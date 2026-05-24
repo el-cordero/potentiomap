@@ -16,7 +16,10 @@ data("synthetic_dem")
 data("synthetic_surface_points")
 synthetic_dem <- terra::rast(synthetic_dem)
 
-out_dir <- file.path(tempdir(), "potentiomap_example_outputs")
+out_dir <- Sys.getenv(
+  "POTENTIOMAP_EXAMPLE_OUT_DIR",
+  unset = file.path(tempdir(), "potentiomap_example_outputs")
+)
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 # 1. Direct groundwater elevation measurements to standardized points.
