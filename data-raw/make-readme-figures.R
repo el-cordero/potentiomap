@@ -22,15 +22,34 @@ pts <- ps_potentiometric_points(
 )
 aoi <- ps_sample_aoi()
 
-panel_png <- function(file, expr, width = 1100, height = 1800) {
+panel_png <- function(file, expr, width = 2400, height = 650) {
   grDevices::png(file, width = width, height = height, res = 150)
   old <- par(no.readonly = TRUE)
   on.exit({
     par(old)
     grDevices::dev.off()
   }, add = TRUE)
-  par(mfrow = c(4, 1), mar = c(2.5, 3, 3.2, 5), oma = c(0, 0, 0, 0))
+  par(mfrow = c(1, 4), mar = c(1.8, 2, 3, 4), oma = c(0, 0, 0, 0))
   force(expr)
+}
+
+draw_arrows <- function(arrows_layer, col = "black", lwd = 1.3) {
+  if (is.null(arrows_layer) || nrow(arrows_layer) < 1) {
+    return(invisible(NULL))
+  }
+  for (i in seq_len(nrow(arrows_layer))) {
+    xy <- terra::crds(arrows_layer[i], df = TRUE)
+    if (nrow(xy) >= 2) {
+      graphics::arrows(
+        xy[1, 1], xy[1, 2],
+        xy[nrow(xy), 1], xy[nrow(xy), 2],
+        length = 0.08,
+        angle = 25,
+        col = col,
+        lwd = lwd
+      )
+    }
+  }
 }
 
 draw_surface <- function(surface, main, interval = 1, arrows = NULL) {
@@ -42,7 +61,7 @@ draw_surface <- function(surface, main, interval = 1, arrows = NULL) {
     terra::plot(contours, add = TRUE, col = "grey15", lwd = 0.8)
   }
   if (!is.null(arrows) && nrow(arrows) > 0) {
-    terra::plot(arrows, add = TRUE, col = "#d73027", lwd = 1.4)
+    draw_arrows(arrows, col = "black", lwd = 1.35)
   }
   terra::plot(pts, add = TRUE, pch = 21, bg = "white", col = "black", cex = 0.65)
 }
@@ -95,6 +114,28 @@ panel_png("man/figures/tps_smoothing.png", {
       tps_lambda = lambda_values[[label]]
     ))
     draw_surface(s$TPS, paste("TPS smoothing:", label), interval = 1)
+  }
+})
+
+smoothing_values <- list(
+  "No raster smoothing" = list(window_size = NULL, iterations = 0),
+  "3 x 3 mean, 1 pass" = list(window_size = 3, iterations = 1),
+  "5 x 5 mean, 1 pass" = list(window_size = 5, iterations = 1),
+  "5 x 5 mean, 2 passes" = list(window_size = 5, iterations = 2)
+)
+panel_png("man/figures/raster_smoothing.png", {
+  for (label in names(smoothing_values)) {
+    spec <- smoothing_values[[label]]
+    smoothed <- if (spec$iterations == 0) {
+      base_surface
+    } else {
+      ps_smooth_surface(
+        base_surface,
+        window_size = spec$window_size,
+        iterations = spec$iterations
+      )
+    }
+    draw_surface(smoothed, label, interval = 1)
   }
 })
 

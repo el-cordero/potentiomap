@@ -84,6 +84,42 @@ test_that("custom interpolation methods can be supplied", {
   )
 })
 
+test_that("potentiometric surface rasters can be smoothed", {
+  data("synthetic_wells", package = "potentiomap")
+
+  pts <- ps_make_points(
+    synthetic_wells,
+    x = "x",
+    y = "y",
+    value = "gw_elevation",
+    name_col = "well_id",
+    crs = "EPSG:26916"
+  )
+  surfaces <- ps_interpolate(pts, grid_res = 150)
+  smoothed <- ps_smooth_surface(surfaces$TPS, window_size = 5, iterations = 2)
+
+  expect_s4_class(smoothed, "SpatRaster")
+  expect_equal(dim(smoothed), dim(surfaces$TPS))
+  expect_equal(terra::crs(smoothed), terra::crs(surfaces$TPS))
+  expect_true(any(is.finite(terra::values(smoothed, mat = FALSE))))
+})
+
+test_that("invalid smoothing windows fail clearly", {
+  data("synthetic_wells", package = "potentiomap")
+
+  pts <- ps_make_points(
+    synthetic_wells,
+    x = "x",
+    y = "y",
+    value = "gw_elevation",
+    name_col = "well_id",
+    crs = "EPSG:26916"
+  )
+  surfaces <- ps_interpolate(pts, grid_res = 150)
+
+  expect_error(ps_smooth_surface(surfaces$TPS, window_size = 4), "odd integer")
+})
+
 test_that("flow arrows and vertices are generated", {
   data("synthetic_wells", package = "potentiomap")
 

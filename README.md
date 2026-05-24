@@ -1,5 +1,7 @@
 # potentiomap
 
+<img src="man/figures/logo.png" align="right" width="160" alt="potentiomap logo" />
+
 `potentiomap` builds potentiometric surface products from groundwater monitoring
 data. It prepares groundwater elevation observations from direct water-level
 measurements or depth-to-water measurements, interpolates a continuous
@@ -208,6 +210,27 @@ outputs
 The output table lists the raster, contour, and quicklook file paths for each
 interpolation method.
 
+## Surface Smoothing
+
+Interpolated surfaces sometimes contain local roughness that is not useful for
+contour development or gradient visualization. `ps_smooth_surface()` applies a
+focal moving-window smoother to the raster while preserving the original raster
+geometry and, by default, the original `NA` footprint.
+
+```r
+smoothed_tps <- ps_smooth_surface(
+  surfaces$TPS,
+  window_size = 5,
+  method = "mean",
+  iterations = 2
+)
+
+smoothed_contours <- ps_contours(smoothed_tps, interval = 1)
+```
+
+The smoothing function can be used before contour extraction or before
+hydraulic-gradient arrow development when a smoother display product is needed.
+
 ## Hydraulic Gradient and Flow Arrows
 
 `ps_flow_arrows()` calculates slope and aspect from a potentiometric surface,
@@ -242,7 +265,7 @@ arrow lines, arrow tips, and arrow bases.
 ## Visual Examples
 
 The following panels are generated from the bundled synthetic dataset. Each
-figure uses four rows to show how an output changes as one modeling or display
+figure uses one row and four columns to show how an output changes as one modeling or display
 choice varies.
 
 ### Interpolation Method
@@ -274,6 +297,13 @@ specified directly through `tps_lambda`.
 
 ![TPS smoothing comparison](man/figures/tps_smoothing.png)
 
+### Raster Smoothing
+
+`ps_smooth_surface()` can be applied after interpolation when a smoother surface
+is desirable for contours or arrows.
+
+![Raster smoothing comparison](man/figures/raster_smoothing.png)
+
 ### Arrow Density
 
 `res_factor` controls the spacing of sampled hydraulic-gradient arrows. Higher
@@ -299,13 +329,12 @@ selection rather than suppressed automatically.
 
 ## References
 
-Hijmans, R. J. (2025). `terra`: Spatial Data Analysis. R package version 1.9-1.
+Hijmans, R. J. 2025. `terra`: Spatial data analysis. R package version 1.9-1.
+https://doi.org/10.32614/CRAN.package.terra
 
-Nychka, D., Furrer, R., Paige, J., and Sain, S. (2021). `fields`: Tools for
-spatial data.
+Nychka, D., R. Furrer, J. Paige, and S. Sain. 2021. `fields`: Tools for spatial
+data. R package version 17.1. https://doi.org/10.5065/D6W957CT
 
-Pebesma, E. (2018). Simple Features for R: Standardized Support for Spatial
-Vector Data. *The R Journal*, 10(1), 439-446.
-
-Pebesma, E. (2004). Multivariable geostatistics in S: the `gstat` package.
-*Computers & Geosciences*, 30, 683-691.
+Pebesma, E. 2004. Multivariable geostatistics in S: The `gstat` package.
+*Computers & Geosciences* 30:683-691.
+https://doi.org/10.1016/j.cageo.2004.03.012

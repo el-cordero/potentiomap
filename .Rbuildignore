@@ -6,5 +6,6 @@
 ^\\.Rhistory$
 ^\\.RData$
 ^data-raw$
+^paper$
 ^potentiomap\\.Rcheck$
 ^potentiomap_[0-9].*\\.tar\\.gz$
