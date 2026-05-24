@@ -1,0 +1,10 @@
+^\\.DS_Store$
+^\\.Rproj\\.user$
+^\\.git$
+^\\.gitignore$
+^\\.github$
+^\\.Rhistory$
+^\\.RData$
+^potentiomap\\.Rcheck$
+^potentiomap_[0-9].*\\.tar\\.gz$
+^_scripts/.*\\.DS_Store$
