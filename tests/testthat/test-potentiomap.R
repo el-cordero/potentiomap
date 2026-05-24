@@ -37,6 +37,53 @@ test_that("IDW interpolation and contours produce spatial outputs", {
   expect_gt(nrow(contours), 0)
 })
 
+test_that("TPS is the default interpolation method", {
+  data("synthetic_wells", package = "potentiomap")
+
+  pts <- ps_make_points(
+    synthetic_wells,
+    x = "x",
+    y = "y",
+    value = "gw_elevation",
+    name_col = "well_id",
+    crs = "EPSG:26916"
+  )
+  surfaces <- ps_interpolate(pts, grid_res = 150)
+
+  expect_named(surfaces, "TPS")
+  expect_s4_class(surfaces$TPS, "SpatRaster")
+  expect_true(any(is.finite(terra::values(surfaces$TPS, mat = FALSE))))
+})
+
+test_that("custom interpolation methods can be supplied", {
+  data("synthetic_wells", package = "potentiomap")
+
+  pts <- ps_make_points(
+    synthetic_wells,
+    x = "x",
+    y = "y",
+    value = "gw_elevation",
+    name_col = "well_id",
+    crs = "EPSG:26916"
+  )
+  mean_surface <- function(points, template, grid) {
+    rep(mean(terra::values(points)$Z), terra::ncell(template))
+  }
+  surfaces <- ps_interpolate(
+    pts,
+    methods = "mean_surface",
+    custom_methods = list(mean_surface = mean_surface),
+    grid_res = 150
+  )
+
+  expect_named(surfaces, "mean_surface")
+  expect_s4_class(surfaces$mean_surface, "SpatRaster")
+  expect_equal(
+    unique(terra::values(surfaces$mean_surface, mat = FALSE)),
+    mean(terra::values(pts)$Z)
+  )
+})
+
 test_that("flow arrows and vertices are generated", {
   data("synthetic_wells", package = "potentiomap")
 

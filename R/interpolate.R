@@ -1,14 +1,18 @@
 #' Interpolate potentiometric surfaces
 #'
-#' Creates one raster per requested interpolation method. Supported methods are
-#' inverse distance weighting (`"IDW"`), thin-plate spline (`"TPS"`), ordinary
-#' kriging (`"OK"`), and universal kriging with quadratic drift (`"UK"`).
+#' Creates one raster per requested interpolation method. The default method is
+#' thin-plate spline (`"TPS"`). Other built-in methods are inverse distance
+#' weighting (`"IDW"`), ordinary kriging (`"OK"`), and universal kriging with
+#' quadratic drift (`"UK"`). Advanced users can also pass named custom
+#' interpolation functions through `custom_methods`.
 #'
 #' @param points A point `SpatVector`, `sf` object, or coordinate table with a
 #'   groundwater elevation column.
 #' @param value Groundwater elevation column name when `points` is not already
 #'   standardized. Defaults to `"Z"`.
-#' @param methods Character vector of interpolation methods.
+#' @param methods Character vector of interpolation methods. Built-in values are
+#'   `"TPS"`, `"IDW"`, `"OK"`, and `"UK"`. Names supplied in `custom_methods`
+#'   can also be used.
 #' @param grid_res Output raster cell size in map units.
 #' @param template Optional template `SpatRaster`; overrides `grid_res`,
 #'   `padding`, and `mask` extent construction.
@@ -20,6 +24,10 @@
 #'   `fields::Tps()` choose by GCV.
 #' @param kr_auto_cutoff Use automatic variogram cutoff and lag width.
 #' @param kr_cutoff,kr_width Manual variogram cutoff and lag width.
+#' @param custom_methods Optional named list of custom interpolation functions.
+#'   Each function is called as `fun(points, template, grid)` and must return
+#'   either a `SpatRaster` matching `template` or a numeric vector with one value
+#'   per template cell.
 #' @param x,y,name_col,crs Used when `points` is a coordinate table.
 #'
 #' @return A named list of `SpatRaster` surfaces.
@@ -29,14 +37,15 @@
 #' data("synthetic_wells")
 #' pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
 #'                       "well_id", "EPSG:26916")
-#' surfaces <- ps_interpolate(pts, methods = c("IDW", "TPS"), grid_res = 100)
+#' surfaces <- ps_interpolate(pts, grid_res = 100)
 #' names(surfaces)
 ps_interpolate <- function(points, value = "Z",
-                           methods = c("IDW", "TPS", "OK", "UK"),
+                           methods = "TPS",
                            grid_res = NULL, template = NULL, mask = NULL,
                            padding = NULL, idw_power = 2, idw_nmax = 15,
                            tps_lambda = NULL, kr_auto_cutoff = TRUE,
                            kr_cutoff = NA_real_, kr_width = NA_real_,
+                           custom_methods = NULL,
                            x = "x", y = "y", name_col = NULL, crs = NULL) {
   pts <- if (inherits(points, "SpatVector")) {
     if (!"Z" %in% names(terra::values(points))) {
@@ -53,11 +62,24 @@ ps_interpolate <- function(points, value = "Z",
          call. = FALSE)
   }
 
-  methods <- toupper(methods)
-  bad <- setdiff(methods, c("IDW", "TPS", "OK", "UK"))
-  if (length(bad) > 0) {
-    stop("Unsupported method(s): ", paste(bad, collapse = ", "),
-         call. = FALSE)
+  if (is.function(methods)) {
+    custom_methods <- c(list(custom = methods), custom_methods)
+    methods <- "custom"
+  } else if (is.list(methods) && !is.character(methods)) {
+    if (is.null(names(methods)) || any(names(methods) == "")) {
+      names(methods) <- paste0("custom_", seq_along(methods))
+    }
+    custom_methods <- c(methods, custom_methods)
+    methods <- names(methods)
+  }
+  methods <- as.character(methods)
+  if (!is.null(custom_methods)) {
+    if (!is.list(custom_methods) || any(!vapply(custom_methods, is.function, logical(1)))) {
+      stop("`custom_methods` must be a named list of functions.", call. = FALSE)
+    }
+    if (is.null(names(custom_methods)) || any(names(custom_methods) == "")) {
+      stop("Every custom method must have a name.", call. = FALSE)
+    }
   }
 
   tmpl <- .surface_template(pts, grid_res, template, mask, padding)
@@ -66,12 +88,14 @@ ps_interpolate <- function(points, value = "Z",
 
   out <- list()
   for (method in methods) {
+    builtin <- toupper(method)
     out[[method]] <- switch(
-      method,
+      builtin,
       IDW = .interp_idw(pts, tmpl, grid, idw_power, idw_nmax),
       TPS = .interp_tps(pts, tmpl, grid, tps_lambda),
       OK = .interp_ok(pts, tmpl, grid, kr_auto_cutoff, kr_cutoff, kr_width),
-      UK = .interp_uk(pts, tmpl, grid, kr_auto_cutoff, kr_cutoff, kr_width)
+      UK = .interp_uk(pts, tmpl, grid, kr_auto_cutoff, kr_cutoff, kr_width),
+      .interp_custom(method, custom_methods, pts, tmpl, grid)
     )
     names(out[[method]]) <- method
     if (!is.null(mask)) {
@@ -79,6 +103,25 @@ ps_interpolate <- function(points, value = "Z",
     }
   }
   out
+}
+
+.interp_custom <- function(method, custom_methods, points, template, grid) {
+  if (is.null(custom_methods) || !method %in% names(custom_methods)) {
+    stop("Unsupported method `", method, "`. Use one of TPS, IDW, OK, UK, ",
+         "or provide a matching function in `custom_methods`.", call. = FALSE)
+  }
+  result <- custom_methods[[method]](points = points, template = template,
+                                     grid = grid)
+  if (inherits(result, "SpatRaster")) {
+    return(result)
+  }
+  if (is.numeric(result) && length(result) == terra::ncell(template)) {
+    r <- template
+    terra::values(r) <- result
+    return(r)
+  }
+  stop("Custom method `", method, "` must return a SpatRaster or a numeric ",
+       "vector with one value per template cell.", call. = FALSE)
 }
 
 .surface_template <- function(points, grid_res, template, mask, padding) {

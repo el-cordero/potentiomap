@@ -7,7 +7,7 @@
 ps_interpolate(
   points,
   value = "Z",
-  methods = c("IDW", "TPS", "OK", "UK"),
+  methods = "TPS",
   grid_res = NULL,
   template = NULL,
   mask = NULL,
@@ -18,6 +18,7 @@ ps_interpolate(
   kr_auto_cutoff = TRUE,
   kr_cutoff = NA_real_,
   kr_width = NA_real_,
+  custom_methods = NULL,
   x = "x",
   y = "y",
   name_col = NULL,
@@ -31,7 +32,9 @@ groundwater elevation column.}
 \item{value}{Groundwater elevation column name when \code{points} is not already
 standardized. Defaults to \code{"Z"}.}
 
-\item{methods}{Character vector of interpolation methods.}
+\item{methods}{Character vector of interpolation methods. Built-in values are
+\code{"TPS"}, \code{"IDW"}, \code{"OK"}, and \code{"UK"}. Names supplied in \code{custom_methods}
+can also be used.}
 
 \item{grid_res}{Output raster cell size in map units.}
 
@@ -52,20 +55,27 @@ template from points.}
 
 \item{kr_cutoff, kr_width}{Manual variogram cutoff and lag width.}
 
+\item{custom_methods}{Optional named list of custom interpolation functions.
+Each function is called as \code{fun(points, template, grid)} and must return
+either a \code{SpatRaster} matching \code{template} or a numeric vector with one value
+per template cell.}
+
 \item{x, y, name_col, crs}{Used when \code{points} is a coordinate table.}
 }
 \value{
 A named list of \code{SpatRaster} surfaces.
 }
 \description{
-Creates one raster per requested interpolation method. Supported methods are
-inverse distance weighting (\code{"IDW"}), thin-plate spline (\code{"TPS"}), ordinary
-kriging (\code{"OK"}), and universal kriging with quadratic drift (\code{"UK"}).
+Creates one raster per requested interpolation method. The default method is
+thin-plate spline (\code{"TPS"}). Other built-in methods are inverse distance
+weighting (\code{"IDW"}), ordinary kriging (\code{"OK"}), and universal kriging with
+quadratic drift (\code{"UK"}). Advanced users can also pass named custom
+interpolation functions through \code{custom_methods}.
 }
 \examples{
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-surfaces <- ps_interpolate(pts, methods = c("IDW", "TPS"), grid_res = 100)
+surfaces <- ps_interpolate(pts, grid_res = 100)
 names(surfaces)
 }
