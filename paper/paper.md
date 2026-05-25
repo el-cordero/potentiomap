@@ -1,20 +1,21 @@
 ---
-title: "potentiomap: An R package for reproducible potentiometric surface mapping"
+title: 'potentiomap: An R package for reproducible potentiometric surface mapping'
 tags:
-  - R
-  - groundwater
-  - hydrogeology
-  - geospatial
-  - interpolation
-  - potentiometric surface
+- R
+- groundwater
+- hydrogeology
+- geospatial
+- interpolation
+- potentiometric surface
+date: "24 May 2026"
+output: pdf_document
 authors:
-  - name: Elvin Cordero
-    affiliation: 1
-affiliations:
-  - name: Seamount Geo
-    index: 1
-date: 24 May 2026
+- name: Elvin Cordero
+  affiliation: 1
 bibliography: paper.bib
+affiliations:
+- name: Seamount Geo
+  index: 1
 ---
 
 # Summary
