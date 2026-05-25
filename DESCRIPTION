@@ -15,7 +15,7 @@ Description: Builds potentiometric surface products from groundwater monitoring
     spline interpolation uses methods from Nychka et al. (2021)
     <doi:10.5065/D6W957CT>, and geostatistical interpolation uses methods from
     Pebesma (2004) <doi:10.1016/j.cageo.2004.03.012>.
-License: MIT + file LICENSE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
