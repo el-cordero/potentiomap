@@ -7,9 +7,9 @@
 #' interpolation functions through `custom_methods`.
 #'
 #' @param points A point `SpatVector`, `sf` object, or coordinate table with a
-#'   groundwater elevation column.
-#' @param value Groundwater elevation column name when `points` is not already
-#'   standardized. Defaults to `"Z"`.
+#'   data column to interpolate.
+#' @param value Data column name when `points` is not already standardized.
+#'   Defaults to `"Z"`.
 #' @param methods Character vector of interpolation methods. Built-in values are
 #'   `"TPS"`, `"IDW"`, `"OK"`, and `"UK"`. Names supplied in `custom_methods`
 #'   can also be used.

@@ -1,11 +1,12 @@
-^\\.DS_Store$
-^\\.Rproj\\.user$
-^\\.git$
-^\\.gitignore$
-^\\.github$
-^\\.Rhistory$
-^\\.RData$
+^\.DS_Store$
+^\.Rproj\.user$
+^\.git$
+^\.gitignore$
+^\.github$
+^\.Rhistory$
+^\.RData$
+^README 2\.md$
 ^data-raw$
 ^paper$
-^potentiomap\\.Rcheck$
-^potentiomap_[0-9].*\\.tar\\.gz$
+^potentiomap\.Rcheck$
+^potentiomap_[0-9].*\.tar\.gz$

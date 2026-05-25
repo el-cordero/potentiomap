@@ -27,10 +27,10 @@ ps_interpolate(
 }
 \arguments{
 \item{points}{A point \code{SpatVector}, \code{sf} object, or coordinate table with a
-groundwater elevation column.}
+data column to interpolate.}
 
-\item{value}{Groundwater elevation column name when \code{points} is not already
-standardized. Defaults to \code{"Z"}.}
+\item{value}{Data column name when \code{points} is not already standardized.
+Defaults to \code{"Z"}.}
 
 \item{methods}{Character vector of interpolation methods. Built-in values are
 \code{"TPS"}, \code{"IDW"}, \code{"OK"}, and \code{"UK"}. Names supplied in \code{custom_methods}
