@@ -1,0 +1,18 @@
+potentiomap website build session
+===================================
+
+Generated: 2026-07-13
+R: R version 4.5.3 (2026-03-11)
+Platform: aarch64-apple-darwin20
+
+Package versions:
+potentiomap 0.1.0
+pkgdown 2.2.1
+rmarkdown 2.31
+knitr 1.51
+terra 1.9.34
+sf 1.1.1
+fields 17.3
+gstat 2.1.6
+foreign 0.8.91
+magick 2.9.1
