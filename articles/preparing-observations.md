@@ -39,27 +39,14 @@ Positive depth means below land surface. A negative value describes head
 above land surface, but users should verify that convention in the
 source record.
 
-``` r
-
-plot.new()
-plot.window(xlim = c(0, 10), ylim = c(0, 10))
-polygon(c(0, 10, 10, 0), c(7.7, 8.4, 10, 10), col = "#d6b98c", border = NA)
-abline(h = 4.4, col = "#176b87", lwd = 4)
-arrows(5, 8.05, 5, 4.55, length = .11, code = 2, lwd = 2)
-text(5.2, 6.25, "positive depth to water", adj = 0, cex = .9)
-segments(1.2, 1, 1.2, 8.05, lwd = 2, col = "#52646d")
-text(1.45, 4.6, "land-surface\nelevation", adj = 0, cex = .9)
-segments(8.8, 1, 8.8, 4.4, lwd = 2, col = "#176b87")
-text(8.55, 2.5, "groundwater\nelevation", adj = 1, cex = .9)
-abline(h = 1, lty = 2, col = "#52646d")
-text(5, .55, "documented vertical datum", cex = .9)
-box()
-```
-
-![Cross-section diagram showing land-surface elevation, a downward
-positive depth-to-water measurement, and groundwater elevation
-referenced to a vertical
-datum.](preparing-observations_files/figure-html/head-diagram-1.png)
+![Groundwater cross-section on a white background. A sloping land
+surface lies above a horizontal groundwater surface and documented
+vertical datum. Double-ended dimension arrows show land-surface
+elevation from datum to land, positive depth to water measured downward
+from land to groundwater, and groundwater elevation from datum to
+groundwater. The equation states groundwater elevation equals
+land-surface elevation minus depth to
+water.](../depth-to-water-cross-section.png)
 
 ``` r
 
