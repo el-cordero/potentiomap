@@ -48,7 +48,7 @@ test_that("TPS is the default interpolation method", {
     name_col = "well_id",
     crs = "EPSG:26916"
   )
-  surfaces <- ps_interpolate(pts, grid_res = 150)
+  surfaces <- suppressWarnings(ps_interpolate(pts, grid_res = 150))
 
   expect_named(surfaces, "TPS")
   expect_s4_class(surfaces$TPS, "SpatRaster")
@@ -95,7 +95,7 @@ test_that("potentiometric surface rasters can be smoothed", {
     name_col = "well_id",
     crs = "EPSG:26916"
   )
-  surfaces <- ps_interpolate(pts, grid_res = 150)
+  surfaces <- suppressWarnings(ps_interpolate(pts, grid_res = 150))
   smoothed <- ps_smooth_surface(surfaces$TPS, window_size = 5, iterations = 2)
 
   expect_s4_class(smoothed, "SpatRaster")
@@ -115,7 +115,7 @@ test_that("invalid smoothing windows fail clearly", {
     name_col = "well_id",
     crs = "EPSG:26916"
   )
-  surfaces <- ps_interpolate(pts, grid_res = 150)
+  surfaces <- suppressWarnings(ps_interpolate(pts, grid_res = 150))
 
   expect_error(ps_smooth_surface(surfaces$TPS, window_size = 4), "odd integer")
 })
@@ -180,12 +180,12 @@ test_that("surface export writes rasters contours and quicklooks", {
     crs = "EPSG:26916"
   )
 
-  surfaces <- ps_interpolate(
+  surfaces <- suppressWarnings(ps_interpolate(
     pts,
     methods = c("IDW", "TPS"),
     grid_res = 150,
     mask = ps_sample_aoi()
-  )
+  ))
   out_dir <- file.path(tempdir(), "potentiomap-test-export")
   outputs <- ps_export_surfaces(
     surfaces,
@@ -218,7 +218,7 @@ test_that("flow arrow export writes gradient products and vertices", {
     name_col = "well_id",
     crs = "EPSG:26916"
   )
-  surfaces <- ps_interpolate(pts, methods = "TPS", grid_res = 150)
+  surfaces <- suppressWarnings(ps_interpolate(pts, methods = "TPS", grid_res = 150))
   out_dir <- file.path(tempdir(), "potentiomap-test-flow")
   flow <- ps_flow_arrows(
     surfaces$TPS,

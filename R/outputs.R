@@ -172,6 +172,7 @@ ps_quicklook <- function(surface, contours = NULL, points = NULL, file = NULL,
               "potentiomap_input_error")
   }
   opened <- FALSE
+  discard_device <- FALSE
   if (!is.null(file)) {
     if (!is.character(file) || length(file) != 1L || !nzchar(file)) {
       .ps_abort("`file` must be one nonempty path or NULL.",
@@ -190,6 +191,10 @@ ps_quicklook <- function(surface, contours = NULL, points = NULL, file = NULL,
              ))
     opened <- TRUE
     on.exit(if (opened) grDevices::dev.off(), add = TRUE)
+  } else if (!interactive() && grDevices::dev.cur() == 1L) {
+    grDevices::pdf(file = NULL)
+    discard_device <- TRUE
+    on.exit(if (discard_device) grDevices::dev.off(), add = TRUE)
   }
   terra::plot(r, main = title)
   if (!is.null(contours) && nrow(contours) > 0L) {
