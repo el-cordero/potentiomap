@@ -9,6 +9,7 @@
 ^README\.Rmd$
 ^_pkgdown\.yml$
 ^docs$
+^pkgdown$
 ^cran-comments\.md$
 ^CITATION\.cff$
 ^dev$
@@ -17,3 +18,5 @@
 ^paper$
 ^potentiomap\.Rcheck$
 ^potentiomap_[0-9].*\.tar\.gz$
+^doc$
+^Meta$

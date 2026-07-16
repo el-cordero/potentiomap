@@ -1,0 +1,271 @@
+---
+output:
+  github_document:
+    html_preview: false
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+devtools::load_all(".", quiet = TRUE)
+```
+
+# potentiomap
+
+<img src="man/figures/logo.png" align="right" width="160" alt="potentiomap hexagon logo" />
+
+<!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/potentiomap)](https://CRAN.R-project.org/package=potentiomap)
+[![DOI](https://img.shields.io/badge/DOI-10.32614%2FCRAN.package.potentiomap-blue)](https://doi.org/10.32614/CRAN.package.potentiomap)
+<!-- badges: end -->
+
+## What the package does
+
+`potentiomap` prepares groundwater-head observations, interpolates
+potentiometric surfaces, retains model diagnostics, describes prediction
+support, creates contour inventories, and derives local hydraulic-gradient
+arrow symbols for review in R or GIS.
+
+The package is not a groundwater-flow or contaminant-transport model.
+Hydraulic-gradient arrows show the local negative gradient of a modeled head
+surface. Arrow length is a display convention, not velocity, travel time, or a
+traced groundwater path.
+
+## Installation
+
+Install the CRAN release with:
+
+```{r installation, eval=FALSE}
+install.packages("potentiomap")
+```
+
+Install the development version with:
+
+```{r development-installation, eval=FALSE}
+# install.packages("remotes")
+remotes::install_github("el-cordero/potentiomap")
+```
+
+## A short groundwater example
+
+This example uses only bundled synthetic data. The elevations are synthetic
+metres relative to a synthetic example datum.
+
+```{r short-example}
+suppressPackageStartupMessages({
+  library(potentiomap)
+  library(terra)
+})
+
+data("synthetic_wells")
+
+points <- ps_make_points(
+  synthetic_wells,
+  x = "x", y = "y", value = "gw_elevation", name_col = "well_id",
+  crs = "EPSG:26916", head_unit = "m", output_unit = "m",
+  vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface", metadata_mode = "strict"
+)
+
+result <- ps_interpolate(
+  points, methods = "IDW", grid_res = 300,
+  return = "result", support = TRUE, support_max_distance = 1000
+)
+
+ps_diagnostics(result, "IDW")
+result$support$summary
+
+contours <- ps_contours(
+  result$surfaces$IDW, levels = c(166, 168, 170), return = "result"
+)
+contours$manifest
+
+classified <- suppressWarnings(ps_contour_support(
+  contours = contours$contours,
+  support = result$support,
+  supported_distance = 500,
+  approximate_distance = 1200,
+  require_inside_hull = TRUE
+))
+classified$summary
+
+# Short, sparse map symbols reduce clutter while preserving direction.
+arrows <- ps_flow_arrows(
+  result$surfaces$IDW,
+  scale = 25, res_factor = 10, endpoint_action = "shorten"
+)
+arrows$validation_summary
+
+output_dir <- file.path(tempdir(), "potentiomap-example")
+exported <- ps_export_surfaces(
+  result, output_dir, out_stub = "synthetic",
+  points = points, vector_format = "gpkg"
+)
+data.frame(
+  method = exported$method,
+  raster = basename(exported$raster),
+  contours = basename(exported$contours),
+  quicklook = basename(exported$quicklook)
+)
+```
+
+## Preparing groundwater-head observations
+
+Use `ps_make_points()` when groundwater elevation or measured hydraulic head is
+already present. Use `ps_potentiometric_points()` when head must be calculated
+from land-surface elevation and depth to water.
+
+```{r depth-example}
+depth_points <- ps_potentiometric_points(
+  synthetic_wells,
+  x = "x", y = "y", depth_col = "depth_to_water",
+  surface_col = "surface_elevation", name_col = "well_id",
+  crs = "EPSG:26916", depth_unit = "m", surface_unit = "m",
+  output_unit = "m", vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface", depth_sign = "positive_down",
+  metadata_mode = "strict"
+)
+
+head(terra::values(depth_points)[, c("surface_elevation", "depth_to_water", "Z")])
+ps_metadata(depth_points)
+```
+
+The package supports metres and international feet, using exactly
+`1 ft = 0.3048 m`. It records a supplied vertical datum but does not infer or
+transform vertical datums. It also does not guess measuring-point corrections.
+
+## Interpolation methods
+
+Built-in methods are inverse-distance weighting (`IDW`), thin-plate splines
+(`TPS`), ordinary kriging (`OK`), and universal kriging (`UK`) with quadratic
+drift. Named user functions are also supported.
+
+- IDW is deterministic and distance based.
+- TPS produces a smooth penalized surface.
+- OK assumes a constant unknown mean and requires a usable variogram.
+- UK uses a specified quadratic spatial trend and requires an estimable,
+  adequately conditioned design.
+
+TPS remains the software default for backward compatibility and produces a
+smooth surface. Its suitability should be evaluated against the monitoring
+network, hydrogeologic setting, prediction support, validation design, and
+intended map use. Requested methods are never silently replaced.
+
+## Diagnostics and prediction support
+
+Set `return = "result"` to retain method conditions, fitted model information,
+grid geometry, observation counts, and optional support products. For kriging,
+the result includes empirical and fitted variogram information. For UK, it also
+includes trend rank, condition number, coordinate scaling, and prediction-range
+diagnostics. TPS records supported GCV selection information.
+
+`ps_prediction_support()` classifies cells using the training-point convex
+hull, nearest-observation distance, mask membership, and finite prediction
+availability. A convex hull describes the monitoring network; it is not an
+aquifer boundary. Finite predictions outside the training network can still be
+poorly supported.
+
+## Contours and contour manifests
+
+`ps_contours()` returns line geometry by default. Set `return = "result"` to
+inventory every requested level, the finite surface range, returned feature
+count, and any omitted level. Explicit levels outside the modeled range produce
+a classed warning and remain visible in the manifest. Open contour lines are not
+silently closed or converted to polygons.
+
+`ps_contour_support()` divides individual contours at local support boundaries.
+The same contour level can therefore contain solid supported sections, dashed
+approximate sections, and dotted unsupported sections.
+
+```{r contour-support-plot, eval=FALSE}
+terra::plot(
+  classified$segments[
+    classified$segments$support_class == "supported",
+  ],
+  lty = 1
+)
+terra::plot(
+  classified$segments[
+    classified$segments$support_class == "approximate",
+  ],
+  lty = 2, add = TRUE
+)
+```
+
+These classes use mapping criteria supplied by the user; they are not
+statistical confidence intervals. Nearness to wells does not prove a section is
+correct, and greater distance does not prove it is wrong. Users should choose
+thresholds for their monitoring-network geometry, hydrogeologic setting,
+interpolation method, support resolution, and intended map use.
+
+## Hydraulic-gradient arrows
+
+`ps_flow_arrows()` derives local negative-gradient directions from the modeled
+surface. Endpoint policies can flag, shorten, drop, or leave the symbols
+unvalidated. Shortening keeps the original direction and repeatedly reduces
+line length until the tip is finite and no higher than its base within the
+specified tolerance.
+
+The arrow-tip check evaluates each straight symbol against the supplied raster.
+It does not prove that the interpolated surface is physically correct. Use
+`ps_validate_arrows()` to check an existing arrow layer independently.
+
+## Grouped events and water-bearing units
+
+`ps_interpolate_grouped()` runs separate analyses for explicit event, aquifer,
+water-bearing-unit, season, or other grouping columns. Observations are never
+combined between groups. The returned manifest retains successful, failed, and
+empty groups and attributes conditions to each group and method.
+
+```{r grouped-example}
+grouped_data <- transform(
+  synthetic_wells,
+  event = rep(c("spring", "autumn"), each = 16),
+  unit = rep(c("upper", "lower"), times = 16)
+)
+
+grouped <- ps_interpolate_grouped(
+  grouped_data, c("event", "unit"),
+  value = "gw_elevation", name_col = "well_id", crs = "EPSG:26916",
+  methods = "IDW", grid_res = 400
+)
+grouped$manifest
+```
+
+## Exporting GIS products
+
+`ps_export_surfaces()` writes deterministic GeoTIFF, contour, quicklook,
+diagnostic, support, and CSV manifest products only when an output directory is
+supplied. GeoPackage is recommended for vector output because it preserves field
+names and supports multiple layers more reliably than shapefiles. Shapefile
+output remains available for compatibility.
+
+For large prediction grids, consider on-disk `terra` rasters and set a temporary
+directory with adequate space. See the getting-started article for resource and
+temporary-file guidance.
+
+## Documentation and support
+
+- Documentation: <https://el-cordero.github.io/potentiomap/>
+- Source: <https://github.com/el-cordero/potentiomap>
+- Issues: <https://github.com/el-cordero/potentiomap/issues>
+- CRAN: <https://CRAN.R-project.org/package=potentiomap>
+
+Please do not post confidential well coordinates, client data, private site
+identifiers, or restricted environmental data in public issues.
+
+## Citation
+
+Run `citation("potentiomap")` for the package citation. The permanent CRAN
+package DOI is <https://doi.org/10.32614/CRAN.package.potentiomap>.
+
+## Contributing
+
+Contributions are welcome through the public issue tracker and pull requests.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md) before contributing.

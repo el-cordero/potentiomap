@@ -1,340 +1,371 @@
+
 # potentiomap
 
-<img src="man/figures/logo.png" align="right" width="160" alt="potentiomap logo" />
+<img src="man/figures/logo.png" align="right" width="160" alt="potentiomap hexagon logo" />
 
-`potentiomap` builds potentiometric surface products from groundwater monitoring
-data. It prepares groundwater elevation observations from direct water-level
-measurements or depth-to-water measurements, interpolates a continuous
-potentiometric surface, generates contour products, and derives hydraulic
-gradient flow arrows suitable for GIS review and technical reporting.
+<!-- badges: start -->
 
-The default interpolation method is a thin-plate spline (`TPS`), which provides
-a smooth surface appropriate for many monitoring-well networks. Additional
-built-in methods include inverse distance weighting (`IDW`), ordinary kriging
-(`OK`), and universal kriging (`UK`). Advanced users can also supply their own
-interpolation function.
+[![CRAN
+status](https://www.r-pkg.org/badges/version/potentiomap)](https://CRAN.R-project.org/package=potentiomap)
+[![DOI](https://img.shields.io/badge/DOI-10.32614%2FCRAN.package.potentiomap-blue)](https://doi.org/10.32614/CRAN.package.potentiomap)
+<!-- badges: end -->
+
+## What the package does
+
+`potentiomap` prepares groundwater-head observations, interpolates
+potentiometric surfaces, retains model diagnostics, describes prediction
+support, creates contour inventories, and derives local
+hydraulic-gradient arrow symbols for review in R or GIS.
+
+The package is not a groundwater-flow or contaminant-transport model.
+Hydraulic-gradient arrows show the local negative gradient of a modeled
+head surface. Arrow length is a display convention, not velocity, travel
+time, or a traced groundwater path.
 
 ## Installation
 
-Install the released version:
+Install the CRAN release with:
 
-```r
+``` r
 install.packages("potentiomap")
 ```
 
-Install the development version:
+Install the development version with:
 
-```r
-install.packages("remotes")
+``` r
+# install.packages("remotes")
 remotes::install_github("el-cordero/potentiomap")
 ```
 
-Load the package:
+## A short groundwater example
 
-```r
-library(potentiomap)
-library(terra)
-```
+This example uses only bundled synthetic data. The elevations are
+synthetic metres relative to a synthetic example datum.
 
-## Core Workflow
+``` r
+suppressPackageStartupMessages({
+  library(potentiomap)
+  library(terra)
+})
 
-`potentiomap` organizes a groundwater surface workflow into four stages:
-
-1. Prepare monitoring points with a standardized groundwater elevation field.
-2. Interpolate a potentiometric surface on a raster grid.
-3. Export surface, contour, and quicklook products.
-4. Generate hydraulic-gradient arrows and arrow-tip or arrow-base point layers.
-
-The package accepts coordinate tables, `sf` objects, and `terra::SpatVector`
-point layers. Tabular inputs require coordinate columns and a coordinate
-reference system.
-
-## Example Data
-
-The package includes synthetic example data for reproducible examples:
-
-- `synthetic_wells`: monitoring-well coordinates, land-surface elevations,
-  depth-to-water measurements, and groundwater elevations.
-- `synthetic_dem`: a packed `terra` raster representing land-surface elevation.
-- `synthetic_surface_points`: separate land-surface elevation measurements.
-- `ps_sample_aoi()`: an example area-of-interest polygon.
-
-```r
 data("synthetic_wells")
-data("synthetic_dem")
-data("synthetic_surface_points")
 
-synthetic_dem <- terra::rast(synthetic_dem)
-```
-
-## Preparing Groundwater Elevation Points
-
-### Direct Groundwater Elevation Measurements
-
-Use `ps_make_points()` when groundwater elevation is already present in the
-input table.
-
-```r
-gw_points <- ps_make_points(
+points <- ps_make_points(
   synthetic_wells,
-  x = "x",
-  y = "y",
-  value = "gw_elevation",
-  name_col = "well_id",
-  crs = "EPSG:26916"
+  x = "x", y = "y", value = "gw_elevation", name_col = "well_id",
+  crs = "EPSG:26916", head_unit = "m", output_unit = "m",
+  vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface", metadata_mode = "strict"
 )
+
+result <- ps_interpolate(
+  points, methods = "IDW", grid_res = 300,
+  return = "result", support = TRUE, support_max_distance = 1000
+)
+
+ps_diagnostics(result, "IDW")
+#> $formula
+#> [1] "Z ~ 1"
+#>
+#> $observation_count
+#> [1] 32
+#>
+#> $idw_power
+#> [1] 2
+#>
+#> $idw_nmax
+#> [1] 15
+#>
+#> $return_status
+#> [1] "success"
+#>
+#> $requested_method
+#> [1] "IDW"
+#>
+#> $returned_method
+#> [1] "IDW"
+#>
+#> $finite_prediction_count
+#> [1] 169
+#>
+#> $nonfinite_prediction_count
+#> [1] 0
+result$support$summary
+#>             support_class cells   percent
+#> 1               supported    78 46.153846
+#> 2   outside_training_hull    85 50.295858
+#> 3 beyond_maximum_distance     0  0.000000
+#> 4            outside_mask     0  0.000000
+#> 5  prediction_unavailable     0  0.000000
+#> 6    multiple_limitations     6  3.550296
+
+contours <- ps_contours(
+  result$surfaces$IDW, levels = c(166, 168, 170), return = "result"
+)
+contours$manifest
+#>   requested_level surface_minimum surface_maximum       level_relation
+#> 1             166         164.528        170.8319 within_surface_range
+#> 2             168         164.528        170.8319 within_surface_range
+#> 3             170         164.528        170.8319 within_surface_range
+#>   returned_status returned_feature_count omission_reason
+#> 1        returned                      1
+#> 2        returned                      1
+#> 3        returned                      1
+
+classified <- suppressWarnings(ps_contour_support(
+  contours = contours$contours,
+  support = result$support,
+  supported_distance = 500,
+  approximate_distance = 1200,
+  require_inside_hull = TRUE
+))
+classified$summary
+#>   contour_level support_class segment_count total_line_length
+#> 4           166     supported             1          1518.085
+#> 1           166   approximate             2          2458.483
+#> 5           168     supported             1          2701.971
+#> 2           168   approximate             3          1272.686
+#> 6           170     supported             1          2448.299
+#> 3           170   approximate             3          3012.517
+#>   retained_line_length removed_line_length
+#> 4             1518.085                   0
+#> 1             2458.483                   0
+#> 5             2701.971                   0
+#> 2             1272.686                   0
+#> 6             2448.299                   0
+#> 3             3012.517                   0
+
+# Short, sparse map symbols reduce clutter while preserving direction.
+arrows <- ps_flow_arrows(
+  result$surfaces$IDW,
+  scale = 25, res_factor = 10, endpoint_action = "shorten"
+)
+arrows$validation_summary
+#>   endpoint_action arrows_generated arrows_retained finite_support downhill_pass
+#> 1         shorten                1               1              1             1
+#>   failed shortened dropped
+#> 1      0         0       0
+
+output_dir <- file.path(tempdir(), "potentiomap-example")
+exported <- ps_export_surfaces(
+  result, output_dir, out_stub = "synthetic",
+  points = points, vector_format = "gpkg"
+)
+data.frame(
+  method = exported$method,
+  raster = basename(exported$raster),
+  contours = basename(exported$contours),
+  quicklook = basename(exported$quicklook)
+)
+#>   method                    raster                    contours
+#> 1    IDW synthetic_IDW_surface.tif synthetic_IDW_contours.gpkg
+#>                     quicklook
+#> 1 synthetic_IDW_quicklook.png
 ```
 
-The returned point layer contains standardized `Z` and `Name` fields. `Z` is the
-groundwater elevation used by the interpolation functions.
+## Preparing groundwater-head observations
 
-### Depth to Water with a DEM
+Use `ps_make_points()` when groundwater elevation or measured hydraulic
+head is already present. Use `ps_potentiometric_points()` when head must
+be calculated from land-surface elevation and depth to water.
 
-Use `ps_potentiometric_points()` when field data contain depth to water and
-land-surface elevation should be sampled from a DEM.
-
-```r
-gw_points <- ps_potentiometric_points(
+``` r
+depth_points <- ps_potentiometric_points(
   synthetic_wells,
-  x = "x",
-  y = "y",
-  depth_col = "depth_to_water",
-  surface = synthetic_dem,
-  name_col = "well_id",
-  crs = "EPSG:26916"
+  x = "x", y = "y", depth_col = "depth_to_water",
+  surface_col = "surface_elevation", name_col = "well_id",
+  crs = "EPSG:26916", depth_unit = "m", surface_unit = "m",
+  output_unit = "m", vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface", depth_sign = "positive_down",
+  metadata_mode = "strict"
+)
+
+head(terra::values(depth_points)[, c("surface_elevation", "depth_to_water", "Z")])
+#>   surface_elevation depth_to_water      Z
+#> 1            185.13          18.48 166.65
+#> 2            183.89          18.39 165.50
+#> 3            190.43          18.97 171.46
+#> 4            184.35          18.66 165.69
+#> 5            189.02          20.02 169.00
+#> 6            188.40          18.87 169.53
+ps_metadata(depth_points)
+#> $depth_unit
+#> [1] "m"
+#>
+#> $surface_unit
+#> [1] "m"
+#>
+#> $output_unit
+#> [1] "m"
+#>
+#> $vertical_datum
+#> [1] "synthetic example datum"
+#>
+#> $surface_reference
+#> [1] "land_surface"
+#>
+#> $depth_sign
+#> [1] "positive_down"
+#>
+#> $measuring_point_offset
+#> [1] 0
+#>
+#> $metadata_mode
+#> [1] "strict"
+#>
+#> $international_foot_metres
+#> [1] 0.3048
+```
+
+The package supports metres and international feet, using exactly
+`1 ft = 0.3048 m`. It records a supplied vertical datum but does not
+infer or transform vertical datums. It also does not guess
+measuring-point corrections.
+
+## Interpolation methods
+
+Built-in methods are inverse-distance weighting (`IDW`), thin-plate
+splines (`TPS`), ordinary kriging (`OK`), and universal kriging (`UK`)
+with quadratic drift. Named user functions are also supported.
+
+- IDW is deterministic and distance based.
+- TPS produces a smooth penalized surface.
+- OK assumes a constant unknown mean and requires a usable variogram.
+- UK uses a specified quadratic spatial trend and requires an estimable,
+  adequately conditioned design.
+
+TPS remains the software default for backward compatibility and produces
+a smooth surface. Its suitability should be evaluated against the
+monitoring network, hydrogeologic setting, prediction support,
+validation design, and intended map use. Requested methods are never
+silently replaced.
+
+## Diagnostics and prediction support
+
+Set `return = "result"` to retain method conditions, fitted model
+information, grid geometry, observation counts, and optional support
+products. For kriging, the result includes empirical and fitted
+variogram information. For UK, it also includes trend rank, condition
+number, coordinate scaling, and prediction-range diagnostics. TPS
+records supported GCV selection information.
+
+`ps_prediction_support()` classifies cells using the training-point
+convex hull, nearest-observation distance, mask membership, and finite
+prediction availability. A convex hull describes the monitoring network;
+it is not an aquifer boundary. Finite predictions outside the training
+network can still be poorly supported.
+
+## Contours and contour manifests
+
+`ps_contours()` returns line geometry by default. Set
+`return = "result"` to inventory every requested level, the finite
+surface range, returned feature count, and any omitted level. Explicit
+levels outside the modeled range produce a classed warning and remain
+visible in the manifest. Open contour lines are not silently closed or
+converted to polygons.
+
+`ps_contour_support()` divides individual contours at local support
+boundaries. The same contour level can therefore contain solid supported
+sections, dashed approximate sections, and dotted unsupported sections.
+
+``` r
+terra::plot(
+  classified$segments[
+    classified$segments$support_class == "supported",
+  ],
+  lty = 1
+)
+terra::plot(
+  classified$segments[
+    classified$segments$support_class == "approximate",
+  ],
+  lty = 2, add = TRUE
 )
 ```
 
-### Depth to Water with a Surface-Elevation Column
+These classes use mapping criteria supplied by the user; they are not
+statistical confidence intervals. Nearness to wells does not prove a
+section is correct, and greater distance does not prove it is wrong.
+Users should choose thresholds for their monitoring-network geometry,
+hydrogeologic setting, interpolation method, support resolution, and
+intended map use.
 
-If the well table already contains land-surface elevation, provide that column
-through `surface_col`.
+## Hydraulic-gradient arrows
 
-```r
-gw_points <- ps_potentiometric_points(
+`ps_flow_arrows()` derives local negative-gradient directions from the
+modeled surface. Endpoint policies can flag, shorten, drop, or leave the
+symbols unvalidated. Shortening keeps the original direction and
+repeatedly reduces line length until the tip is finite and no higher
+than its base within the specified tolerance.
+
+The arrow-tip check evaluates each straight symbol against the supplied
+raster. It does not prove that the interpolated surface is physically
+correct. Use `ps_validate_arrows()` to check an existing arrow layer
+independently.
+
+## Grouped events and water-bearing units
+
+`ps_interpolate_grouped()` runs separate analyses for explicit event,
+aquifer, water-bearing-unit, season, or other grouping columns.
+Observations are never combined between groups. The returned manifest
+retains successful, failed, and empty groups and attributes conditions
+to each group and method.
+
+``` r
+grouped_data <- transform(
   synthetic_wells,
-  x = "x",
-  y = "y",
-  depth_col = "depth_to_water",
-  surface_col = "surface_elevation",
-  name_col = "well_id",
-  crs = "EPSG:26916"
+  event = rep(c("spring", "autumn"), each = 16),
+  unit = rep(c("upper", "lower"), times = 16)
 )
+
+grouped <- ps_interpolate_grouped(
+  grouped_data, c("event", "unit"),
+  value = "gw_elevation", name_col = "well_id", crs = "EPSG:26916",
+  methods = "IDW", grid_res = 400
+)
+grouped$manifest
+#>    event  unit      group_id method input_count retained_count  status
+#> 1 autumn lower autumn__lower    IDW           8              8 success
+#> 2 spring lower spring__lower    IDW           8              8 success
+#> 3 autumn upper autumn__upper    IDW           8              8 success
+#> 4 spring upper spring__upper    IDW           8              8 success
+#>   surface_available warnings errors output_paths
+#> 1              TRUE
+#> 2              TRUE
+#> 3              TRUE
+#> 4              TRUE
 ```
 
-### Depth to Water with Separate Surface Points
+## Exporting GIS products
 
-Separate land-surface elevation points can also be used. Matching names are used
-when available; otherwise the surface elevation points are interpolated to the
-groundwater measurement locations.
+`ps_export_surfaces()` writes deterministic GeoTIFF, contour, quicklook,
+diagnostic, support, and CSV manifest products only when an output
+directory is supplied. GeoPackage is recommended for vector output
+because it preserves field names and supports multiple layers more
+reliably than shapefiles. Shapefile output remains available for
+compatibility.
 
-```r
-gw_points <- ps_potentiometric_points(
-  synthetic_wells,
-  x = "x",
-  y = "y",
-  depth_col = "depth_to_water",
-  surface = synthetic_surface_points,
-  surface_col = "surface_elevation",
-  name_col = "well_id",
-  surface_name_col = "point_id",
-  crs = "EPSG:26916"
-)
-```
+For large prediction grids, consider on-disk `terra` rasters and set a
+temporary directory with adequate space. See the getting-started article
+for resource and temporary-file guidance.
 
-## Interpolation
+## Documentation and support
 
-The default call uses thin-plate spline interpolation.
+- Documentation: <https://el-cordero.github.io/potentiomap/>
+- Source: <https://github.com/el-cordero/potentiomap>
+- Issues: <https://github.com/el-cordero/potentiomap/issues>
+- CRAN: <https://CRAN.R-project.org/package=potentiomap>
 
-```r
-tps_surface <- ps_interpolate(
-  gw_points,
-  grid_res = 50,
-  mask = ps_sample_aoi()
-)
+Please do not post confidential well coordinates, client data, private
+site identifiers, or restricted environmental data in public issues.
 
-names(tps_surface)
-```
+## Citation
 
-Run multiple built-in methods by passing `methods`.
+Run `citation("potentiomap")` for the package citation. The permanent
+CRAN package DOI is <https://doi.org/10.32614/CRAN.package.potentiomap>.
 
-```r
-surfaces <- ps_interpolate(
-  gw_points,
-  methods = c("TPS", "IDW", "OK", "UK"),
-  grid_res = 50,
-  mask = ps_sample_aoi(),
-  padding = 150
-)
-```
+## Contributing
 
-### Custom Interpolation Methods
-
-Custom methods receive the prepared point layer, the template raster, and the
-prediction grid. They must return either a `terra::SpatRaster` matching the
-template or a numeric vector with one value per template cell.
-
-```r
-mean_surface <- function(points, template, grid) {
-  rep(mean(terra::values(points)$Z), terra::ncell(template))
-}
-
-custom_surface <- ps_interpolate(
-  gw_points,
-  methods = "mean_surface",
-  custom_methods = list(mean_surface = mean_surface),
-  grid_res = 50,
-  mask = ps_sample_aoi()
-)
-```
-
-## Exporting Surface Products
-
-`ps_export_surfaces()` writes GeoTIFF surfaces, contour shapefiles, and quicklook
-PNG figures.
-
-```r
-out_dir <- file.path(tempdir(), "potentiomap-products")
-
-outputs <- ps_export_surfaces(
-  surfaces,
-  points = gw_points,
-  out_dir = out_dir,
-  out_stub = "synthetic",
-  contour_interval = 1
-)
-
-outputs
-```
-
-The output table lists the raster, contour, and quicklook file paths for each
-interpolation method.
-
-## Surface Smoothing
-
-Interpolated surfaces sometimes contain local roughness that is not useful for
-contour development or gradient visualization. `ps_smooth_surface()` applies a
-focal moving-window smoother to the raster while preserving the original raster
-geometry and, by default, the original `NA` footprint.
-
-```r
-smoothed_tps <- ps_smooth_surface(
-  surfaces$TPS,
-  window_size = 5,
-  method = "mean",
-  iterations = 2
-)
-
-smoothed_contours <- ps_contours(smoothed_tps, interval = 1)
-```
-
-The smoothing function can be used before contour extraction or before
-hydraulic-gradient arrow development when a smoother display product is needed.
-
-## Hydraulic Gradient and Flow Arrows
-
-`ps_flow_arrows()` calculates slope and aspect from a potentiometric surface,
-converts slope to hydraulic gradient, samples the gradient to a readable arrow
-spacing, and builds downgradient line features.
-
-```r
-flow <- ps_flow_arrows(
-  surfaces$TPS,
-  res_factor = 8,
-  scale = 80,
-  out_dir = out_dir,
-  out_stub = "synthetic_TPS"
-)
-
-tips <- ps_arrow_vertices(
-  flow$arrows,
-  which = "last",
-  out_file = file.path(out_dir, "synthetic_TPS_arrow_tips.shp")
-)
-
-bases <- ps_arrow_vertices(
-  flow$arrows,
-  which = "first",
-  out_file = file.path(out_dir, "synthetic_TPS_arrow_bases.shp")
-)
-```
-
-The flow output includes a hydraulic-gradient raster, sampled gradient points,
-arrow lines, arrow tips, and arrow bases.
-
-## Visual Examples
-
-The following panels are generated from the bundled synthetic dataset. Each
-figure uses one row and four columns to show how an output changes as one modeling or display
-choice varies.
-
-### Interpolation Method
-
-TPS is the default method. IDW, OK, and UK are available when comparison among
-surface assumptions is useful.
-
-![Interpolation method comparison](man/figures/interpolation_methods.png)
-
-### Grid Resolution
-
-Smaller grid cells preserve more local detail but create larger output rasters.
-Coarser grids are faster and may be appropriate for broad screening maps.
-
-![Grid resolution comparison](man/figures/grid_resolution.png)
-
-### Contour Interval
-
-Contour interval controls how much vertical detail is shown. Fine intervals can
-highlight subtle gradients; wider intervals can make regional patterns easier to
-read.
-
-![Contour interval comparison](man/figures/contour_intervals.png)
-
-### TPS Smoothing
-
-TPS smoothing can be selected automatically by generalized cross-validation or
-specified directly through `tps_lambda`.
-
-![TPS smoothing comparison](man/figures/tps_smoothing.png)
-
-### Raster Smoothing
-
-`ps_smooth_surface()` can be applied after interpolation when a smoother surface
-is desirable for contours or arrows.
-
-![Raster smoothing comparison](man/figures/raster_smoothing.png)
-
-### Arrow Density
-
-`res_factor` controls the spacing of sampled hydraulic-gradient arrows. Higher
-values create fewer arrows; lower values create denser arrow fields.
-
-![Arrow density comparison](man/figures/arrow_density.png)
-
-### Arrow Scale
-
-`scale` controls arrow length. Larger values emphasize small gradients; smaller
-values reduce visual clutter.
-
-![Arrow scale comparison](man/figures/arrow_scale.png)
-
-## Choosing a Method
-
-TPS is a practical default for producing smooth potentiometric surfaces from
-typical monitoring-well datasets. IDW is deterministic and easy to interpret.
-Kriging methods can be valuable when the observation network supports a
-meaningful variogram model, but sparse monitoring networks may produce
-variogram-fit warnings. Those warnings should be reviewed as part of model
-selection rather than suppressed automatically.
-
-## References
-
-Hijmans, R. J. 2025. `terra`: Spatial data analysis. R package version 1.9-1.
-https://doi.org/10.32614/CRAN.package.terra
-
-Nychka, D., R. Furrer, J. Paige, and S. Sain. 2021. `fields`: Tools for spatial
-data. R package version 17.1. https://doi.org/10.5065/D6W957CT
-
-Pebesma, E. 2004. Multivariable geostatistics in S: The `gstat` package.
-*Computers & Geosciences* 30:683-691.
-https://doi.org/10.1016/j.cageo.2004.03.012
+Contributions are welcome through the public issue tracker and pull
+requests. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code
+of Conduct](CODE_OF_CONDUCT.md) before contributing.

@@ -1,0 +1,83 @@
+---
+title: "Interpolation diagnostics and prediction support"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Interpolation diagnostics and prediction support}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Different interpolation methods express different assumptions. potentiomap
+retains available fit information and upstream condition text so those
+assumptions can be reviewed.
+
+```{r models}
+library(potentiomap)
+data("synthetic_wells")
+points <- ps_make_points(
+  synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916"
+)
+
+result <- suppressWarnings(ps_interpolate(
+  points, methods = c("IDW", "TPS", "OK", "UK"), grid_res = 400,
+  return = "result", support = TRUE, support_max_distance = 1000
+))
+summary(result)
+result$conditions
+```
+
+IDW records its power and neighbor limit. When TPS selects its smoothing
+parameter, supported generalized-cross-validation information is retained.
+Ordinary and universal kriging retain empirical and fitted variogram objects,
+their fitted parameters, and method-attributed conditions.
+
+```{r selected-diagnostics}
+ps_diagnostics(result, "TPS")[c(
+  "selection_mode", "selected_lambda", "effective_degrees_of_freedom",
+  "selected_at_search_boundary", "return_status"
+)]
+
+ps_diagnostics(result, "UK")[c(
+  "coordinate_scaling", "model_matrix_rank", "condition_number",
+  "observed_range", "predicted_range",
+  "predicted_range_to_observed_range_ratio", "return_status"
+)]
+```
+
+Quadratic-drift UK centers and scales coordinates by default. The condition
+number, prediction-range ratio, and overshoot thresholds are heuristic review
+flags, not formal acceptance tests. A warning does not automatically discard a
+surface. Rank deficiency or nonfinite model components can make the requested
+fit impossible, in which case the function returns a classed error rather than
+another interpolation method.
+
+```{r support}
+result$support$summary
+head(result$support$records)
+```
+
+The convex hull is a description of the training network, not an aquifer
+boundary. Nearest-observation distances require projected coordinates by
+default because longitude and latitude degrees are not linear ground-distance
+units. Predictions are classified rather than automatically blanked.
+
+The same support rasters can classify sections of modeled contours. Criteria
+are supplied explicitly rather than inferred from universal distances.
+
+```{r contour-support}
+contours <- ps_contours(result$surfaces$IDW, interval = 1)
+classified <- suppressWarnings(ps_contour_support(
+  contours, support = result$support,
+  supported_distance = 500, approximate_distance = 1200
+))
+classified$summary
+```
+
+Distance-derived contour classes describe local observation support. They are
+not statistical confidence intervals. An identified uncertainty raster can be
+used as a separate criterion, but its meaning and units must be supplied and it
+is not silently resampled or treated as interchangeable with distance.

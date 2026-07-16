@@ -1,0 +1,61 @@
+---
+title: "Units, vertical references, and grouped groundwater observations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Units, vertical references, and grouped groundwater observations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Groundwater elevation calculated from depth requires an explicit sign and
+measurement reference. With positive depth below land surface:
+
+`groundwater elevation = land-surface elevation - depth to water`.
+
+```{r units}
+library(potentiomap)
+data("synthetic_wells")
+points <- ps_potentiometric_points(
+  synthetic_wells,
+  x = "x", y = "y", depth_col = "depth_to_water",
+  surface_col = "surface_elevation", name_col = "well_id",
+  crs = "EPSG:26916", depth_unit = "m", surface_unit = "m",
+  output_unit = "ft", vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface", depth_sign = "positive_down",
+  metadata_mode = "strict"
+)
+ps_metadata(points)
+head(terra::values(points)$Z)
+```
+
+The supported length units are metres and international feet, using exactly
+`1 ft = 0.3048 m`. A horizontal CRS does not supply a vertical datum.
+potentiomap records the stated datum but does not transform between vertical
+datums, infer datum compatibility, or guess measuring-point offsets. R-level
+metadata may not survive every GIS vector format, so preserve a sidecar manifest
+when those details must accompany exports.
+
+Separate events and water-bearing units before fitting surfaces.
+
+```{r grouped}
+grouped_data <- transform(
+  synthetic_wells,
+  event = rep(c("spring", "autumn"), each = 16),
+  unit = rep(c("upper", "lower"), times = 16)
+)
+grouped <- ps_interpolate_grouped(
+  grouped_data, c("event", "unit"), value = "gw_elevation",
+  name_col = "well_id", crs = "EPSG:26916",
+  methods = "IDW", grid_res = 400
+)
+grouped$manifest
+```
+
+Each row is assigned to exactly one group. A shared template standardizes output
+geometry but does not share observations or fitted information. Empty and failed
+groups remain in the manifest. A simple progress callback can report group
+completion without adding another package dependency.

@@ -1,0 +1,81 @@
+---
+title: "Contours and hydraulic-gradient arrows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Contours and hydraulic-gradient arrows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r surface}
+library(potentiomap)
+data("synthetic_wells")
+points <- ps_make_points(
+  synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916"
+)
+surface <- ps_interpolate(points, methods = "IDW", grid_res = 300)$IDW
+```
+
+The default contour result is a line `SpatVector`. A structured result adds an
+inventory of every requested level.
+
+```{r contours}
+contours <- ps_contours(
+  surface, levels = c(166, 168, 170), return = "result"
+)
+contours$manifest
+```
+
+Explicit levels outside the finite surface range remain in the manifest and
+produce a classed warning. Open lines are not silently closed or converted to
+polygons.
+
+Individual contour lines can be divided where local support changes.
+
+```{r contour-support}
+support <- ps_prediction_support(points, surface = surface)
+classified <- suppressWarnings(ps_contour_support(
+  contours$contours, support = support,
+  supported_distance = 500, approximate_distance = 1200,
+  require_inside_hull = TRUE
+))
+classified$summary
+```
+
+```{r contour-support-map, fig.width=7, fig.height=4, fig.alt="Synthetic potentiometric contours divided into solid supported sections and dashed approximate sections, with groundwater observation wells shown as points."}
+plot(classified, show_unsupported = FALSE, legend_position = "topright")
+terra::plot(points, add = TRUE, pch = 20)
+```
+
+The `line_type` field suggests solid, dashed, or dotted symbology while keeping
+the support class and reason as GIS attributes. The classes use thresholds
+chosen by the user, not confidence intervals. Proximity to wells does not prove
+that a contour is correct, distance does not prove that it is wrong, and every
+section remains an interpolation from the modeled surface. Coarse support cells
+can shift the apparent solid-to-dashed transition.
+
+Hydraulic-gradient arrows point along the local negative modeled-head gradient.
+The following deliberately uses short, sparse display symbols.
+
+```{r arrows}
+flow <- ps_flow_arrows(
+  surface, scale = 25, res_factor = 10, endpoint_action = "shorten"
+)
+flow$validation_summary
+head(flow$validation)
+```
+
+`endpoint_action = "flag"` preserves failing lines and reports them.
+`"shorten"` repeatedly halves their length along the original direction.
+`"drop"` removes failures. `"none"` retains the version 0.1.0 unvalidated
+geometry for comparison. No policy reverses or bends an arrow.
+
+Arrow length is a cartographic convention based on gradient, cell size, and the
+chosen scale. The line is not a velocity, travel time, particle path, or traced
+groundwater path. Endpoint checks only evaluate a straight symbol against the
+supplied raster; they do not prove that the interpolated surface is physically
+correct.
