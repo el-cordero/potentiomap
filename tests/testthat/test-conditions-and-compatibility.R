@@ -34,8 +34,14 @@ test_that("exported functions have help topics", {
     ps_smooth_surface = "ps_smooth_surface", ps_sample_aoi = "ps_sample_aoi"
   )
   expect_setequal(exports, names(topics))
+  source_man <- testthat::test_path("..", "..", "man")
   for (topic in topics) {
-    rd <- testthat::test_path("..", "..", "man", paste0(topic, ".Rd"))
-    expect_true(file.exists(rd), info = topic)
+    if (dir.exists(source_man)) {
+      rd <- file.path(source_man, paste0(topic, ".Rd"))
+      expect_true(file.exists(rd), info = topic)
+    } else {
+      help_topic <- utils::help(topic, package = "potentiomap")
+      expect_true(length(help_topic) > 0, info = topic)
+    }
   }
 })
