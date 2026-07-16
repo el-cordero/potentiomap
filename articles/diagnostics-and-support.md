@@ -151,6 +151,31 @@ head(result$support$records)
 #> 6                         outside_training_hull
 ```
 
+``` r
+
+distance <- result$support$rasters[["nearest_observation_distance"]]
+
+par(bg = "white")
+terra::plot(
+  distance, col = hcl.colors(64, "YlGnBu"),
+  main = "Local observation support: nearest-well distance"
+)
+terra::plot(
+  terra::convHull(points), add = TRUE, border = "#9b3d2f",
+  lwd = 2, lty = 2
+)
+terra::plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.75)
+legend(
+  "topleft", legend = "Training convex hull", lty = 2, lwd = 2,
+  col = "#9b3d2f", bty = "n"
+)
+```
+
+![Nearest-observation-distance raster for a synthetic monitoring
+network, with the training convex hull outlined and observation wells
+shown as
+points.](diagnostics-and-support_files/figure-html/support-distance-map-1.png)
+
 The convex hull is a description of the training network, not an aquifer
 boundary. Nearest-observation distances require projected coordinates by
 default because longitude and latitude degrees are not linear
@@ -186,6 +211,11 @@ knitr::kable(classified$summary)
 | 13 | 169 | unsupported | 1 | 200.32308 | 200.32308 | 0 |
 | 12 | 170 | supported | 1 | 2536.95768 | 2536.95768 | 0 |
 | 6 | 170 | approximate | 3 | 3191.34715 | 3191.34715 | 0 |
+
+See the [contour-support threshold
+comparison](https://el-cordero.github.io/potentiomap/articles/contour-support-thresholds.md)
+for maps showing how tighter, broader, and network-relative distance
+criteria change the same contour lines.
 
 Distance-derived contour classes describe local observation support.
 They are not statistical confidence intervals. An identified uncertainty

@@ -53,6 +53,7 @@
     <li><a class="dropdown-item" href="../articles/interpolation-parameters.html">Interpolation parameters</a></li>
     <li><a class="dropdown-item" href="../articles/custom-interpolation.html">Custom interpolation functions</a></li>
     <li><a class="dropdown-item" href="../articles/contours-smoothing.html">Contours and smoothing</a></li>
+    <li><a class="dropdown-item" href="../articles/contour-support-thresholds.html">Compare contour-support thresholds</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Create products</h6></li>
     <li><a class="dropdown-item" href="../articles/flow-arrows.html">Hydraulic-gradient arrows</a></li>
     <li><a class="dropdown-item" href="../articles/exporting-products.html">Export GIS-ready products</a></li>
@@ -110,28 +111,57 @@
 <span><span class="va">points</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_make_points.html">ps_make_points</a></span><span class="op">(</span></span>
 <span>  <span class="va">synthetic_wells</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"gw_elevation"</span>, <span class="st">"well_id"</span>, <span class="st">"EPSG:26916"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">surface</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_interpolate.html">ps_interpolate</a></span><span class="op">(</span><span class="va">points</span>, methods <span class="op">=</span> <span class="st">"IDW"</span>, grid_res <span class="op">=</span> <span class="fl">300</span><span class="op">)</span><span class="op">$</span><span class="va">IDW</span></span></code></pre></div>
+<span><span class="va">aoi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_sample_aoi.html">ps_sample_aoi</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">surface</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="../reference/ps_interpolate.html">ps_interpolate</a></span><span class="op">(</span></span>
+<span>  <span class="va">points</span>, methods <span class="op">=</span> <span class="st">"TPS"</span>, grid_res <span class="op">=</span> <span class="fl">150</span>, mask <span class="op">=</span> <span class="va">aoi</span>, padding <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span><span class="op">$</span><span class="va">TPS</span><span class="op">)</span></span>
+<span><span class="va">head_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">64</span>, <span class="st">"RdYlBu"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The default contour result is a line <code>SpatVector</code>. A
 structured result adds an inventory of every requested level.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contours</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_contours.html">ps_contours</a></span><span class="op">(</span></span>
-<span>  <span class="va">surface</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">166</span>, <span class="fl">168</span>, <span class="fl">170</span><span class="op">)</span>, return <span class="op">=</span> <span class="st">"result"</span></span>
+<span>  <span class="va">surface</span>, interval <span class="op">=</span> <span class="fl">1</span>, return <span class="op">=</span> <span class="st">"result"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">contours</span><span class="op">$</span><span class="va">manifest</span></span>
-<span><span class="co">#&gt;   requested_level surface_minimum surface_maximum       level_relation</span></span>
-<span><span class="co">#&gt; 1             166         164.528        170.8319 within_surface_range</span></span>
-<span><span class="co">#&gt; 2             168         164.528        170.8319 within_surface_range</span></span>
-<span><span class="co">#&gt; 3             170         164.528        170.8319 within_surface_range</span></span>
-<span><span class="co">#&gt;   returned_status returned_feature_count omission_reason</span></span>
-<span><span class="co">#&gt; 1        returned                      1                </span></span>
-<span><span class="co">#&gt; 2        returned                      1                </span></span>
-<span><span class="co">#&gt; 3        returned                      1</span></span></code></pre></div>
-<p>Explicit levels outside the finite surface range remain in the
-manifest and produce a classed warning. Open lines are not silently
-closed or converted to polygons.</p>
+<span><span class="co">#&gt;    requested_level surface_minimum surface_maximum       level_relation</span></span>
+<span><span class="co">#&gt; 1              164        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 2              165        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 3              166        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 4              167        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 5              168        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 6              169        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 7              170        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 8              171        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 9              172        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt; 10             173        163.2237        173.3426 within_surface_range</span></span>
+<span><span class="co">#&gt;    returned_status returned_feature_count omission_reason</span></span>
+<span><span class="co">#&gt; 1         returned                      1                </span></span>
+<span><span class="co">#&gt; 2         returned                      1                </span></span>
+<span><span class="co">#&gt; 3         returned                      1                </span></span>
+<span><span class="co">#&gt; 4         returned                      1                </span></span>
+<span><span class="co">#&gt; 5         returned                      1                </span></span>
+<span><span class="co">#&gt; 6         returned                      1                </span></span>
+<span><span class="co">#&gt; 7         returned                      1                </span></span>
+<span><span class="co">#&gt; 8         returned                      1                </span></span>
+<span><span class="co">#&gt; 9         returned                      1                </span></span>
+<span><span class="co">#&gt; 10        returned                      1</span></span></code></pre></div>
+<p>The one-unit interval produces enough lines to show the TPS surface
+clearly. Use <code>levels = c(...)</code> when specific regulatory or
+interpretive elevations are required. Explicit levels outside the finite
+surface range remain in the manifest and produce a classed warning. Open
+lines are not silently closed or converted to polygons.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">surface</span>, col <span class="op">=</span> <span class="va">head_cols</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"TPS surface with one-unit contours"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">contours</span><span class="op">$</span><span class="va">contours</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"#263845"</span>, lwd <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">points</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, bg <span class="op">=</span> <span class="st">"white"</span>, cex <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
+<p><img src="contours-and-arrows_files/figure-html/contour-map-1.png" class="r-plt" alt="Synthetic thin-plate-spline potentiometric surface shaded blue at lower heads and red at higher heads, with one-unit dark contours and groundwater observation wells." width="1152" style="display: block; margin: auto;"></p>
 <p>Individual contour lines can be divided where local support
 changes.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">support</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_prediction_support.html">ps_prediction_support</a></span><span class="op">(</span><span class="va">points</span>, surface <span class="op">=</span> <span class="va">surface</span><span class="op">)</span></span>
 <span><span class="va">classified</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="../reference/ps_contour_support.html">ps_contour_support</a></span><span class="op">(</span></span>
 <span>  <span class="va">contours</span><span class="op">$</span><span class="va">contours</span>, support <span class="op">=</span> <span class="va">support</span>,</span>
@@ -139,24 +169,67 @@ changes.</p>
 <span>  require_inside_hull <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">classified</span><span class="op">$</span><span class="va">summary</span></span>
-<span><span class="co">#&gt;   contour_level support_class segment_count total_line_length</span></span>
-<span><span class="co">#&gt; 4           166     supported             1          1518.085</span></span>
-<span><span class="co">#&gt; 1           166   approximate             2          2458.483</span></span>
-<span><span class="co">#&gt; 5           168     supported             1          2701.971</span></span>
-<span><span class="co">#&gt; 2           168   approximate             3          1272.686</span></span>
-<span><span class="co">#&gt; 6           170     supported             1          2448.299</span></span>
-<span><span class="co">#&gt; 3           170   approximate             3          3012.517</span></span>
-<span><span class="co">#&gt;   retained_line_length removed_line_length</span></span>
-<span><span class="co">#&gt; 4             1518.085                   0</span></span>
-<span><span class="co">#&gt; 1             2458.483                   0</span></span>
-<span><span class="co">#&gt; 5             2701.971                   0</span></span>
-<span><span class="co">#&gt; 2             1272.686                   0</span></span>
-<span><span class="co">#&gt; 6             2448.299                   0</span></span>
-<span><span class="co">#&gt; 3             3012.517                   0</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">classified</span>, show_unsupported <span class="op">=</span> <span class="cn">FALSE</span>, legend_position <span class="op">=</span> <span class="st">"topright"</span><span class="op">)</span></span>
-<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">points</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
-<p><img src="contours-and-arrows_files/figure-html/contour-support-map-1.png" class="r-plt" alt="Synthetic potentiometric contours divided into solid supported sections and dashed approximate sections, with groundwater observation wells shown as points." width="672"></p>
+<span><span class="co">#&gt;    contour_level support_class segment_count total_line_length</span></span>
+<span><span class="co">#&gt; 11           164     supported             1         137.47676</span></span>
+<span><span class="co">#&gt; 1            164   approximate             1         555.22808</span></span>
+<span><span class="co">#&gt; 12           165     supported             1         972.43352</span></span>
+<span><span class="co">#&gt; 2            165   approximate             1         521.61483</span></span>
+<span><span class="co">#&gt; 13           166     supported             1        2119.15474</span></span>
+<span><span class="co">#&gt; 3            166   approximate             1          69.40846</span></span>
+<span><span class="co">#&gt; 14           167     supported             1        2926.51463</span></span>
+<span><span class="co">#&gt; 4            167   approximate             1         182.21716</span></span>
+<span><span class="co">#&gt; 15           168     supported             1        2692.20425</span></span>
+<span><span class="co">#&gt; 5            168   approximate             2         553.46384</span></span>
+<span><span class="co">#&gt; 16           169     supported             1        3272.59409</span></span>
+<span><span class="co">#&gt; 6            169   approximate             1         102.10670</span></span>
+<span><span class="co">#&gt; 17           170     supported             1        3111.84942</span></span>
+<span><span class="co">#&gt; 7            170   approximate             1         372.87908</span></span>
+<span><span class="co">#&gt; 18           171     supported             1        1800.69990</span></span>
+<span><span class="co">#&gt; 8            171   approximate             2         535.71669</span></span>
+<span><span class="co">#&gt; 9            172   approximate             2        1782.18118</span></span>
+<span><span class="co">#&gt; 10           173   approximate             1         316.99811</span></span>
+<span><span class="co">#&gt;    retained_line_length removed_line_length</span></span>
+<span><span class="co">#&gt; 11            137.47676                   0</span></span>
+<span><span class="co">#&gt; 1             555.22808                   0</span></span>
+<span><span class="co">#&gt; 12            972.43352                   0</span></span>
+<span><span class="co">#&gt; 2             521.61483                   0</span></span>
+<span><span class="co">#&gt; 13           2119.15474                   0</span></span>
+<span><span class="co">#&gt; 3              69.40846                   0</span></span>
+<span><span class="co">#&gt; 14           2926.51463                   0</span></span>
+<span><span class="co">#&gt; 4             182.21716                   0</span></span>
+<span><span class="co">#&gt; 15           2692.20425                   0</span></span>
+<span><span class="co">#&gt; 5             553.46384                   0</span></span>
+<span><span class="co">#&gt; 16           3272.59409                   0</span></span>
+<span><span class="co">#&gt; 6             102.10670                   0</span></span>
+<span><span class="co">#&gt; 17           3111.84942                   0</span></span>
+<span><span class="co">#&gt; 7             372.87908                   0</span></span>
+<span><span class="co">#&gt; 18           1800.69990                   0</span></span>
+<span><span class="co">#&gt; 8             535.71669                   0</span></span>
+<span><span class="co">#&gt; 9            1782.18118                   0</span></span>
+<span><span class="co">#&gt; 10            316.99811                   0</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">support_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>supported <span class="op">=</span> <span class="st">"#176b4d"</span>, approximate <span class="op">=</span> <span class="st">"#c56a00"</span><span class="op">)</span></span>
+<span><span class="va">support_lty</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>supported <span class="op">=</span> <span class="fl">1</span>, approximate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">segment_values</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">classified</span><span class="op">$</span><span class="va">segments</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"white"</span>, fg <span class="op">=</span> <span class="st">"#263845"</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">aoi</span>, col <span class="op">=</span> <span class="st">"#f7f5ef"</span>, border <span class="op">=</span> <span class="st">"#8b969c"</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Contour support from user-defined criteria"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">support_class</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">support_lty</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">keep</span> <span class="op">&lt;-</span> <span class="va">segment_values</span><span class="op">$</span><span class="va">support_class</span> <span class="op">==</span> <span class="va">support_class</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="va">keep</span><span class="op">)</span><span class="op">)</span> <span class="kw">next</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>    <span class="va">classified</span><span class="op">$</span><span class="va">segments</span><span class="op">[</span><span class="va">keep</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    col <span class="op">=</span> <span class="va">support_colors</span><span class="op">[</span><span class="va">support_class</span><span class="op">]</span>,</span>
+<span>    lty <span class="op">=</span> <span class="va">support_lty</span><span class="op">[</span><span class="va">support_class</span><span class="op">]</span>, lwd <span class="op">=</span> <span class="fl">2</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">points</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, bg <span class="op">=</span> <span class="st">"white"</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></code></pre></div>
+<p><img src="contours-and-arrows_files/figure-html/contour-support-map-1.png" class="r-plt" alt="Synthetic potentiometric contours divided into green solid supported sections and orange dashed approximate sections, with groundwater observation wells shown as points." width="1152" style="display: block; margin: auto;"></p>
+<p>Solid green sections are supported; dashed orange sections are
+approximate.</p>
 <p>The <code>line_type</code> field suggests solid, dashed, or dotted
 symbology while keeping the support class and reason as GIS attributes.
 The classes use thresholds chosen by the user, not confidence intervals.
@@ -164,30 +237,67 @@ Proximity to wells does not prove that a contour is correct, distance
 does not prove that it is wrong, and every section remains an
 interpolation from the modeled surface. Coarse support cells can shift
 the apparent solid-to-dashed transition.</p>
+<p>The <a href="contour-support-thresholds.html">contour-support
+threshold comparison</a> applies tight, balanced, broad, and
+network-relative criteria to the same modeled contours so their effects
+can be compared directly.</p>
 <p>Hydraulic-gradient arrows point along the local negative modeled-head
 gradient. The following deliberately uses short, sparse display
 symbols.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">flow</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_flow_arrows.html">ps_flow_arrows</a></span><span class="op">(</span></span>
-<span>  <span class="va">surface</span>, scale <span class="op">=</span> <span class="fl">25</span>, res_factor <span class="op">=</span> <span class="fl">10</span>, endpoint_action <span class="op">=</span> <span class="st">"shorten"</span></span>
+<span>  <span class="va">surface</span>, scale <span class="op">=</span> <span class="fl">25</span>, res_factor <span class="op">=</span> <span class="fl">8</span>, endpoint_action <span class="op">=</span> <span class="st">"shorten"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">flow</span><span class="op">$</span><span class="va">validation_summary</span></span>
 <span><span class="co">#&gt;   endpoint_action arrows_generated arrows_retained finite_support downhill_pass</span></span>
-<span><span class="co">#&gt; 1         shorten                1               1              1             1</span></span>
+<span><span class="co">#&gt; 1         shorten                6               6              6             6</span></span>
 <span><span class="co">#&gt;   failed shortened dropped</span></span>
 <span><span class="co">#&gt; 1      0         0       0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">flow</span><span class="op">$</span><span class="va">validation</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   arrow_id   base_x  base_y    tip_x   tip_y base_head tip_head  head_drop</span></span>
-<span><span class="co">#&gt; x        1 501293.2 4641110 501380.4 4641188  169.6271 169.5799 0.04716736</span></span>
+<span><span class="co">#&gt;   arrow_id base_x  base_y    tip_x   tip_y base_head tip_head head_drop</span></span>
+<span><span class="co">#&gt; 1        1 500450 4641900 500499.1 4641926  170.9322 170.8193 0.1129606</span></span>
+<span><span class="co">#&gt; 2        2 501650 4641900 501714.5 4641941  169.7985 169.6141 0.1844064</span></span>
+<span><span class="co">#&gt; 3        3 502850 4641900 502956.6 4641937  166.0828 165.5942 0.4886409</span></span>
+<span><span class="co">#&gt; 4        4 500450 4640700 500504.7 4640731  171.8847 171.7303 0.1543925</span></span>
+<span><span class="co">#&gt; 5        5 501650 4640700 501706.7 4640718  169.6474 169.5394 0.1080042</span></span>
+<span><span class="co">#&gt; 6        6 502850 4640700 502935.0 4640721  167.0377 166.7653 0.2723505</span></span>
 <span><span class="co">#&gt;   finite_base finite_tip finite_support downhill_pass tolerance original_length</span></span>
-<span><span class="co">#&gt; x        TRUE       TRUE           TRUE          TRUE     1e-06         116.678</span></span>
+<span><span class="co">#&gt; 1        TRUE       TRUE           TRUE          TRUE     1e-06        55.61521</span></span>
+<span><span class="co">#&gt; 2        TRUE       TRUE           TRUE          TRUE     1e-06        76.15973</span></span>
+<span><span class="co">#&gt; 3        TRUE       TRUE           TRUE          TRUE     1e-06       112.66136</span></span>
+<span><span class="co">#&gt; 4        TRUE       TRUE           TRUE          TRUE     1e-06        62.95524</span></span>
+<span><span class="co">#&gt; 5        TRUE       TRUE           TRUE          TRUE     1e-06        59.63186</span></span>
+<span><span class="co">#&gt; 6        TRUE       TRUE           TRUE          TRUE     1e-06        87.58473</span></span>
 <span><span class="co">#&gt;   final_length shortening_steps validation_status validation_reason</span></span>
-<span><span class="co">#&gt; x      116.678                0              pass              pass</span></span></code></pre></div>
+<span><span class="co">#&gt; 1     55.61521                0              pass              pass</span></span>
+<span><span class="co">#&gt; 2     76.15973                0              pass              pass</span></span>
+<span><span class="co">#&gt; 3    112.66136                0              pass              pass</span></span>
+<span><span class="co">#&gt; 4     62.95524                0              pass              pass</span></span>
+<span><span class="co">#&gt; 5     59.63186                0              pass              pass</span></span>
+<span><span class="co">#&gt; 6     87.58473                0              pass              pass</span></span></code></pre></div>
 <p><code>endpoint_action = "flag"</code> preserves failing lines and
 reports them. <code>"shorten"</code> repeatedly halves their length
 along the original direction. <code>"drop"</code> removes failures.
 <code>"none"</code> retains the version 0.1.0 unvalidated geometry for
 comparison. No policy reverses or bends an arrow.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bases</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_arrow_vertices.html">ps_arrow_vertices</a></span><span class="op">(</span><span class="va">flow</span><span class="op">$</span><span class="va">arrows</span>, <span class="st">"first"</span><span class="op">)</span></span>
+<span><span class="va">tips</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_arrow_vertices.html">ps_arrow_vertices</a></span><span class="op">(</span><span class="va">flow</span><span class="op">$</span><span class="va">arrows</span>, <span class="st">"last"</span><span class="op">)</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crds.html" class="external-link">crds</a></span><span class="op">(</span><span class="va">bases</span><span class="op">)</span></span>
+<span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crds.html" class="external-link">crds</a></span><span class="op">(</span><span class="va">tips</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">surface</span>, col <span class="op">=</span> <span class="va">head_cols</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Inferred negative-gradient direction"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">contours</span><span class="op">$</span><span class="va">contours</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"#52646d"</span>, lwd <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/arrows.html" class="external-link">arrows</a></span><span class="op">(</span></span>
+<span>  <span class="va">b</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">b</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, <span class="va">t</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">t</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>,</span>
+<span>  length <span class="op">=</span> <span class="fl">0.06</span>, col <span class="op">=</span> <span class="st">"#111111"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">points</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, bg <span class="op">=</span> <span class="st">"white"</span>, cex <span class="op">=</span> <span class="fl">0.65</span><span class="op">)</span></span></code></pre></div>
+<p><img src="contours-and-arrows_files/figure-html/arrow-map-1.png" class="r-plt" alt="Synthetic TPS potentiometric surface with one-unit contours, groundwater observation wells, and short sparse arrows pointing toward decreasing modeled head." width="1152" style="display: block; margin: auto;"></p>
 <p>Arrow length is a cartographic convention based on gradient, cell
 size, and the chosen scale. The line is not a velocity, travel time,
 particle path, or traced groundwater path. Endpoint checks only evaluate

@@ -53,6 +53,7 @@
     <li><a class="dropdown-item" href="../articles/interpolation-parameters.html">Interpolation parameters</a></li>
     <li><a class="dropdown-item" href="../articles/custom-interpolation.html">Custom interpolation functions</a></li>
     <li><a class="dropdown-item" href="../articles/contours-smoothing.html">Contours and smoothing</a></li>
+    <li><a class="dropdown-item" href="../articles/contour-support-thresholds.html">Compare contour-support thresholds</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Create products</h6></li>
     <li><a class="dropdown-item" href="../articles/flow-arrows.html">Hydraulic-gradient arrows</a></li>
     <li><a class="dropdown-item" href="../articles/exporting-products.html">Export GIS-ready products</a></li>
@@ -270,6 +271,24 @@ method.</p>
 <span><span class="co">#&gt; 4                         outside_training_hull</span></span>
 <span><span class="co">#&gt; 5                         outside_training_hull</span></span>
 <span><span class="co">#&gt; 6                         outside_training_hull</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">support</span><span class="op">$</span><span class="va">rasters</span><span class="op">[[</span><span class="st">"nearest_observation_distance"</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">distance</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">64</span>, <span class="st">"YlGnBu"</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Local observation support: nearest-well distance"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/convhull.html" class="external-link">convHull</a></span><span class="op">(</span><span class="va">points</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="st">"#9b3d2f"</span>,</span>
+<span>  lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">points</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, bg <span class="op">=</span> <span class="st">"white"</span>, cex <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
+<span>  <span class="st">"topleft"</span>, legend <span class="op">=</span> <span class="st">"Training convex hull"</span>, lty <span class="op">=</span> <span class="fl">2</span>, lwd <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"#9b3d2f"</span>, bty <span class="op">=</span> <span class="st">"n"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="diagnostics-and-support_files/figure-html/support-distance-map-1.png" class="r-plt" alt="Nearest-observation-distance raster for a synthetic monitoring network, with the training convex hull outlined and observation wells shown as points." width="1152" style="display: block; margin: auto;"></p>
 <p>The convex hull is a description of the training network, not an
 aquifer boundary. Nearest-observation distances require projected
 coordinates by default because longitude and latitude degrees are not
@@ -278,7 +297,7 @@ automatically blanked.</p>
 <p>The same support rasters can classify sections of modeled contours.
 Criteria are supplied explicitly rather than inferred from universal
 distances.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contours</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_contours.html">ps_contours</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">surfaces</span><span class="op">$</span><span class="va">IDW</span>, interval <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">classified</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="../reference/ps_contour_support.html">ps_contour_support</a></span><span class="op">(</span></span>
 <span>  <span class="va">contours</span>, support <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">support</span>,</span>
@@ -424,6 +443,9 @@ distances.</p>
 </tr>
 </tbody>
 </table>
+<p>See the <a href="contour-support-thresholds.html">contour-support
+threshold comparison</a> for maps showing how tighter, broader, and
+network-relative distance criteria change the same contour lines.</p>
 <p>Distance-derived contour classes describe local observation support.
 They are not statistical confidence intervals. An identified uncertainty
 raster can be used as a separate criterion, but its meaning and units

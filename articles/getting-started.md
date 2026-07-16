@@ -70,6 +70,24 @@ result$support$summary
 #> 6    multiple_limitations     6  3.550296
 ```
 
+``` r
+
+surface <- result$surfaces$IDW
+contours <- ps_contours(surface, interval = 1)
+
+par(bg = "white")
+terra::plot(
+  surface, col = hcl.colors(64, "RdYlBu", rev = TRUE),
+  main = "First potentiometric surface"
+)
+terra::plot(contours, add = TRUE, col = "#263845", lwd = 1)
+terra::plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.75)
+```
+
+![Synthetic IDW potentiometric surface shaded blue at lower modeled
+heads and red at higher heads, with one-unit contours and observation
+wells.](getting-started_files/figure-html/first-map-1.png)
+
 IDW is deterministic and distance based. TPS produces a smooth penalized
 surface. Ordinary kriging assumes a constant unknown mean. Universal
 kriging uses a specified spatial trend. Method selection should consider

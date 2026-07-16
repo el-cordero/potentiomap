@@ -58,6 +58,7 @@
     <li><a class="dropdown-item" href="../articles/interpolation-parameters.html">Interpolation parameters</a></li>
     <li><a class="dropdown-item" href="../articles/custom-interpolation.html">Custom interpolation functions</a></li>
     <li><a class="dropdown-item" href="../articles/contours-smoothing.html">Contours and smoothing</a></li>
+    <li><a class="dropdown-item" href="../articles/contour-support-thresholds.html">Compare contour-support thresholds</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Create products</h6></li>
     <li><a class="dropdown-item" href="../articles/flow-arrows.html">Hydraulic-gradient arrows</a></li>
     <li><a class="dropdown-item" href="../articles/exporting-products.html">Export GIS-ready products</a></li>
@@ -160,9 +161,6 @@ CRS.</p>
 <span>  <span class="va">lonlat</span>, <span class="st">"longitude"</span>, <span class="st">"latitude"</span>, <span class="st">"head_ft"</span>, <span class="st">"id"</span>, <span class="st">"EPSG:4326"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">projected</span> <span class="op">&lt;-</span> <span class="fu">project</span><span class="op">(</span><span class="va">geographic</span>, <span class="st">"EPSG:26915"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in x@pntr$project(y, partial, pipeline, aoi, desired_accuracy,</span></span>
-<span><span class="co">#&gt; isTRUE(allow_approx)): GDAL Error 1: PROJ: Cannot open</span></span>
-<span><span class="co">#&gt; https://cdn.proj.org/us_noaa_TN.tif: Send failure: Connection reset by peer</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  object <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"assigned geographic"</span>, <span class="st">"transformed projected"</span><span class="op">)</span>,</span>

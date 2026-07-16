@@ -53,6 +53,7 @@
     <li><a class="dropdown-item" href="../articles/interpolation-parameters.html">Interpolation parameters</a></li>
     <li><a class="dropdown-item" href="../articles/custom-interpolation.html">Custom interpolation functions</a></li>
     <li><a class="dropdown-item" href="../articles/contours-smoothing.html">Contours and smoothing</a></li>
+    <li><a class="dropdown-item" href="../articles/contour-support-thresholds.html">Compare contour-support thresholds</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Create products</h6></li>
     <li><a class="dropdown-item" href="../articles/flow-arrows.html">Hydraulic-gradient arrows</a></li>
     <li><a class="dropdown-item" href="../articles/exporting-products.html">Export GIS-ready products</a></li>
@@ -182,6 +183,35 @@ and measurement reference. With positive depth below land surface:</p>
 </tr>
 </tbody>
 </table>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">point_values</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">points</span><span class="op">)</span></span>
+<span><span class="va">land_surface_ft</span> <span class="op">&lt;-</span> <span class="va">synthetic_wells</span><span class="op">$</span><span class="va">surface_elevation</span> <span class="op">/</span> <span class="fl">0.3048</span></span>
+<span><span class="va">order_wells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">land_surface_ft</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">order_wells</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>, <span class="va">land_surface_ft</span><span class="op">[</span><span class="va">order_wells</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"n"</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">land_surface_ft</span>, <span class="va">point_values</span><span class="op">$</span><span class="va">Z</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"Synthetic wells ordered by land-surface elevation"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Elevation above synthetic datum (ft)"</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Vertical reference used to calculate groundwater elevation"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/segments.html" class="external-link">segments</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>, <span class="va">land_surface_ft</span><span class="op">[</span><span class="va">order_wells</span><span class="op">]</span>,</span>
+<span>  <span class="va">x</span>, <span class="va">point_values</span><span class="op">$</span><span class="va">Z</span><span class="op">[</span><span class="va">order_wells</span><span class="op">]</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"#7b8790"</span>, lwd <span class="op">=</span> <span class="fl">1.5</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">land_surface_ft</span><span class="op">[</span><span class="va">order_wells</span><span class="op">]</span>, pch <span class="op">=</span> <span class="fl">24</span>, bg <span class="op">=</span> <span class="st">"#c77b30"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">point_values</span><span class="op">$</span><span class="va">Z</span><span class="op">[</span><span class="va">order_wells</span><span class="op">]</span>, pch <span class="op">=</span> <span class="fl">21</span>, bg <span class="op">=</span> <span class="st">"#2c7fb8"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
+<span>  <span class="st">"topleft"</span>,</span>
+<span>  legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Land surface"</span>, <span class="st">"Groundwater elevation"</span>, <span class="st">"Depth to water"</span><span class="op">)</span>,</span>
+<span>  pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">21</span>, <span class="cn">NA</span><span class="op">)</span>, pt.bg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#c77b30"</span>, <span class="st">"#2c7fb8"</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#17252d"</span>, <span class="st">"#17252d"</span>, <span class="st">"#7b8790"</span><span class="op">)</span>,</span>
+<span>  bty <span class="op">=</span> <span class="st">"n"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="units-and-groups_files/figure-html/vertical-reference-plot-1.png" class="r-plt" alt="Land-surface and calculated groundwater elevations for synthetic wells, with vertical connecting lines representing positive depth to water." width="1152" style="display: block; margin: auto;"></p>
 <p>The supported length units are metres and international feet, using
 exactly <code>1 ft = 0.3048 m</code>. A horizontal CRS does not supply a
 vertical datum. potentiomap records the stated datum but does not
@@ -190,7 +220,7 @@ measuring-point offsets. R-level metadata may not survive every GIS
 vector format, so preserve a sidecar manifest when those details must
 accompany exports.</p>
 <p>Separate events and water-bearing units before fitting surfaces.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grouped_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span></span>
 <span>  <span class="va">synthetic_wells</span>,</span>
 <span>  event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spring"</span>, <span class="st">"autumn"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">16</span><span class="op">)</span>,</span>
@@ -284,6 +314,28 @@ accompany exports.</p>
 </tr>
 </tbody>
 </table>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">group_surfaces</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">grouped</span><span class="op">$</span><span class="va">results</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">surfaces</span><span class="op">$</span><span class="va">IDW</span><span class="op">)</span></span>
+<span><span class="va">common_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span></span>
+<span>  <span class="va">group_surfaces</span>,</span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/minmax.html" class="external-link">minmax</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">common_range</span> <span class="op">&lt;-</span> <span class="va">common_range</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">common_range</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.001</span></span>
+<span></span>
+<span><span class="va">old_par</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, bg <span class="op">=</span> <span class="st">"white"</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">group_id</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">group_surfaces</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>    <span class="va">group_surfaces</span><span class="op">[[</span><span class="va">group_id</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">48</span>, <span class="st">"RdYlBu"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"continuous"</span>, range <span class="op">=</span> <span class="va">common_range</span>, fill_range <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    plg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nice <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"__"</span>, <span class="st">" — "</span>, <span class="va">group_id</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><img src="units-and-groups_files/figure-html/grouped-maps-1.png" class="r-plt" alt="Four synthetic IDW surfaces for spring and autumn observations in upper and lower units, displayed with a common modeled-head scale." width="1440" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">old_par</span><span class="op">)</span></span></code></pre></div>
 <p>Each row is assigned to exactly one group. A shared template
 standardizes output geometry but does not share observations or fitted
 information. Empty and failed groups remain in the manifest. A simple

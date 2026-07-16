@@ -3,6 +3,7 @@ pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/citation: citation.html
+  articles/contour-support-thresholds: contour-support-thresholds.html
   contours-and-arrows: contours-and-arrows.html
   articles/contours-smoothing: contours-smoothing.html
   articles/custom-interpolation: custom-interpolation.html
@@ -21,7 +22,7 @@ articles:
   articles/repeated-events: repeated-events.html
   articles/troubleshooting: troubleshooting.html
   units-and-groups: units-and-groups.html
-last_built: 2026-07-16T16:15Z
+last_built: 2026-07-16T16:48Z
 urls:
   reference: https://el-cordero.github.io/potentiomap/reference
   article: https://el-cordero.github.io/potentiomap/articles

@@ -48,6 +48,13 @@
   Regular and explicit contours plus mean, median, one-pass, and
   multi-pass focal smoothing with scientific cautions.
 
+- [Comparing contour-support
+  thresholds](https://el-cordero.github.io/potentiomap/articles/contour-support-thresholds.md):
+
+  See how tighter, broader, and network-relative distance criteria
+  divide the same modeled contours into supported, approximate, and
+  unsupported sections.
+
 ### Create products
 
 - [Hydraulic-gradient
