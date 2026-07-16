@@ -8,19 +8,21 @@
 A data frame with 32 rows and 6 columns:
 \describe{
 \item{well_id}{Synthetic well identifier.}
-\item{x}{Easting in EPSG:26916 map units.}
-\item{y}{Northing in EPSG:26916 map units.}
-\item{surface_elevation}{Land-surface elevation.}
-\item{depth_to_water}{Depth to groundwater below land surface.}
-\item{gw_elevation}{Groundwater elevation.}
+\item{x}{Synthetic easting in EPSG:26916 metres.}
+\item{y}{Synthetic northing in EPSG:26916 metres.}
+\item{surface_elevation}{Synthetic land-surface elevation in metres.}
+\item{depth_to_water}{Positive depth below land surface in metres.}
+\item{gw_elevation}{Synthetic groundwater elevation in metres.}
 }
 }
 \usage{
 synthetic_wells
 }
 \description{
-A real-looking artificial monitoring dataset with coordinates, land-surface
-elevation, depth to water, and calculated groundwater elevation.
+A small artificial monitoring dataset with coordinates, land-surface
+elevation, positive depth below land surface, and calculated groundwater
+elevation. Elevations and depths are synthetic metres relative to a
+synthetic example datum.
 }
 \examples{
 data("synthetic_wells")

@@ -2,29 +2,42 @@
 % Please edit documentation in R/outputs.R
 \name{ps_contours}
 \alias{ps_contours}
-\title{Create contours from a surface raster}
+\title{Create contours and a contour-level inventory}
 \usage{
-ps_contours(surface, interval = 1, levels = NULL)
+ps_contours(
+  surface,
+  interval = 1,
+  levels = NULL,
+  return = c("contours", "result")
+)
 }
 \arguments{
-\item{surface}{A \code{terra::SpatRaster} potentiometric surface.}
+\item{surface}{One-layer potentiometric-surface \code{SpatRaster}.}
 
-\item{interval}{Contour interval in map elevation units.}
+\item{interval}{Positive contour interval in surface units.}
 
-\item{levels}{Optional explicit contour levels. When supplied, \code{interval} is
-ignored.}
+\item{levels}{Optional finite explicit contour levels. \code{interval} is ignored
+when these are supplied.}
+
+\item{return}{Either \code{"contours"} for the backward-compatible \code{SpatVector} or
+\code{"result"} for a structured inventory.}
 }
 \value{
-A line \code{terra::SpatVector} of contours.
+A line \code{SpatVector}, or a \code{potentiomap_contour_result} containing
+\code{contours}, \code{manifest}, \code{surface_range}, \code{call}, \code{interval}, \code{levels},
+\code{warnings}, and \code{package_version}.
 }
 \description{
-Create contours from a surface raster
+Extracts contour lines from a one-layer surface. The default remains a line
+\code{SpatVector}. The opt-in result inventories every requested level, its
+relation to the finite surface range, returned feature count, and any
+omission. Open lines are not converted to polygons.
 }
 \examples{
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-ctr <- ps_contours(s$IDW, interval = 1)
-ctr
+surface <- ps_interpolate(pts, methods = "IDW", grid_res = 150)$IDW
+result <- ps_contours(surface, levels = c(165, 168, 171), return = "result")
+result$manifest
 }

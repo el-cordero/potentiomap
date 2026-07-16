@@ -2,7 +2,7 @@
 % Please edit documentation in R/flow.R
 \name{ps_flow_arrows}
 \alias{ps_flow_arrows}
-\title{Generate hydraulic-gradient flow arrows}
+\title{Generate hydraulic-gradient arrows}
 \usage{
 ps_flow_arrows(
   surface,
@@ -12,38 +12,69 @@ ps_flow_arrows(
   log_gradient = FALSE,
   log_arrow = FALSE,
   out_dir = NULL,
-  out_stub = "gw"
+  out_stub = "gw",
+  endpoint_action = c("flag", "shorten", "drop", "none"),
+  endpoint_tolerance = 1e-06,
+  endpoint_extraction = c("bilinear", "simple"),
+  max_shortening = 12L,
+  overwrite = TRUE
 )
 }
 \arguments{
-\item{surface}{A groundwater elevation \code{SpatRaster}.}
+\item{surface}{A one-layer groundwater-elevation \code{SpatRaster}.}
 
-\item{res_factor}{Factor used to thin arrows by resampling to a coarser grid.}
+\item{res_factor}{Positive integer used to thin arrows on a coarser grid.}
 
-\item{scale}{Arrow length multiplier.}
+\item{scale}{Positive cartographic length multiplier.}
 
-\item{min_gradient}{Gradients below this value are dropped.}
+\item{min_gradient}{Nonnegative gradient threshold.}
 
-\item{log_gradient}{Store \code{log1p()} transformed gradient in the output raster.}
+\item{log_gradient}{Store \code{log1p()} gradient in the returned raster.}
 
-\item{log_arrow}{Use \code{log1p()} transformed gradient for arrow lengths.}
+\item{log_arrow}{Use \code{log1p()} gradient for arrow display length.}
 
-\item{out_dir}{Optional output directory. When supplied, files are written.}
+\item{out_dir}{Optional output directory. No files are written when \code{NULL}.}
 
-\item{out_stub}{File prefix used when writing outputs.}
+\item{out_stub}{Safe file prefix.}
+
+\item{endpoint_action}{One of \code{"flag"}, \code{"shorten"}, \code{"drop"}, or \code{"none"}.
+\code{"flag"} preserves geometry and warns; \code{"shorten"} retains direction while
+reducing failed lines; \code{"drop"} removes failures; \code{"none"} reproduces the
+version 0.1.0 unvalidated geometry.}
+
+\item{endpoint_tolerance}{Nonnegative head tolerance.}
+
+\item{endpoint_extraction}{Either \code{"bilinear"} or \code{"simple"} raster
+extraction.}
+
+\item{max_shortening}{Positive maximum number of length halvings.}
+
+\item{overwrite}{Overwrite gradient files when \code{out_dir} is supplied.}
 }
 \value{
-A list with \code{raster}, \code{points}, and \code{arrows}.
+A list containing at least \code{raster}, \code{points}, and \code{arrows}, plus
+\code{tips}, \code{bases}, \code{validation}, and \code{validation_summary}.
 }
 \description{
-Derives slope, aspect, hydraulic gradient, and downgradient arrows from a
-potentiometric surface raster.
+Derives the local negative modeled-head gradient from a potentiometric
+surface. Arrow direction comes from raster aspect; arrow length is a display
+convention based on gradient, raster resolution, and \code{scale}. Arrows are map
+symbols, not groundwater velocities, travel times, particle paths, or traced
+groundwater paths.
+}
+\details{
+Endpoint checking compares each straight line with the supplied raster. It
+can flag, shorten, or drop lines whose tip is nonfinite or higher than the
+base. Shortening retains the original direction and repeatedly halves length;
+arrows are never reversed or bent. A passing check does not establish that
+the interpolated surface is physically correct.
 }
 \examples{
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-arrows <- ps_flow_arrows(s$IDW, res_factor = 4, scale = 60)
-arrows$arrows
+surface <- ps_interpolate(pts, methods = "IDW", grid_res = 150)$IDW
+flow <- ps_flow_arrows(surface, res_factor = 6, scale = 30,
+                       endpoint_action = "shorten")
+flow$validation_summary
 }

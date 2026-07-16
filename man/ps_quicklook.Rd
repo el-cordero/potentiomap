@@ -13,23 +13,32 @@ ps_quicklook(
   label_points = TRUE,
   width = 1600,
   height = 1200,
-  res = 180
+  res = 180,
+  contour_units = NULL,
+  label_contours = TRUE,
+  overwrite = TRUE
 )
 }
 \arguments{
-\item{surface}{A \code{SpatRaster}.}
+\item{surface}{One-layer \code{SpatRaster}.}
 
-\item{contours}{Optional contour \code{SpatVector}.}
+\item{contours}{Optional contour \code{SpatVector} or contour result.}
 
-\item{points}{Optional observation point \code{SpatVector}.}
+\item{points}{Optional observation points.}
 
-\item{file}{Optional PNG output path. When \code{NULL}, plots to the active device.}
+\item{file}{Optional PNG path. No file is written when \code{NULL}.}
 
 \item{title}{Plot title.}
 
-\item{label_points}{Label points with \code{Name} and \code{Z}.}
+\item{label_points}{Label points with \code{Name} and \code{Z} when available.}
 
-\item{width, height, res}{PNG dimensions and resolution.}
+\item{width, height, res}{Positive PNG dimensions and resolution.}
+
+\item{contour_units}{Optional units appended to contour labels.}
+
+\item{label_contours}{Draw contour labels.}
+
+\item{overwrite}{Overwrite \code{file} when it exists.}
 }
 \value{
 Invisibly returns \code{file}.
@@ -41,6 +50,6 @@ Draw a quicklook surface plot
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-ps_quicklook(s$IDW, points = pts, title = "Synthetic IDW")
+surface <- ps_interpolate(pts, methods = "IDW", grid_res = 150)$IDW
+ps_quicklook(surface, points = pts, title = "Synthetic IDW")
 }

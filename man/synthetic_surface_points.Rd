@@ -11,8 +11,8 @@ A data frame with coordinate, surface-elevation, and name columns.
 synthetic_surface_points
 }
 \description{
-Artificial land-surface elevation points for demonstrating workflows that do
-not start with a DEM raster.
+Artificial land-surface elevation points for analyses that do not start with
+a DEM raster.
 }
 \examples{
 data("synthetic_surface_points")

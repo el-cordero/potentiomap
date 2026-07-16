@@ -4,27 +4,31 @@
 \alias{ps_arrow_vertices}
 \title{Extract arrow base or tip points}
 \usage{
-ps_arrow_vertices(arrows, which = c("last", "first"), out_file = NULL)
+ps_arrow_vertices(
+  arrows,
+  which = c("last", "first"),
+  out_file = NULL,
+  overwrite = TRUE
+)
 }
 \arguments{
 \item{arrows}{A line \code{SpatVector} or path to a line vector file.}
 
-\item{which}{\code{"first"} for arrow bases or \code{"last"} for arrow tips.}
+\item{which}{\code{"first"} for bases or \code{"last"} for tips.}
 
-\item{out_file}{Optional output vector path.}
+\item{out_file}{Optional vector output path.}
+
+\item{overwrite}{Overwrite \code{out_file} when it exists.}
 }
 \value{
-A point \code{SpatVector}.
+A point \code{terra::SpatVector}, including an empty point vector for zero
+arrows.
 }
 \description{
 Extract arrow base or tip points
 }
 \examples{
-data("synthetic_wells")
-pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
-                      "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-arrows <- ps_flow_arrows(s$IDW, res_factor = 4, scale = 60)
-tips <- ps_arrow_vertices(arrows$arrows, which = "last")
-tips
+line <- terra::vect(list(rbind(c(0, 0), c(1, 1))), type = "lines",
+                    crs = "EPSG:3857")
+ps_arrow_vertices(line, "last")
 }
