@@ -114,7 +114,7 @@ surface <- ps_interpolate(
 )$TPS
 contours <- ps_contours(surface, interval = 20)
 flow <- ps_flow_arrows(
-  surface, res_factor = 12, scale = 10, min_gradient = 1e-5,
+  surface, res_factor = 12, scale = 5, min_gradient = 1e-5,
   endpoint_action = "shorten"
 )
 flow_tips <- ps_arrow_vertices(flow$arrows, "last")
