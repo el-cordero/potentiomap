@@ -21,6 +21,7 @@ URL: https://el-cordero.github.io/potentiomap/,
     https://github.com/el-cordero/potentiomap
 BugReports: https://github.com/el-cordero/potentiomap/issues
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
