@@ -53,6 +53,9 @@ geographic <- ps_make_points(
   lonlat, "longitude", "latitude", "head_ft", "id", "EPSG:4326"
 )
 projected <- project(geographic, "EPSG:26915")
+#> Warning in x@pntr$project(y, partial, pipeline, aoi, desired_accuracy,
+#> isTRUE(allow_approx)): GDAL Error 1: PROJ: Cannot open
+#> https://cdn.proj.org/us_noaa_TN.tif: Send failure: Connection reset by peer
 
 data.frame(
   object = c("assigned geographic", "transformed projected"),
