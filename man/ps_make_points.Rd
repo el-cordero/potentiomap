@@ -4,10 +4,25 @@
 \alias{ps_make_points}
 \title{Make groundwater observation points}
 \usage{
-ps_make_points(data, x = "x", y = "y", value, name_col = NULL, crs = NULL)
+ps_make_points(
+  data,
+  x = "x",
+  y = "y",
+  value,
+  name_col = NULL,
+  crs = NULL,
+  metadata = NULL,
+  head_unit = NULL,
+  output_unit = NULL,
+  vertical_datum = NULL,
+  surface_reference = NULL,
+  metadata_mode = c("legacy", "warn", "strict"),
+  invalid_action = c("drop", "error")
+)
 }
 \arguments{
-\item{data}{A data frame, \code{sf} object, or \code{terra::SpatVector}.}
+\item{data}{A data frame, \code{sf} object, or \code{terra::SpatVector} containing
+point observations.}
 
 \item{x, y}{Coordinate column names for tabular data.}
 
@@ -17,13 +32,38 @@ ps_make_points(data, x = "x", y = "y", value, name_col = NULL, crs = NULL)
 
 \item{crs}{Coordinate reference system for tabular data, such as
 \code{"EPSG:26916"}.}
+
+\item{metadata}{Optional named list containing scientific metadata.}
+
+\item{head_unit}{Unit of \code{value}; accepted spellings represent metres or the
+international foot.}
+
+\item{output_unit}{Desired unit of \code{Z}. When supplied with \code{head_unit}, values
+are converted using exactly 1 ft = 0.3048 m.}
+
+\item{vertical_datum}{Documented vertical datum. It is recorded, not
+transformed.}
+
+\item{surface_reference}{Measurement reference, such as \code{"land_surface"} or
+\code{"measuring_point"}.}
+
+\item{metadata_mode}{One of \code{"legacy"}, \code{"warn"}, or \code{"strict"}. Legacy mode
+accepts numeric data without metadata; warning mode reports omissions;
+strict mode rejects them.}
+
+\item{invalid_action}{Either \code{"drop"} to report and remove invalid records or
+\code{"error"} to stop.}
 }
 \value{
-A point \code{terra::SpatVector} with standardized attributes.
+A point \code{terra::SpatVector} with standardized attributes and optional
+metadata available through \code{\link[=ps_metadata]{ps_metadata()}}. The \code{dropped_records}
+attribute summarizes invalid observations.
 }
 \description{
-Convert a coordinate table, \code{sf} point object, or \code{terra} vector to a
-\code{SpatVector} with standard \code{Z} and \code{Name} fields.
+Converts a coordinate table, \code{sf} point object, or \code{terra} point vector to a
+\code{SpatVector} with standard \code{Z} and \code{Name} fields. Optional unit and vertical
+reference information is retained as package metadata; a horizontal CRS is
+never interpreted as a vertical datum.
 }
 \examples{
 data("synthetic_wells")
@@ -32,7 +72,10 @@ pts <- ps_make_points(
   x = "x", y = "y",
   value = "gw_elevation",
   name_col = "well_id",
-  crs = "EPSG:26916"
+  crs = "EPSG:26916",
+  head_unit = "m", output_unit = "m",
+  vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface"
 )
 pts
 }

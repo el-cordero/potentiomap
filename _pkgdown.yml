@@ -1,0 +1,108 @@
+url: https://el-cordero.github.io/potentiomap/
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  bslib:
+    primary: "#1F5E6B"
+    link-color: "#176B87"
+    base_font:
+      google: Source Sans 3
+    heading_font:
+      google: Source Sans 3
+
+home:
+  title: "potentiomap: potentiometric surfaces in R"
+  description: >
+    Prepare groundwater observations, interpolate potentiometric surfaces,
+    inspect diagnostics and prediction support, and create contours and
+    hydraulic-gradient arrow symbols.
+
+navbar:
+  structure:
+    left: [intro, articles, reference, news]
+    right: [github, issues, search]
+  components:
+    intro:
+      text: Get started
+      href: articles/getting-started.html
+    articles:
+      text: Articles
+      menu:
+        - text: Getting started with potentiomap
+          href: articles/getting-started.html
+        - text: Interpolation diagnostics and prediction support
+          href: articles/diagnostics-and-support.html
+        - text: Contours and hydraulic-gradient arrows
+          href: articles/contours-and-arrows.html
+        - text: Units, vertical references, and grouped observations
+          href: articles/units-and-groups.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: News
+      href: news/index.html
+    github:
+      text: GitHub
+      href: https://github.com/el-cordero/potentiomap
+    issues:
+      text: Issues
+      href: https://github.com/el-cordero/potentiomap/issues
+
+articles:
+  - title: Articles
+    contents:
+      - getting-started
+      - diagnostics-and-support
+      - contours-and-arrows
+      - units-and-groups
+
+reference:
+  - title: Prepare groundwater observations
+    desc: Standardize measured heads or calculate head from depth to water.
+    contents:
+      - ps_make_points
+      - ps_potentiometric_points
+      - ps_metadata
+      - ps_sample_aoi
+      - synthetic_wells
+      - synthetic_dem
+      - synthetic_surface_points
+  - title: Interpolate potentiometric surfaces
+    desc: Fit single or explicitly grouped mapped surfaces.
+    contents:
+      - ps_interpolate
+      - ps_interpolate_grouped
+  - title: Inspect diagnostics and prediction support
+    desc: Review retained fit information, conditions, and training support.
+    contents:
+      - ps_diagnostics
+      - ps_prediction_support
+      - ps_surfaces
+      - potentiomap_result
+      - potentiomap_conditions
+  - title: Create contours and hydraulic-gradient arrows
+    desc: Inventory contour levels and create checked negative-gradient symbols.
+    contents:
+      - ps_contours
+      - ps_contour_support
+      - plot.potentiomap_contour_support
+      - ps_flow_arrows
+      - ps_validate_arrows
+      - ps_arrow_vertices
+  - title: Visualize and export
+    desc: Create quicklooks, smooth rasters, and save GIS products.
+    contents:
+      - ps_quicklook
+      - ps_export_surfaces
+      - ps_export_contour_support
+      - ps_smooth_surface
+  - title: Package overview
+    contents:
+      - potentiomap-package
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with

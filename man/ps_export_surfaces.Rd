@@ -2,7 +2,7 @@
 % Please edit documentation in R/outputs.R
 \name{ps_export_surfaces}
 \alias{ps_export_surfaces}
-\title{Export surfaces, contours, and quicklook PNGs}
+\title{Export potentiometric-surface products}
 \usage{
 ps_export_surfaces(
   surfaces,
@@ -12,34 +12,58 @@ ps_export_surfaces(
   points = NULL,
   write_raster = TRUE,
   write_contours = TRUE,
-  write_png = TRUE
+  write_png = TRUE,
+  contour_levels = NULL,
+  vector_format = c("shapefile", "gpkg"),
+  support = NULL,
+  diagnostics = NULL,
+  write_contour_manifest = TRUE,
+  write_support = FALSE,
+  write_diagnostics = FALSE,
+  write_manifest = TRUE,
+  overwrite = TRUE
 )
 }
 \arguments{
-\item{surfaces}{A named list of \code{SpatRaster} objects, such as the result of
-\code{ps_interpolate()}.}
+\item{surfaces}{Named raster list or \code{potentiomap_result}.}
 
 \item{out_dir}{Output directory.}
 
-\item{out_stub}{File prefix.}
+\item{out_stub}{Safe file prefix.}
 
-\item{contour_interval}{Contour interval.}
+\item{contour_interval}{Positive contour interval.}
 
-\item{points}{Optional observation points to draw on quicklook figures.}
+\item{points}{Optional observation points for quicklooks.}
 
-\item{write_raster, write_contours, write_png}{Choose which outputs to write.}
+\item{write_raster, write_contours, write_png}{Choose outputs.}
+
+\item{contour_levels}{Optional explicit levels.}
+
+\item{vector_format}{Either \code{"shapefile"} or \code{"gpkg"}.}
+
+\item{support}{Optional \code{potentiomap_support}; defaults to support stored in a
+structured interpolation result.}
+
+\item{diagnostics}{Optional diagnostic list; defaults to structured-result
+diagnostics.}
+
+\item{write_contour_manifest, write_support, write_diagnostics, write_manifest}{Choose sidecar products.}
+
+\item{overwrite}{Overwrite existing outputs.}
 }
 \value{
-A data frame listing written files.
+A data frame describing written files.
 }
 \description{
-Export surfaces, contours, and quicklook PNGs
+Writes deterministic GeoTIFF, vector, contour-manifest, quicklook, support,
+and diagnostic products only when an output directory is supplied. GeoPackage
+is recommended because it preserves field names and supports multiple layers
+better than shapefiles; the shapefile default is retained for compatibility.
 }
 \examples{
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-out <- ps_export_surfaces(s, points = pts, out_dir = tempdir())
-out
+surfaces <- ps_interpolate(pts, methods = "IDW", grid_res = 200)
+ps_export_surfaces(surfaces, tempdir(), points = pts)
 }

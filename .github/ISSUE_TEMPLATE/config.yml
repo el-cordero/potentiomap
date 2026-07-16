@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://el-cordero.github.io/potentiomap/
+    about: Read function references and articles before opening an issue.
+  - name: CRAN package page
+    url: https://CRAN.R-project.org/package=potentiomap
+    about: View the released package and reference manual.

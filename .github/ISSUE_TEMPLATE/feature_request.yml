@@ -1,0 +1,27 @@
+name: Feature request
+description: Propose a focused improvement to potentiomap.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Do not upload confidential or restricted groundwater data. Use synthetic examples.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Hydrogeologic or mapping need
+      description: Describe the decision or analysis the feature would support.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed behavior
+      description: Include expected inputs, outputs, and limitations.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Synthetic example
+      render: r

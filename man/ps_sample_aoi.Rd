@@ -7,7 +7,8 @@
 ps_sample_aoi()
 }
 \value{
-A \code{terra::SpatVector} polygon in EPSG:26916.
+A \code{terra::SpatVector} polygon in EPSG:26916. Coordinates are
+synthetic and expressed in metres.
 }
 \description{
 Make the sample area-of-interest polygon

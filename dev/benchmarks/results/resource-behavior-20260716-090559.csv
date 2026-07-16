@@ -1,0 +1,4 @@
+"timestamp_utc","os","r_version","potentiomap_version","terra_version","fields_version","gstat_version","method","target_cells","actual_rows","actual_columns","actual_cells","arrow_count","elapsed_seconds","raster_bytes","terra_tempdir"
+"2026-07-16 13:05:51 UTC","Darwin 25.2.0 arm64","R version 4.5.3 (2026-03-11)","0.2.0","1.9.27","17.1","2.1.5","IDW",10000,102,102,10404,64,0.459,37316,"/private/var/folders/7j/dr505g_j3zd9z6m9qdykzc4w0000gn/T/RtmpfK17Nk"
+"2026-07-16 13:05:52 UTC","Darwin 25.2.0 arm64","R version 4.5.3 (2026-03-11)","0.2.0","1.9.27","17.1","2.1.5","IDW",40000,200,199,39800,272,1.482,137354,"/private/var/folders/7j/dr505g_j3zd9z6m9qdykzc4w0000gn/T/RtmpfK17Nk"
+"2026-07-16 13:05:59 UTC","Darwin 25.2.0 arm64","R version 4.5.3 (2026-03-11)","0.2.0","1.9.27","17.1","2.1.5","IDW",160000,397,395,156815,1084,6.173,534345,"/private/var/folders/7j/dr505g_j3zd9z6m9qdykzc4w0000gn/T/RtmpfK17Nk"

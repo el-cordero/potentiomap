@@ -14,7 +14,17 @@ ps_potentiometric_points(
   name_col = NULL,
   surface_name_col = name_col,
   crs = NULL,
-  idw_power = 2
+  idw_power = 2,
+  metadata = NULL,
+  depth_unit = NULL,
+  surface_unit = NULL,
+  output_unit = NULL,
+  vertical_datum = NULL,
+  surface_reference = NULL,
+  depth_sign = NULL,
+  measuring_point_offset = NULL,
+  metadata_mode = c("legacy", "warn", "strict"),
+  invalid_action = c("drop", "error")
 )
 }
 \arguments{
@@ -23,8 +33,7 @@ ps_potentiometric_points(
 
 \item{x, y}{Coordinate column names for tabular depth data.}
 
-\item{depth_col}{Depth-to-water column name. Positive values are assumed to be
-depth below land surface.}
+\item{depth_col}{Depth-to-water column name.}
 
 \item{surface}{A DEM \code{SpatRaster}, separate surface-elevation observations,
 or \code{NULL} when \code{surface_col} is used.}
@@ -38,29 +47,53 @@ or \code{NULL} when \code{surface_col} is used.}
 
 \item{crs}{CRS for tabular depth data.}
 
-\item{idw_power}{Power used when interpolating separate surface points.}
+\item{idw_power}{Positive IDW power for unmatched surface points.}
+
+\item{metadata}{Optional named list of scientific metadata.}
+
+\item{depth_unit, surface_unit, output_unit}{Supported length units.}
+
+\item{vertical_datum}{Documented vertical datum; it is recorded, not
+transformed.}
+
+\item{surface_reference}{Either \code{"land_surface"} or \code{"measuring_point"}.}
+
+\item{depth_sign}{Either \code{"positive_down"} or \code{"signed"}.}
+
+\item{measuring_point_offset}{Height of the measuring point above land surface,
+expressed in \code{surface_unit}. It is not inferred.}
+
+\item{metadata_mode}{One of \code{"legacy"}, \code{"warn"}, or \code{"strict"}.}
+
+\item{invalid_action}{Either \code{"drop"} or \code{"error"}.}
 }
 \value{
 A point \code{terra::SpatVector} with \code{surface_elevation},
-\code{depth_to_water}, and \code{Z} groundwater elevation fields.
+\code{depth_to_water}, and \code{Z} in \code{output_unit}, plus metadata available through
+\code{\link[=ps_metadata]{ps_metadata()}}.
 }
 \description{
-Calculates groundwater elevation as surface elevation minus depth to water.
-Surface elevation can come from a DEM raster, a column in the depth table, or
-separate surface-elevation points. Separate surface points are matched by name
-when possible; otherwise their elevations are interpolated to the depth
-points with inverse distance weighting.
+Calculates groundwater elevation from land-surface elevation and a documented
+depth convention. Surface elevation can come from a DEM, a column in the
+depth table, or separate surface-elevation points. Separate points are
+matched by name where possible and otherwise interpolated by IDW.
+}
+\details{
+With \code{depth_sign = "positive_down"}, groundwater elevation equals reference
+elevation minus depth. With \code{depth_sign = "signed"}, a negative value denotes
+water below the reference and is added to the reference elevation. A
+measuring-point offset is added to land-surface elevation only when
+\code{surface_reference = "measuring_point"}. potentiomap converts supported
+units but does not transform vertical datums or guess measuring-point offsets.
 }
 \examples{
 data("synthetic_wells")
-data("synthetic_dem")
 gw <- ps_potentiometric_points(
-  synthetic_wells,
-  x = "x", y = "y",
-  depth_col = "depth_to_water",
-  surface = synthetic_dem,
-  name_col = "well_id",
-  crs = "EPSG:26916"
+  synthetic_wells, "x", "y", "depth_to_water",
+  surface_col = "surface_elevation", name_col = "well_id",
+  crs = "EPSG:26916", depth_unit = "m", surface_unit = "m",
+  output_unit = "m", vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface", depth_sign = "positive_down"
 )
 head(terra::values(gw))
 }

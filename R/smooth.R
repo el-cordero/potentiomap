@@ -32,28 +32,35 @@ ps_smooth_surface <- function(surface, window_size = 3,
                               na.rm = TRUE, preserve_na = TRUE,
                               filename = "", overwrite = FALSE) {
   method <- match.arg(method)
+  .validate_integer(iterations, "iterations", lower = 0)
   iterations <- as.integer(iterations)
-  if (!is.finite(iterations) || iterations < 1) {
-    stop("`iterations` must be a positive integer.", call. = FALSE)
+
+  if (!is.logical(na.rm) || length(na.rm) != 1L || is.na(na.rm) ||
+      !is.logical(preserve_na) || length(preserve_na) != 1L || is.na(preserve_na) ||
+      !is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    .ps_abort("`na.rm`, `preserve_na`, and `overwrite` must be TRUE or FALSE.",
+              "potentiomap_input_error")
   }
 
   if (is.null(weights)) {
     window_size <- as.integer(window_size)
     if (!is.finite(window_size) || window_size < 3 || window_size %% 2 == 0) {
-      stop("`window_size` must be an odd integer of 3 or greater.",
-           call. = FALSE)
+      .ps_abort("`window_size` must be an odd integer of 3 or greater.",
+                "potentiomap_input_error")
     }
     weights <- window_size
   } else {
     if (!is.matrix(weights) || !is.numeric(weights)) {
-      stop("`weights` must be a numeric matrix.", call. = FALSE)
+      .ps_abort("`weights` must be a numeric matrix.",
+                "potentiomap_input_error")
     }
     if (any(dim(weights) %% 2 == 0)) {
-      stop("`weights` must have odd row and column dimensions.", call. = FALSE)
+      .ps_abort("`weights` must have odd row and column dimensions.",
+                "potentiomap_input_error")
     }
   }
 
-  original <- if (inherits(surface, "SpatRaster")) surface else terra::rast(surface)
+  original <- .as_surface(surface)
   result <- original
   for (i in seq_len(iterations)) {
     result <- terra::focal(
@@ -68,7 +75,14 @@ ps_smooth_surface <- function(surface, window_size = 3,
     result <- terra::mask(result, original)
   }
   if (nzchar(filename)) {
-    result <- terra::writeRaster(result, filename, overwrite = overwrite)
+    dir.create(dirname(filename), recursive = TRUE, showWarnings = FALSE)
+    result <- tryCatch(
+      terra::writeRaster(result, filename, overwrite = overwrite),
+      error = function(e) .ps_abort(
+        paste0("Could not write smoothed surface: ", conditionMessage(e)),
+        "potentiomap_export_error"
+      )
+    )
   }
   names(result) <- names(original)
   result

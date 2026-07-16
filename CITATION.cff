@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use potentiomap, please cite the package."
+title: "potentiomap: Build Potentiometric Surfaces and Hydraulic-Gradient Arrows"
+type: software
+authors:
+  - family-names: Cordero
+    given-names: Elvin
+version: 0.2.0
+doi: 10.32614/CRAN.package.potentiomap
+license: GPL-3.0-only
+repository-code: "https://github.com/el-cordero/potentiomap"
+url: "https://el-cordero.github.io/potentiomap/"
