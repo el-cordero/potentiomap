@@ -14,9 +14,11 @@
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_3-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Interpolation diagnostics and prediction support">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="Interpolation diagnostics and prediction support">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,25 +37,52 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/getting-started.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/quick-start.html">Get started</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><h6 class="dropdown-header" data-toc-skip>Start here</h6></li>
+    <li><a class="dropdown-item" href="../articles/quick-start.html">Five-minute quick start</a></li>
+    <li><a class="dropdown-item" href="../articles/exporting-products.html">Complete groundwater-surface workflow</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Prepare observations</h6></li>
+    <li><a class="dropdown-item" href="../articles/preparing-observations.html">Preparing groundwater observations</a></li>
+    <li><a class="dropdown-item" href="../articles/input-formats-crs.html">Input formats and coordinate systems</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Build surfaces</h6></li>
+    <li><a class="dropdown-item" href="../articles/interpolation-methods.html">Compare interpolation methods</a></li>
+    <li><a class="dropdown-item" href="../articles/interpolation-parameters.html">Interpolation parameters</a></li>
+    <li><a class="dropdown-item" href="../articles/custom-interpolation.html">Custom interpolation functions</a></li>
+    <li><a class="dropdown-item" href="../articles/contours-smoothing.html">Contours and smoothing</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Create products</h6></li>
+    <li><a class="dropdown-item" href="../articles/flow-arrows.html">Hydraulic-gradient arrows</a></li>
+    <li><a class="dropdown-item" href="../articles/exporting-products.html">Export GIS-ready products</a></li>
+    <li><a class="dropdown-item" href="../articles/repeated-events.html">Repeated monitoring events</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Applied examples</h6></li>
+    <li><a class="dropdown-item" href="../articles/real-world-usgs.html">Public USGS groundwater example</a></li>
+    <li><a class="dropdown-item" href="../articles/output-gallery.html">Output gallery</a></li>
+  </ul>
+</li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/getting-started.html">Getting started with potentiomap</a></li>
-    <li><a class="dropdown-item" href="../articles/diagnostics-and-support.html">Interpolation diagnostics and prediction support</a></li>
-    <li><a class="dropdown-item" href="../articles/contours-and-arrows.html">Contours and hydraulic-gradient arrows</a></li>
-    <li><a class="dropdown-item" href="../articles/units-and-groups.html">Units, vertical references, and grouped observations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
+<li><a class="dropdown-item" href="../articles/getting-started.html">0.2.0 feature guide</a></li>
+    <li><a class="dropdown-item" href="../articles/diagnostics-and-support.html">Diagnostics and prediction support</a></li>
+    <li><a class="dropdown-item" href="../articles/contours-and-arrows.html">Contour support and arrows</a></li>
+    <li><a class="dropdown-item" href="../articles/units-and-groups.html">Units, vertical references, and groups</a></li>
+    <li><a class="dropdown-item" href="../articles/interpretation-limitations.html">Interpretation and limitations</a></li>
+    <li><a class="dropdown-item" href="../articles/troubleshooting.html">Troubleshooting</a></li>
+    <li><a class="dropdown-item" href="../articles/citation.html">Citation</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/el-cordero/potentiomap">GitHub</a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/el-cordero/potentiomap/issues">Issues</a></li>
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://CRAN.R-project.org/package=potentiomap" target="_blank">CRAN</a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/el-cordero/potentiomap/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -69,7 +98,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Interpolation diagnostics and prediction support</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/el-cordero/potentiomap/blob/main/vignettes/diagnostics-and-support.Rmd" class="external-link"><code>vignettes/diagnostics-and-support.Rmd</code></a></small>
+
       <div class="d-none name"><code>diagnostics-and-support.Rmd</code></div>
     </div>
 
@@ -89,7 +118,7 @@ text so those assumptions can be reviewed.</p>
 <span>  <span class="va">points</span>, methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"IDW"</span>, <span class="st">"TPS"</span>, <span class="st">"OK"</span>, <span class="st">"UK"</span><span class="op">)</span>, grid_res <span class="op">=</span> <span class="fl">400</span>,</span>
 <span>  return <span class="op">=</span> <span class="st">"result"</span>, support <span class="op">=</span> <span class="cn">TRUE</span>, support_max_distance <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="co">#&gt; potentiomap interpolation summary</span></span>
 <span><span class="co">#&gt;   observations: 32 </span></span>
 <span><span class="co">#&gt;   methods: IDW, TPS, OK, UK </span></span>
@@ -178,15 +207,48 @@ components can make the requested fit impossible, in which case the
 function returns a classed error rather than another interpolation
 method.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">support</span><span class="op">$</span><span class="va">summary</span></span>
-<span><span class="co">#&gt;             support_class cells   percent</span></span>
-<span><span class="co">#&gt; 1               supported    48 43.636364</span></span>
-<span><span class="co">#&gt; 2   outside_training_hull    54 49.090909</span></span>
-<span><span class="co">#&gt; 3 beyond_maximum_distance     0  0.000000</span></span>
-<span><span class="co">#&gt; 4            outside_mask     0  0.000000</span></span>
-<span><span class="co">#&gt; 5  prediction_unavailable     0  0.000000</span></span>
-<span><span class="co">#&gt; 6    multiple_limitations     8  7.272727</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">support</span><span class="op">$</span><span class="va">records</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">support</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">support_class</th>
+<th align="right">cells</th>
+<th align="right">percent</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">supported</td>
+<td align="right">48</td>
+<td align="right">43.636364</td>
+</tr>
+<tr class="even">
+<td align="left">outside_training_hull</td>
+<td align="right">54</td>
+<td align="right">49.090909</td>
+</tr>
+<tr class="odd">
+<td align="left">beyond_maximum_distance</td>
+<td align="right">0</td>
+<td align="right">0.000000</td>
+</tr>
+<tr class="even">
+<td align="left">outside_mask</td>
+<td align="right">0</td>
+<td align="right">0.000000</td>
+</tr>
+<tr class="odd">
+<td align="left">prediction_unavailable</td>
+<td align="right">0</td>
+<td align="right">0.000000</td>
+</tr>
+<tr class="even">
+<td align="left">multiple_limitations</td>
+<td align="right">8</td>
+<td align="right">7.272727</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">support</span><span class="op">$</span><span class="va">records</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   cell inside_training_hull nearest_observation_distance</span></span>
 <span><span class="co">#&gt; 1    1                FALSE                    1205.6344</span></span>
 <span><span class="co">#&gt; 2    2                FALSE                     853.3371</span></span>
@@ -216,41 +278,152 @@ automatically blanked.</p>
 <p>The same support rasters can classify sections of modeled contours.
 Criteria are supplied explicitly rather than inferred from universal
 distances.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contours</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_contours.html">ps_contours</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">surfaces</span><span class="op">$</span><span class="va">IDW</span>, interval <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">classified</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="../reference/ps_contour_support.html">ps_contour_support</a></span><span class="op">(</span></span>
 <span>  <span class="va">contours</span>, support <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">support</span>,</span>
 <span>  supported_distance <span class="op">=</span> <span class="fl">500</span>, approximate_distance <span class="op">=</span> <span class="fl">1200</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">classified</span><span class="op">$</span><span class="va">summary</span></span>
-<span><span class="co">#&gt;    contour_level support_class segment_count total_line_length</span></span>
-<span><span class="co">#&gt; 7            165     supported             1        1316.53639</span></span>
-<span><span class="co">#&gt; 1            165   approximate             1          20.88435</span></span>
-<span><span class="co">#&gt; 8            166     supported             1        1805.69040</span></span>
-<span><span class="co">#&gt; 2            166   approximate             2        1876.34622</span></span>
-<span><span class="co">#&gt; 9            167     supported             1        2979.87771</span></span>
-<span><span class="co">#&gt; 3            167   approximate             1         871.59269</span></span>
-<span><span class="co">#&gt; 10           168     supported             1        3091.10331</span></span>
-<span><span class="co">#&gt; 4            168   approximate             2         874.56085</span></span>
-<span><span class="co">#&gt; 11           169     supported             1        3342.05486</span></span>
-<span><span class="co">#&gt; 5            169   approximate             2        1511.22085</span></span>
-<span><span class="co">#&gt; 13           169   unsupported             1         200.32308</span></span>
-<span><span class="co">#&gt; 12           170     supported             1        2536.95768</span></span>
-<span><span class="co">#&gt; 6            170   approximate             3        3191.34715</span></span>
-<span><span class="co">#&gt;    retained_line_length removed_line_length</span></span>
-<span><span class="co">#&gt; 7            1316.53639                   0</span></span>
-<span><span class="co">#&gt; 1              20.88435                   0</span></span>
-<span><span class="co">#&gt; 8            1805.69040                   0</span></span>
-<span><span class="co">#&gt; 2            1876.34622                   0</span></span>
-<span><span class="co">#&gt; 9            2979.87771                   0</span></span>
-<span><span class="co">#&gt; 3             871.59269                   0</span></span>
-<span><span class="co">#&gt; 10           3091.10331                   0</span></span>
-<span><span class="co">#&gt; 4             874.56085                   0</span></span>
-<span><span class="co">#&gt; 11           3342.05486                   0</span></span>
-<span><span class="co">#&gt; 5            1511.22085                   0</span></span>
-<span><span class="co">#&gt; 13            200.32308                   0</span></span>
-<span><span class="co">#&gt; 12           2536.95768                   0</span></span>
-<span><span class="co">#&gt; 6            3191.34715                   0</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">classified</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="2%">
+<col width="13%">
+<col width="13%">
+<col width="13%">
+<col width="17%">
+<col width="20%">
+<col width="19%">
+</colgroup>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">contour_level</th>
+<th align="left">support_class</th>
+<th align="right">segment_count</th>
+<th align="right">total_line_length</th>
+<th align="right">retained_line_length</th>
+<th align="right">removed_line_length</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">7</td>
+<td align="right">165</td>
+<td align="left">supported</td>
+<td align="right">1</td>
+<td align="right">1316.53639</td>
+<td align="right">1316.53639</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="right">165</td>
+<td align="left">approximate</td>
+<td align="right">1</td>
+<td align="right">20.88435</td>
+<td align="right">20.88435</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">8</td>
+<td align="right">166</td>
+<td align="left">supported</td>
+<td align="right">1</td>
+<td align="right">1805.69040</td>
+<td align="right">1805.69040</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="right">166</td>
+<td align="left">approximate</td>
+<td align="right">2</td>
+<td align="right">1876.34622</td>
+<td align="right">1876.34622</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="right">167</td>
+<td align="left">supported</td>
+<td align="right">1</td>
+<td align="right">2979.87771</td>
+<td align="right">2979.87771</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="right">167</td>
+<td align="left">approximate</td>
+<td align="right">1</td>
+<td align="right">871.59269</td>
+<td align="right">871.59269</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">10</td>
+<td align="right">168</td>
+<td align="left">supported</td>
+<td align="right">1</td>
+<td align="right">3091.10331</td>
+<td align="right">3091.10331</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">168</td>
+<td align="left">approximate</td>
+<td align="right">2</td>
+<td align="right">874.56085</td>
+<td align="right">874.56085</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">11</td>
+<td align="right">169</td>
+<td align="left">supported</td>
+<td align="right">1</td>
+<td align="right">3342.05486</td>
+<td align="right">3342.05486</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="right">169</td>
+<td align="left">approximate</td>
+<td align="right">2</td>
+<td align="right">1511.22085</td>
+<td align="right">1511.22085</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">13</td>
+<td align="right">169</td>
+<td align="left">unsupported</td>
+<td align="right">1</td>
+<td align="right">200.32308</td>
+<td align="right">200.32308</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">12</td>
+<td align="right">170</td>
+<td align="left">supported</td>
+<td align="right">1</td>
+<td align="right">2536.95768</td>
+<td align="right">2536.95768</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">6</td>
+<td align="right">170</td>
+<td align="left">approximate</td>
+<td align="right">3</td>
+<td align="right">3191.34715</td>
+<td align="right">3191.34715</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
 <p>Distance-derived contour classes describe local observation support.
 They are not statistical confidence intervals. An identified uncertainty
 raster can be used as a separate criterion, but its meaning and units
@@ -266,7 +439,7 @@ interchangeable with distance.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
+  <p><a href="https://CRAN.R-project.org/package=potentiomap" class="external-link">CRAN</a> <a href="https://doi.org/10.32614/CRAN.package.potentiomap" class="external-link">DOI</a> <a href="https://github.com/el-cordero/potentiomap" class="external-link">GitHub</a> Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

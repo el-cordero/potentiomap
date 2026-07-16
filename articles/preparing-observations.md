@@ -61,12 +61,12 @@ from_dem <- ps_potentiometric_points(
 )
 head(values(from_dem)[, c("Name", "surface_elevation", "depth_to_water", "Z")])
 #>    Name surface_elevation depth_to_water        Z
-#> 1 MW-01          185.1316          18.48 166.6516
-#> 2 MW-02          183.8884          18.39 165.4984
-#> 3 MW-03          190.4255          18.97 171.4555
-#> 4 MW-04          184.3528          18.66 165.6928
-#> 5 MW-05          189.0185          20.02 168.9985
-#> 6 MW-06          188.4036          18.87 169.5336
+#> 1 MW-01          185.1218          18.48 166.6418
+#> 2 MW-02          183.8870          18.39 165.4970
+#> 3 MW-03          190.4548          18.97 171.4848
+#> 4 MW-04          184.3021          18.66 165.6421
+#> 5 MW-05          188.9872          20.02 168.9672
+#> 6 MW-06          188.4655          18.87 169.5955
 ```
 
 The raster and wells must represent compatible horizontal coordinates.

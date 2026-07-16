@@ -111,7 +111,10 @@ surface <- ps_interpolate(
   padding = 0
 )$TPS
 contours <- ps_contours(surface, interval = 20)
-flow <- ps_flow_arrows(surface, res_factor = 12, scale = 10, min_gradient = 1e-5)
+flow <- ps_flow_arrows(
+  surface, res_factor = 12, scale = 10, min_gradient = 1e-5,
+  endpoint_action = "shorten"
+)
 flow_tips <- ps_arrow_vertices(flow$arrows, "last")
 tips_inside_map <- !is.na(extract(surface, flow_tips)[[2]])
 flow$arrows <- flow$arrows[tips_inside_map, ]
@@ -124,7 +127,7 @@ data.frame(
   arrow_lines = nrow(flow$arrows)
 )
 #>   method grid_resolution_m cells_with_values contour_features arrow_lines
-#> 1    TPS                75              5416               15          26
+#> 1    TPS                75              5416               15          35
 ```
 
 ``` r

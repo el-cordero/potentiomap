@@ -43,10 +43,8 @@ surfaces <- ps_interpolate(
   mask = aoi,
   padding = 0
 )
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
 contours <- ps_contours(surfaces$TPS, interval = 1)
 
 data.frame(
@@ -82,9 +80,10 @@ wells.](quick-start_files/figure-html/quicklook-1.png)
 
 flow <- ps_flow_arrows(
   surfaces$TPS,
-  res_factor = 4,
-  scale = 150,
-  min_gradient = 1e-5
+  res_factor = 8,
+  scale = 75,
+  min_gradient = 1e-5,
+  endpoint_action = "shorten"
 )
 tips <- ps_arrow_vertices(flow$arrows, which = "last")
 bases <- ps_arrow_vertices(flow$arrows, which = "first")
@@ -97,7 +96,7 @@ data.frame(
   bases = nrow(bases)
 )
 #>      gradient_layers arrow_sample_points arrow_lines tips bases
-#> 1 gwe, igrad, aspect                  53          53   53    53
+#> 1 gwe, igrad, aspect                  13          13   13    13
 ```
 
 ``` r

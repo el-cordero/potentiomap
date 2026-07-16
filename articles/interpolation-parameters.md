@@ -9,15 +9,11 @@ observations.
 ``` r
 
 coarse <- ps_interpolate(points, "Z", "TPS", grid_res = 200, mask = aoi, padding = 0)$TPS
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
 fine <- ps_interpolate(points, "Z", "TPS", grid_res = 50, mask = aoi, padding = 0)$TPS
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
 data.frame(
   grid = c("coarse", "fine"),
   cell_size_m = c(res(coarse)[1], res(fine)[1]),
@@ -26,7 +22,7 @@ data.frame(
 )
 #>     grid cell_size_m cells cells_with_values
 #> 1 coarse         200   270               238
-#> 2   fine          50  4118              3497
+#> 2   fine          50  4118              3499
 ```
 
 ``` r
@@ -52,9 +48,7 @@ mask then limits the published footprint to the analysis polygon.
 ``` r
 
 pad_small <- ps_interpolate(points, methods = "IDW", grid_res = 100, padding = 100)$IDW
-#> [inverse distance weighted interpolation]
 pad_large <- ps_interpolate(points, methods = "IDW", grid_res = 100, padding = 700)$IDW
-#> [inverse distance weighted interpolation]
 rbind(
   small_padding = as.vector(ext(pad_small)),
   large_padding = as.vector(ext(pad_large))
@@ -87,10 +81,8 @@ extrapolations, regardless of whether a rectangular raster is displayed.
 
 idw_1 <- ps_interpolate(points, methods = "IDW", grid_res = 75, mask = aoi,
                         padding = 0, idw_power = 1, idw_nmax = 15)$IDW
-#> [inverse distance weighted interpolation]
 idw_3 <- ps_interpolate(points, methods = "IDW", grid_res = 75, mask = aoi,
                         padding = 0, idw_power = 3, idw_nmax = 8)$IDW
-#> [inverse distance weighted interpolation]
 data.frame(
   setting = c("power 1, nmax 15", "power 3, nmax 8"),
   minimum = c(minmax(idw_1)[1], minmax(idw_3)[1]),
@@ -124,18 +116,12 @@ tps_fixed <- ps_interpolate(
   points, methods = "TPS", grid_res = 100, mask = aoi, padding = 0,
   tps_lambda = 0.001
 )$TPS
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
 
 ok_manual <- ps_interpolate(
   points, methods = "OK", grid_res = 100, mask = aoi, padding = 0,
   kr_auto_cutoff = FALSE, kr_cutoff = 1400, kr_width = 100
 )$OK
-#> Warning in gstat::fit.variogram(empirical, model0, fit.sills = TRUE, fit.ranges
-#> = TRUE, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
+#> Warning: OK: No convergence after 200 iterations: try different initial values?
 
 data.frame(
   surface = c("TPS lambda 0.001", "OK cutoff 1400 m; width 100 m"),
@@ -161,11 +147,8 @@ template <- rast(crs = crs(points), ext = ext(aoi), resolution = 100)
 same_grid <- ps_interpolate(
   points, methods = c("TPS", "IDW"), template = template, mask = aoi
 )
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
-#> [inverse distance weighted interpolation]
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
 compareGeom(same_grid$TPS, same_grid$IDW, stopOnError = FALSE)
 #> [1] TRUE
 ```

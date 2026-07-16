@@ -113,14 +113,20 @@ method.
 
 ``` r
 
-result$support$summary
-#>             support_class cells   percent
-#> 1               supported    48 43.636364
-#> 2   outside_training_hull    54 49.090909
-#> 3 beyond_maximum_distance     0  0.000000
-#> 4            outside_mask     0  0.000000
-#> 5  prediction_unavailable     0  0.000000
-#> 6    multiple_limitations     8  7.272727
+knitr::kable(result$support$summary)
+```
+
+| support_class           | cells |   percent |
+|:------------------------|------:|----------:|
+| supported               |    48 | 43.636364 |
+| outside_training_hull   |    54 | 49.090909 |
+| beyond_maximum_distance |     0 |  0.000000 |
+| outside_mask            |     0 |  0.000000 |
+| prediction_unavailable  |     0 |  0.000000 |
+| multiple_limitations    |     8 |  7.272727 |
+
+``` r
+
 head(result$support$records)
 #>   cell inside_training_hull nearest_observation_distance
 #> 1    1                FALSE                    1205.6344
@@ -162,36 +168,24 @@ classified <- suppressWarnings(ps_contour_support(
   contours, support = result$support,
   supported_distance = 500, approximate_distance = 1200
 ))
-classified$summary
-#>    contour_level support_class segment_count total_line_length
-#> 7            165     supported             1        1316.53639
-#> 1            165   approximate             1          20.88435
-#> 8            166     supported             1        1805.69040
-#> 2            166   approximate             2        1876.34622
-#> 9            167     supported             1        2979.87771
-#> 3            167   approximate             1         871.59269
-#> 10           168     supported             1        3091.10331
-#> 4            168   approximate             2         874.56085
-#> 11           169     supported             1        3342.05486
-#> 5            169   approximate             2        1511.22085
-#> 13           169   unsupported             1         200.32308
-#> 12           170     supported             1        2536.95768
-#> 6            170   approximate             3        3191.34715
-#>    retained_line_length removed_line_length
-#> 7            1316.53639                   0
-#> 1              20.88435                   0
-#> 8            1805.69040                   0
-#> 2            1876.34622                   0
-#> 9            2979.87771                   0
-#> 3             871.59269                   0
-#> 10           3091.10331                   0
-#> 4             874.56085                   0
-#> 11           3342.05486                   0
-#> 5            1511.22085                   0
-#> 13            200.32308                   0
-#> 12           2536.95768                   0
-#> 6            3191.34715                   0
+knitr::kable(classified$summary)
 ```
+
+|  | contour_level | support_class | segment_count | total_line_length | retained_line_length | removed_line_length |
+|:---|---:|:---|---:|---:|---:|---:|
+| 7 | 165 | supported | 1 | 1316.53639 | 1316.53639 | 0 |
+| 1 | 165 | approximate | 1 | 20.88435 | 20.88435 | 0 |
+| 8 | 166 | supported | 1 | 1805.69040 | 1805.69040 | 0 |
+| 2 | 166 | approximate | 2 | 1876.34622 | 1876.34622 | 0 |
+| 9 | 167 | supported | 1 | 2979.87771 | 2979.87771 | 0 |
+| 3 | 167 | approximate | 1 | 871.59269 | 871.59269 | 0 |
+| 10 | 168 | supported | 1 | 3091.10331 | 3091.10331 | 0 |
+| 4 | 168 | approximate | 2 | 874.56085 | 874.56085 | 0 |
+| 11 | 169 | supported | 1 | 3342.05486 | 3342.05486 | 0 |
+| 5 | 169 | approximate | 2 | 1511.22085 | 1511.22085 | 0 |
+| 13 | 169 | unsupported | 1 | 200.32308 | 200.32308 | 0 |
+| 12 | 170 | supported | 1 | 2536.95768 | 2536.95768 | 0 |
+| 6 | 170 | approximate | 3 | 3191.34715 | 3191.34715 | 0 |
 
 Distance-derived contour classes describe local observation support.
 They are not statistical confidence intervals. An identified uncertainty

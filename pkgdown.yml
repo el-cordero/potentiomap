@@ -2,11 +2,26 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  articles/citation: citation.html
   contours-and-arrows: contours-and-arrows.html
+  articles/contours-smoothing: contours-smoothing.html
+  articles/custom-interpolation: custom-interpolation.html
   diagnostics-and-support: diagnostics-and-support.html
+  articles/exporting-products: exporting-products.html
+  articles/flow-arrows: flow-arrows.html
   getting-started: getting-started.html
+  articles/input-formats-crs: input-formats-crs.html
+  articles/interpolation-methods: interpolation-methods.html
+  articles/interpolation-parameters: interpolation-parameters.html
+  articles/interpretation-limitations: interpretation-limitations.html
+  articles/output-gallery: output-gallery.html
+  articles/preparing-observations: preparing-observations.html
+  articles/quick-start: quick-start.html
+  articles/real-world-usgs: real-world-usgs.html
+  articles/repeated-events: repeated-events.html
+  articles/troubleshooting: troubleshooting.html
   units-and-groups: units-and-groups.html
-last_built: 2026-07-16T15:21Z
+last_built: 2026-07-16T15:57Z
 urls:
   reference: https://el-cordero.github.io/potentiomap/reference
   article: https://el-cordero.github.io/potentiomap/articles

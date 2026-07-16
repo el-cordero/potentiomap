@@ -10,6 +10,10 @@
 
 body { color: var(--pm-ink); }
 
+/* GitHub needs the README logo; pkgdown already provides one in its header. */
+.github-readme-logo { display: none; }
+.figure img, img.r-plt { background: #fff; }
+
 .navbar-brand img { max-height: 42px; width: auto; margin-right: .45rem; }
 
 .pm-hero-title { max-width: 17ch; margin-top: 2.4rem; font-size: clamp(2.1rem, 5vw, 3.1rem); line-height: 1.04; }

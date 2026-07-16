@@ -96,10 +96,15 @@ exports <- ps_export_surfaces(
   result, output_dir, out_stub = "synthetic", points = points,
   vector_format = "gpkg"
 )
-data.frame(method = exports$method, raster = basename(exports$raster))
-#>   method                    raster
-#> 1    IDW synthetic_IDW_surface.tif
+knitr::kable(data.frame(
+  method = exports$method,
+  raster = basename(exports$raster)
+))
 ```
+
+| method | raster                    |
+|:-------|:--------------------------|
+| IDW    | synthetic_IDW_surface.tif |
 
 A finite raster is not proof that every cell is well supported. Inspect
 the support classes and fitted-method diagnostics before using a mapped

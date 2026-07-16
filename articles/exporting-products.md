@@ -24,17 +24,20 @@ portable_inventory <- transform(
   quicklook = basename(quicklook)
 )
 portable_inventory
-#>     method                    raster                   contours
-#> TPS    TPS synthetic_TPS_surface.tif synthetic_TPS_contours.shp
-#> IDW    IDW synthetic_IDW_surface.tif synthetic_IDW_contours.shp
-#>                       quicklook
-#> TPS synthetic_TPS_quicklook.png
-#> IDW synthetic_IDW_quicklook.png
+#>   method                    raster                   contours
+#> 1    TPS synthetic_TPS_surface.tif synthetic_TPS_contours.shp
+#> 2    IDW synthetic_IDW_surface.tif synthetic_IDW_contours.shp
+#>                     quicklook
+#> 1 synthetic_TPS_quicklook.png
+#> 2 synthetic_IDW_quicklook.png
+#>                                                             contour_manifest
+#> 1 /tmp/Rtmp8Jm3T5/potentiomap-gis-example/synthetic_TPS_contour_manifest.csv
+#> 2 /tmp/Rtmp8Jm3T5/potentiomap-gis-example/synthetic_IDW_contour_manifest.csv
 ```
 
-The contour vector is an ESRI Shapefile in release 0.1.0, so preserve
-its sidecar files when transferring it. The downloadable example bundle
-includes all components.
+GeoPackage is the recommended vector format because it preserves field
+names and related attributes in one file. Shapefile remains available
+when required; preserve every sidecar file when transferring it.
 
 ## Read the products back
 
@@ -80,11 +83,12 @@ overlaid.](exporting-products_files/figure-html/read-back-map-1.png)
 
 flow <- ps_flow_arrows(
   surfaces$TPS,
-  res_factor = 5,
-  scale = 180,
+  res_factor = 8,
+  scale = 75,
   min_gradient = 1e-5,
   out_dir = output_dir,
-  out_stub = "synthetic_TPS"
+  out_stub = "synthetic_TPS",
+  endpoint_action = "shorten"
 )
 tips_file <- file.path(output_dir, "synthetic_TPS_arrow_tips.gpkg")
 bases_file <- file.path(output_dir, "synthetic_TPS_arrow_bases.gpkg")
@@ -99,10 +103,10 @@ data.frame(
 )
 #>            product                           file features_or_layers
 #> 1 gradient GeoTIFF        synthetic_TPS_hgrad.tif                  3
-#> 2    sample points synthetic_TPS_hgrad_points.shp                 33
-#> 3      arrow lines synthetic_TPS_hgrad_arrows.shp                 33
-#> 4       arrow tips  synthetic_TPS_arrow_tips.gpkg                 33
-#> 5      arrow bases synthetic_TPS_arrow_bases.gpkg                 33
+#> 2    sample points synthetic_TPS_hgrad_points.shp                 13
+#> 3      arrow lines synthetic_TPS_hgrad_arrows.shp                 13
+#> 4       arrow tips  synthetic_TPS_arrow_tips.gpkg                 13
+#> 5      arrow bases synthetic_TPS_arrow_bases.gpkg                 13
 ```
 
 ## Validate geometry and attributes
@@ -130,13 +134,9 @@ data.frame(
 #> 5 tip count equals arrow count TRUE
 ```
 
-Download the complete [example GIS-output
-bundle](https://el-cordero.github.io/potentiomap/downloads/potentiomap_example_outputs.zip).
-It includes GeoTIFF surfaces, complete contour shapefiles, native
-quicklook PNGs, hydraulic-gradient files, arrow vectors, tip and base
-GeoPackages, a README with units and CRS, and the exact [R
-script](https://el-cordero.github.io/potentiomap/downloads/potentiomap_complete_example.R)
-used to generate them.
+The tables and read-back map above are generated during the website
+build. Use the displayed code with a project-specific output directory
+to create the same inventory under the installed package version.
 
 Exported files preserve the modeled products, not their validity. Keep
 the monitoring data, aquifer selection, vertical datum, interpolation

@@ -9,9 +9,10 @@ toward decreasing modeled head.
 
 flow <- ps_flow_arrows(
   surface,
-  res_factor = 4,
-  scale = 150,
-  min_gradient = 1e-5
+  res_factor = 8,
+  scale = 75,
+  min_gradient = 1e-5,
+  endpoint_action = "shorten"
 )
 bases <- ps_arrow_vertices(flow$arrows, "first")
 tips <- ps_arrow_vertices(flow$arrows, "last")
@@ -22,10 +23,10 @@ data.frame(
 )
 #>           product layers_or_features
 #> 1 gradient raster                  3
-#> 2   sample points                201
-#> 3     arrow lines                201
-#> 4     arrow bases                201
-#> 5      arrow tips                201
+#> 2   sample points                 54
+#> 3     arrow lines                 54
+#> 4     arrow bases                 54
+#> 5      arrow tips                 54
 ```
 
 ``` r
@@ -82,17 +83,17 @@ pass_rate <- mean(direction_check$pass[sampled])
 stopifnot(pass_rate >= 0.95)
 
 head(direction_check, 10)
-#>    arrow_id base_head tip_head head_difference  pass
-#> 1         1  169.5021 169.3314      -0.1706134  TRUE
-#> 2         2  169.1395 168.8729      -0.2666140  TRUE
-#> 3         3  168.7623 168.4748      -0.2874948  TRUE
-#> 4         4  168.3546 168.0538      -0.3007199  TRUE
-#> 5         5  167.9280 167.6249      -0.3031730  TRUE
-#> 6         6  167.5080 167.2057      -0.3023194  TRUE
-#> 7         7  167.0963       NA              NA FALSE
-#> 8         8  166.6503       NA              NA FALSE
-#> 9         9  170.1602 169.9982      -0.1620020  TRUE
-#> 10       10  169.8112 169.6491      -0.1620899  TRUE
+#>    arrow_id base_head tip_head head_difference pass
+#> 1         1  169.8349 169.6697     -0.16520099 TRUE
+#> 2         2  169.1352 168.8598     -0.27535914 TRUE
+#> 3         3  168.3560 168.0353     -0.32064629 TRUE
+#> 4         4  167.5321 167.2009     -0.33121867 TRUE
+#> 5         5  166.6015 166.2855     -0.31606379 TRUE
+#> 6         6  165.5281 165.3767     -0.15138375 TRUE
+#> 7         7  164.6123 164.4228     -0.18952757 TRUE
+#> 8         8  170.4126 170.3419     -0.07068473 TRUE
+#> 9         9  169.8652 169.6852     -0.18002040 TRUE
+#> 10       10  169.4129 169.1302     -0.28267701 TRUE
 ```
 
 ``` r
@@ -106,7 +107,7 @@ data.frame(
   tolerance_head_units = tolerance
 )
 #>   arrows sampled_at_base_and_tip tips_outside_surface passes_within_tolerance
-#> 1    201                     198                    3                     198
+#> 1     54                      54                    0                      54
 #>   pass_rate_percent tolerance_head_units
 #> 1               100                 0.01
 ```
@@ -115,28 +116,32 @@ data.frame(
 
 ``` r
 
-sparse <- ps_flow_arrows(surface, res_factor = 8, scale = 250, min_gradient = 1e-5)
-dense <- ps_flow_arrows(surface, res_factor = 3, scale = 100, min_gradient = 1e-5)
-filtered <- ps_flow_arrows(surface, res_factor = 4, scale = 150, min_gradient = 0.002)
-logged <- ps_flow_arrows(surface, res_factor = 4, scale = 250,
-                         min_gradient = 1e-5, log_gradient = TRUE, log_arrow = TRUE)
+sparse <- ps_flow_arrows(surface, res_factor = 12, scale = 90,
+                         min_gradient = 1e-5, endpoint_action = "shorten")
+dense <- ps_flow_arrows(surface, res_factor = 5, scale = 60,
+                        min_gradient = 1e-5, endpoint_action = "shorten")
+filtered <- ps_flow_arrows(surface, res_factor = 8, scale = 75,
+                           min_gradient = 0.002, endpoint_action = "shorten")
+logged <- ps_flow_arrows(surface, res_factor = 8, scale = 90,
+                         min_gradient = 1e-5, log_gradient = TRUE,
+                         log_arrow = TRUE, endpoint_action = "shorten")
 data.frame(
   setting = c("sparse", "dense", "minimum gradient 0.002", "log gradient and length"),
   lines = c(nrow(sparse$arrows), nrow(dense$arrows), nrow(filtered$arrows), nrow(logged$arrows))
 )
 #>                   setting lines
-#> 1                  sparse    54
-#> 2                   dense   359
-#> 3  minimum gradient 0.002   157
-#> 4 log gradient and length   201
+#> 1                  sparse    24
+#> 2                   dense   133
+#> 3  minimum gradient 0.002    45
+#> 4 log gradient and length    54
 ```
 
 ``` r
 
 par(mfrow = c(1, 2), mar = c(3, 3, 3, 1))
-plot(surface, col = cols, main = "res_factor 8; scale 250")
+plot(surface, col = cols, main = "res_factor 12; scale 90")
 draw_lines(sparse$arrows, length = .065)
-plot(surface, col = cols, main = "res_factor 3; scale 100")
+plot(surface, col = cols, main = "res_factor 5; scale 60")
 draw_lines(dense$arrows, length = .04)
 ```
 

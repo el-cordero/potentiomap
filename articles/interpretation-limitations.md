@@ -105,3 +105,16 @@ At minimum, retain:
 An interpolated surface is a model conditioned on data and assumptions.
 Treat it as one line of evidence within the conceptual hydrogeologic
 interpretation.
+
+## Review table
+
+Use a compact review table to keep the result and its limiting evidence
+together in a project record.
+
+| product | review_evidence | does_not_establish |
+|:---|:---|:---|
+| Observation set | Timing, aquifer, screened interval, datum, corrections, and qualifiers | One hydraulic system or error-free head values |
+| Modeled surface | Method, parameters, grid, mask, diagnostics, and validation | A uniquely correct potentiometric surface |
+| Contours | Interval or levels, source surface, and omitted-level manifest | Observed groundwater elevations between wells |
+| Support classes | User-defined thresholds, hull rule, resolution, and reason fields | Statistical confidence without a suitable uncertainty model |
+| Hydraulic-gradient arrows | Source surface, density, scale, endpoint validation, and direction check | Velocity, travel time, particle paths, or contaminant transport |

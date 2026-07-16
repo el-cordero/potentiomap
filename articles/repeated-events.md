@@ -46,18 +46,12 @@ event_surfaces <- lapply(by_event, function(d) {
   )
   ps_interpolate(points, methods = "TPS", template = template, mask = aoi)$TPS
 })
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
 
 do.call(rbind, lapply(names(event_surfaces), function(date) {
   r <- event_surfaces[[date]]

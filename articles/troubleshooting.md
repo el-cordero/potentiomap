@@ -19,14 +19,14 @@ data.frame(
 #> 2 missing groundwater-elevation column
 #>                                       observed_message
 #> 1 `crs` is required when `data` is a coordinate table.
-#> 2                       Missing column(s): not_a_field
+#> 2                      Missing column(s): not_a_field.
 ```
 
-For geographic longitude/latitude, release 0.1.0 accepts a valid
-geographic CRS. Check
+Check
 [`terra::is.lonlat()`](https://rspatial.github.io/terra/reference/is.lonlat.html)
-and transform to an appropriate projected CRS before distance-based
-interpolation. Assigning a projected CRS to longitude and latitude
+and transform longitude/latitude observations to an appropriate
+projected CRS before distance-based interpolation or support
+classification. Assigning a projected CRS to longitude and latitude
 numbers is not a transformation.
 
 ## Too few observations and unsupported methods
@@ -46,9 +46,9 @@ data.frame(
 #>           situation
 #> 1 four observations
 #> 2    unknown method
-#>                                                                                                 observed_message
-#> 1                                                       At least five valid points are needed for interpolation.
-#> 2 Unsupported method `UNKNOWN`. Use one of TPS, IDW, OK, UK, or provide a matching function in `custom_methods`.
+#>                                                                  observed_message
+#> 1                         At least five valid points are needed; 4 were retained.
+#> 2 Unsupported method(s): UNKNOWN. Use TPS, IDW, OK, UK, or a named custom method.
 ```
 
 Kriging can also fail or warn when the point count, spatial
@@ -69,6 +69,7 @@ problem <- synthetic_wells
 problem$gw_elevation[2] <- NA
 problem <- rbind(problem, problem[1, ])
 prepared <- ps_make_points(problem, "x", "y", "gw_elevation", "well_id", "EPSG:26916")
+#> Warning: Dropped 1 invalid groundwater observation(s).
 xy <- as.data.frame(crds(prepared))
 data.frame(
   input_rows = nrow(problem),
@@ -79,9 +80,9 @@ data.frame(
 #> 1         33            32                         2
 ```
 
-Release 0.1.0 does not reconcile duplicate coordinates automatically.
-Review whether duplicates represent repeat readings, nested wells, or
-data errors; resolve them according to the monitoring design before
+Do not assume coincident observations are interchangeable. Review
+whether duplicates represent repeat readings, nested wells, or data
+errors; resolve them according to the monitoring design before
 interpolation.
 
 ## Smoothing and contour errors
@@ -89,7 +90,6 @@ interpolation.
 ``` r
 
 surface <- ps_interpolate(points, methods = "IDW", grid_res = 100)$IDW
-#> [inverse distance weighted interpolation]
 empty_surface <- surface
 values(empty_surface) <- NA_real_
 data.frame(
@@ -113,9 +113,9 @@ than a very small regular interval.
 
 ## AOI, grid size, and memory
 
-Check that observations and the AOI overlap after transformation.
-Release 0.1.0 can predict into a distant AOI rather than treating
-non-overlap as an error, so an explicit overlap check is part of QA.
+Check that observations and the AOI overlap after transformation. An
+explicit overlap check remains part of QA even when the interpolation
+method can return finite predictions away from the monitoring network.
 
 ``` r
 
@@ -149,9 +149,7 @@ additional monitoring information.
 ## Export checks
 
 - Test `file.access(output_directory, 2) == 0` before a long export.
-- Release 0.1.0 writes with overwrite enabled inside
-  [`ps_export_surfaces()`](https://el-cordero.github.io/potentiomap/reference/ps_export_surfaces.md)
-  and the optional flow outputs; use a deliberate event-specific
+- Review `overwrite` behavior and use a deliberate event-specific
   directory.
 - Keep every `.shp`, `.shx`, `.dbf`, `.prj`, and `.cpg` component
   together.
@@ -163,3 +161,13 @@ additional monitoring information.
 - If files become too large, revisit domain extent, raster resolution,
   number of methods, and whether every intermediate belongs in the
   deliverable.
+
+## Quick diagnostic table
+
+| symptom | first_check |
+|:---|:---|
+| Missing or implausible map | CRS, coordinate ranges, AOI overlap, and finite Z values |
+| Kriging fit warning | Point count, spatial geometry, lag classes, variogram, and conditions |
+| Too many or too few contours | Surface range, precision, interval, and requested-level manifest |
+| Cluttered or off-map arrows | res_factor, scale, finite support, and endpoint validation |
+| Unexpected export contents | Output directory, vector format, manifest, and read-back validation |

@@ -38,15 +38,9 @@ surfaces <- ps_interpolate(
   tps_lambda = NULL,
   kr_auto_cutoff = TRUE
 )
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
-#> [inverse distance weighted interpolation]
-#> Warning in gstat::fit.variogram(empirical, model0, fit.sills = TRUE, fit.ranges
-#> = TRUE, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> [using universal kriging]
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect
+#> sensitivity and prediction support.
+#> Warning: OK: No convergence after 200 iterations: try different initial values?
 names(surfaces)
 #> [1] "TPS" "IDW" "OK"  "UK"
 ```
@@ -71,7 +65,7 @@ do.call(rbind, lapply(names(surfaces), function(method) {
 #> 1    TPS   29      36            100            100 163.2509 173.3224
 #> 2    IDW   29      36            100            100 164.1760 171.3948
 #> 3     OK   29      36            100            100 164.0498 171.5606
-#> 4     UK   29      36            100            100 164.1790 177.6413
+#> 4     UK   29      36            100            100 163.0500 172.1665
 ```
 
 ## Surfaces and contours on one head scale
@@ -116,13 +110,13 @@ do.call(rbind, lapply(names(differences), function(method) {
   )
 }))
 #>      comparison mean_difference mean_absolute_difference
-#> 1 IDW minus TPS      -0.4724818                0.7686389
-#> 2  OK minus TPS      -0.1063588                0.1894084
-#> 3  UK minus TPS       0.5444687                0.6456770
+#> 1 IDW minus TPS     -0.47248180                0.7686389
+#> 2  OK minus TPS     -0.10635880                0.1894084
+#> 3  UK minus TPS     -0.02798643                0.1167749
 #>   maximum_absolute_difference
 #> 1                    3.874599
 #> 2                    1.764410
-#> 3                    4.318976
+#> 3                    1.287374
 ```
 
 ``` r

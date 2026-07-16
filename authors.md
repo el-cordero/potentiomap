@@ -6,9 +6,6 @@
 
 ## Citation
 
-Source:
-[`DESCRIPTION`](https://github.com/el-cordero/potentiomap/blob/main/DESCRIPTION)
-
 Cordero E (2026). *potentiomap: Build Potentiometric Surfaces and
 Hydraulic-Gradient Arrows*. R package version 0.2.0,
 <https://el-cordero.github.io/potentiomap/>.

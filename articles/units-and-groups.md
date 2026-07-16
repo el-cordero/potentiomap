@@ -45,9 +45,20 @@ ps_metadata(points)
 #> 
 #> $international_foot_metres
 #> [1] 0.3048
-head(terra::values(points)$Z)
-#> [1] 546.7520 542.9790 562.5328 543.6024 554.4619 556.2008
+knitr::kable(data.frame(
+  well = head(terra::values(points)$Name),
+  groundwater_elevation_ft = head(terra::values(points)$Z)
+))
 ```
+
+| well  | groundwater_elevation_ft |
+|:------|-------------------------:|
+| MW-01 |                 546.7520 |
+| MW-02 |                 542.9790 |
+| MW-03 |                 562.5328 |
+| MW-04 |                 543.6024 |
+| MW-05 |                 554.4619 |
+| MW-06 |                 556.2008 |
 
 The supported length units are metres and international feet, using
 exactly `1 ft = 0.3048 m`. A horizontal CRS does not supply a vertical
@@ -71,18 +82,15 @@ grouped <- ps_interpolate_grouped(
   name_col = "well_id", crs = "EPSG:26916",
   methods = "IDW", grid_res = 400
 )
-grouped$manifest
-#>    event  unit      group_id method input_count retained_count  status
-#> 1 autumn lower autumn__lower    IDW           8              8 success
-#> 2 spring lower spring__lower    IDW           8              8 success
-#> 3 autumn upper autumn__upper    IDW           8              8 success
-#> 4 spring upper spring__upper    IDW           8              8 success
-#>   surface_available warnings errors output_paths
-#> 1              TRUE                             
-#> 2              TRUE                             
-#> 3              TRUE                             
-#> 4              TRUE
+knitr::kable(grouped$manifest)
 ```
+
+| event | unit | group_id | method | input_count | retained_count | status | surface_available | warnings | errors | output_paths |
+|:---|:---|:---|:---|---:|---:|:---|:---|:---|:---|:---|
+| autumn | lower | autumn\_\_lower | IDW | 8 | 8 | success | TRUE |  |  |  |
+| spring | lower | spring\_\_lower | IDW | 8 | 8 | success | TRUE |  |  |  |
+| autumn | upper | autumn\_\_upper | IDW | 8 | 8 | success | TRUE |  |  |  |
+| spring | upper | spring\_\_upper | IDW | 8 | 8 | success | TRUE |  |  |  |
 
 Each row is assigned to exactly one group. A shared template
 standardizes output geometry but does not share observations or fitted

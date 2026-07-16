@@ -65,9 +65,10 @@ data.frame(
 #> 2 transformed projected                 FALSE 500918.2 to 505505.1
 ```
 
-Release 0.1.0 accepts geographic point objects; it does not
-independently prevent interpolation in degrees. That observed behavior
-makes this explicit check important:
+Groundwater points may arrive in geographic coordinates, but
+map-distance support classification rejects longitude/latitude degrees.
+Transform to a suitable projected CRS before distance-based
+interpolation or classification:
 
 ``` r
 
@@ -77,7 +78,8 @@ if (is.lonlat(geographic)) {
 #> Geographic coordinates detected; transform before distance-based interpolation.
 ```
 
-The message above is site guidance, not a fabricated package warning.
+This explicit check also makes horizontal units visible in the analysis
+record.
 
 ## Actual missing-CRS error
 
