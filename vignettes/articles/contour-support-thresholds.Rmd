@@ -101,7 +101,7 @@ threshold_table <- data.frame(
     numeric(1)
   )
 )
-knitr::kable(threshold_table, digits = 1)
+knitr::kable(threshold_table, digits = 2, row.names = FALSE)
 ```
 
 The relative scenario records both the supplied multipliers and the actual
@@ -152,7 +152,7 @@ length_summary <- do.call(rbind, lapply(names(classified), function(scenario) {
     total_length_km = totals$segment_length / 1000
   )
 }))
-knitr::kable(length_summary, digits = 2)
+knitr::kable(length_summary, digits = 2, row.names = FALSE)
 ```
 
 Tighter criteria classify more line length as approximate or unsupported;
