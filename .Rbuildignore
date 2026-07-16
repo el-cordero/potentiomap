@@ -6,6 +6,13 @@
 ^\.Rhistory$
 ^\.RData$
 ^README 2\.md$
+^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^cran-comments\.md$
+^CITATION\.cff$
+^dev$
+^LICENSE$
 ^data-raw$
 ^paper$
 ^potentiomap\.Rcheck$
