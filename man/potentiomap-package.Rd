@@ -19,10 +19,12 @@ Main functions:
 \item \code{\link[=ps_interpolate]{ps_interpolate()}} and \code{\link[=ps_interpolate_grouped]{ps_interpolate_grouped()}} create surfaces.
 \item \code{\link[=ps_diagnostics]{ps_diagnostics()}} and \code{\link[=ps_prediction_support]{ps_prediction_support()}} describe model behavior
 and where predictions have limited observational support.
-\item \code{\link[=ps_contours]{ps_contours()}} inventories requested contour levels.
+\item \code{\link[=ps_contours]{ps_contours()}} inventories requested contour levels, and
+\code{\link[=ps_contour_support]{ps_contour_support()}} divides those lines by user-defined local support.
 \item \code{\link[=ps_flow_arrows]{ps_flow_arrows()}} and \code{\link[=ps_validate_arrows]{ps_validate_arrows()}} create and check local
 negative-gradient symbols.
-\item \code{\link[=ps_quicklook]{ps_quicklook()}} and \code{\link[=ps_export_surfaces]{ps_export_surfaces()}} review and save products.
+\item \code{\link[=ps_quicklook]{ps_quicklook()}}, \code{\link[=ps_export_surfaces]{ps_export_surfaces()}}, and
+\code{\link[=ps_export_contour_support]{ps_export_contour_support()}} review and save products.
 }
 
 Hydraulic-gradient arrows are map symbols derived from the local gradient of

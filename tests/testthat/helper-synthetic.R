@@ -37,3 +37,32 @@ make_curved_surface <- function(n = 40L) {
   names(r) <- "head"
   r
 }
+
+make_contour_support_fixture <- function() {
+  surface <- terra::rast(
+    ncols = 30, nrows = 10, xmin = 0, xmax = 3000,
+    ymin = 0, ymax = 1000, crs = "EPSG:3857"
+  )
+  terra::values(surface) <- 1
+  names(surface) <- "head"
+  points <- terra::vect(
+    data.frame(
+      x = c(400, 600, 600, 400),
+      y = c(400, 400, 600, 600), Z = c(10, 10, 10, 10)
+    ),
+    geom = c("x", "y"), crs = "EPSG:3857"
+  )
+  support <- ps_prediction_support(points, surface = surface)
+  contour <- function(xmin = 0, xmax = 3000, level = 10,
+                      contour_id = "c1", y = 500) {
+    line <- terra::vect(
+      list(rbind(c(xmin, y), c(xmax, y))),
+      type = "lines", crs = terra::crs(surface)
+    )
+    terra::values(line) <- data.frame(
+      level = level, contour_id = contour_id, stringsAsFactors = FALSE
+    )
+    line
+  }
+  list(surface = surface, points = points, support = support, contour = contour)
+}

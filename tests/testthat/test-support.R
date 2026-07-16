@@ -10,7 +10,7 @@ test_that("prediction support classifies hull, distance, mask, and missing cells
   expect_s3_class(support, "potentiomap_support")
   expect_s4_class(support$rasters, "SpatRaster")
   expect_named(support, c("rasters", "lookup", "records", "summary",
-                          "max_distance", "call"))
+                          "max_distance", "points", "call"))
   expect_true(all(c(
     "supported", "outside_training_hull", "beyond_maximum_distance",
     "outside_mask", "prediction_unavailable", "multiple_limitations"

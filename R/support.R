@@ -19,7 +19,8 @@
 #'   warning. The default is `FALSE`.
 #'
 #' @return A `potentiomap_support` list containing `rasters`, a reason-code
-#'   `lookup` table, a cell-level `records` table, `summary`, and `call`.
+#'   `lookup` table, a cell-level `records` table, `summary`, the standardized
+#'   training `points`, and `call`.
 #'   Stable support classes are `supported`, `outside_training_hull`,
 #'   `beyond_maximum_distance`, `outside_mask`, `prediction_unavailable`, and
 #'   `multiple_limitations`.
@@ -155,6 +156,7 @@ ps_prediction_support <- function(points, surface = NULL, template = NULL,
     records = records,
     summary = summary,
     max_distance = max_distance,
+    points = pts,
     call = call
   )
   class(out) <- "potentiomap_support"

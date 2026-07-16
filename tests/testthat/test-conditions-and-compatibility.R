@@ -26,7 +26,9 @@ test_that("exported functions have help topics", {
     ps_interpolate = "ps_interpolate", ps_interpolate_grouped = "ps_interpolate_grouped",
     ps_diagnostics = "ps_diagnostics", ps_surfaces = "ps_surfaces",
     ps_metadata = "ps_metadata", ps_prediction_support = "ps_prediction_support",
-    ps_contours = "ps_contours", ps_flow_arrows = "ps_flow_arrows",
+    ps_contours = "ps_contours", ps_contour_support = "ps_contour_support",
+    ps_export_contour_support = "ps_export_contour_support",
+    ps_flow_arrows = "ps_flow_arrows",
     ps_validate_arrows = "ps_validate_arrows", ps_arrow_vertices = "ps_arrow_vertices",
     ps_quicklook = "ps_quicklook", ps_export_surfaces = "ps_export_surfaces",
     ps_smooth_surface = "ps_smooth_surface", ps_sample_aoi = "ps_sample_aoi"

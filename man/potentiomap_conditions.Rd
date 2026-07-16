@@ -12,6 +12,10 @@
 \alias{potentiomap_kriging_convergence_warning}
 \alias{potentiomap_tps_gcv_boundary_warning}
 \alias{potentiomap_contour_level_warning}
+\alias{potentiomap_contour_support_warning}
+\alias{potentiomap_contour_support_error}
+\alias{potentiomap_contour_threshold_error}
+\alias{potentiomap_contour_uncertainty_error}
 \alias{potentiomap_support_warning}
 \alias{potentiomap_export_error}
 \title{potentiomap condition classes}
@@ -28,6 +32,10 @@ Specific classes include \code{potentiomap_input_error},
 \code{potentiomap_uk_instability_warning},
 \code{potentiomap_kriging_convergence_warning},
 \code{potentiomap_tps_gcv_boundary_warning},
-\code{potentiomap_contour_level_warning}, \code{potentiomap_support_warning}, and
+\code{potentiomap_contour_level_warning},
+\code{potentiomap_contour_support_warning},
+\code{potentiomap_contour_support_error},
+\code{potentiomap_contour_threshold_error},
+\code{potentiomap_contour_uncertainty_error}, \code{potentiomap_support_warning}, and
 \code{potentiomap_export_error}.
 }

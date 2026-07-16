@@ -31,7 +31,8 @@ warning. The default is \code{FALSE}.}
 }
 \value{
 A \code{potentiomap_support} list containing \code{rasters}, a reason-code
-\code{lookup} table, a cell-level \code{records} table, \code{summary}, and \code{call}.
+\code{lookup} table, a cell-level \code{records} table, \code{summary}, the standardized
+training \code{points}, and \code{call}.
 Stable support classes are \code{supported}, \code{outside_training_hull},
 \code{beyond_maximum_distance}, \code{outside_mask}, \code{prediction_unavailable}, and
 \code{multiple_limitations}.

@@ -11,7 +11,11 @@
 #' `potentiomap_uk_instability_warning`,
 #' `potentiomap_kriging_convergence_warning`,
 #' `potentiomap_tps_gcv_boundary_warning`,
-#' `potentiomap_contour_level_warning`, `potentiomap_support_warning`, and
+#' `potentiomap_contour_level_warning`,
+#' `potentiomap_contour_support_warning`,
+#' `potentiomap_contour_support_error`,
+#' `potentiomap_contour_threshold_error`,
+#' `potentiomap_contour_uncertainty_error`, `potentiomap_support_warning`, and
 #' `potentiomap_export_error`.
 #'
 #' @name potentiomap_conditions
@@ -20,7 +24,10 @@
 #'   potentiomap_arrow_endpoint_warning potentiomap_uk_instability_warning
 #'   potentiomap_kriging_convergence_warning
 #'   potentiomap_tps_gcv_boundary_warning potentiomap_contour_level_warning
-#'   potentiomap_support_warning potentiomap_export_error
+#'   potentiomap_contour_support_warning potentiomap_contour_support_error
+#'   potentiomap_contour_threshold_error
+#'   potentiomap_contour_uncertainty_error potentiomap_support_warning
+#'   potentiomap_export_error
 NULL
 
 .ps_condition <- function(message, class, type = c("error", "warning"),
