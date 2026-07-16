@@ -22,60 +22,101 @@ ps_interpolate(
   x = "x",
   y = "y",
   name_col = NULL,
-  crs = NULL
+  crs = NULL,
+  return = c("surfaces", "result"),
+  duplicate_action = c("error", "mean", "median", "first"),
+  allow_geographic = FALSE,
+  uk_coordinate_scaling = c("center_scale", "none"),
+  diagnostic_control = NULL,
+  support = FALSE,
+  support_max_distance = NULL
 )
 }
 \arguments{
-\item{points}{A point \code{SpatVector}, \code{sf} object, or coordinate table with a
-data column to interpolate.}
+\item{points}{A point \code{SpatVector}, \code{sf} object, or coordinate table.}
 
-\item{value}{Data column name when \code{points} is not already standardized.
-Defaults to \code{"Z"}.}
+\item{value}{Data column name when \code{points} is not standardized. Defaults to
+\code{"Z"}.}
 
-\item{methods}{Character vector of interpolation methods. Built-in values are
-\code{"TPS"}, \code{"IDW"}, \code{"OK"}, and \code{"UK"}. Names supplied in \code{custom_methods}
-can also be used.}
+\item{methods}{Character vector containing \code{"TPS"}, \code{"IDW"}, \code{"OK"}, \code{"UK"},
+or names in \code{custom_methods}.}
 
-\item{grid_res}{Output raster cell size in map units.}
+\item{grid_res}{Positive output cell size in projected map units.}
 
-\item{template}{Optional template \code{SpatRaster}; overrides \code{grid_res},
-\code{padding}, and \code{mask} extent construction.}
+\item{template}{Optional one-layer template \code{SpatRaster}; overrides extent
+construction from \code{grid_res}, \code{padding}, and \code{mask}.}
 
-\item{mask}{Optional AOI polygon used to crop and mask output rasters.}
+\item{mask}{Optional polygon mask. A convex hull or supplied mask describes
+the computational domain, not an aquifer boundary.}
 
-\item{padding}{Padding added around the convex hull extent when building a
-template from points.}
+\item{padding}{Nonnegative padding around the template extent.}
 
-\item{idw_power, idw_nmax}{IDW power and maximum neighbors.}
+\item{idw_power, idw_nmax}{Positive IDW power and optional positive maximum
+neighbor count.}
 
-\item{tps_lambda}{Thin-plate spline smoothing parameter. \code{NULL} lets
-\code{fields::Tps()} choose by GCV.}
+\item{tps_lambda}{Optional nonnegative TPS smoothing parameter. \code{NULL} uses
+the selection performed by \code{fields::Tps()}.}
 
-\item{kr_auto_cutoff}{Use automatic variogram cutoff and lag width.}
+\item{kr_auto_cutoff}{Use an automatically derived variogram cutoff and lag
+width.}
 
-\item{kr_cutoff, kr_width}{Manual variogram cutoff and lag width.}
+\item{kr_cutoff, kr_width}{Positive manual variogram values when
+\code{kr_auto_cutoff = FALSE}.}
 
-\item{custom_methods}{Optional named list of custom interpolation functions.
-Each function is called as \code{fun(points, template, grid)} and must return
-either a \code{SpatRaster} matching \code{template} or a numeric vector with one value
-per template cell.}
+\item{custom_methods}{Optional named list of functions called as
+\code{fun(points, template, grid)}. Each must return a matching \code{SpatRaster} or
+one numeric value per template cell.}
 
-\item{x, y, name_col, crs}{Used when \code{points} is a coordinate table.}
+\item{x, y, name_col, crs}{Used for a coordinate table.}
+
+\item{return}{Either \code{"surfaces"} (the backward-compatible named raster list)
+or \code{"result"} for a \link{potentiomap_result}.}
+
+\item{duplicate_action}{Handling for duplicate coordinates: \code{"error"},
+\code{"mean"}, \code{"median"}, or \code{"first"}.}
+
+\item{allow_geographic}{Allow distance calculations in longitude/latitude
+degrees with a classed warning. The default is \code{FALSE}.}
+
+\item{uk_coordinate_scaling}{Either \code{"center_scale"} (the safer default) or
+\code{"none"} for a documented legacy comparison.}
+
+\item{diagnostic_control}{Optional named list overriding heuristic UK warning
+thresholds. Supported names are \code{condition_number_warning},
+\code{predicted_range_ratio_warning}, \code{overshoot_range_ratio_warning},
+\code{warn_on_rank_deficiency}, and \code{warn_on_nonfinite_predictions}.}
+
+\item{support}{Calculate \code{\link[=ps_prediction_support]{ps_prediction_support()}} for the first returned
+surface.}
+
+\item{support_max_distance}{Optional support distance threshold.}
 }
 \value{
-A named list of \code{SpatRaster} surfaces.
+By default, a named list of \code{terra::SpatRaster} surfaces. With
+\code{return = "result"}, a documented \code{potentiomap_result}.
 }
 \description{
-Creates one raster per requested interpolation method. The default method is
-thin-plate spline (\code{"TPS"}). Other built-in methods are inverse distance
-weighting (\code{"IDW"}), ordinary kriging (\code{"OK"}), and universal kriging with
-quadratic drift (\code{"UK"}). Advanced users can also pass named custom
-interpolation functions through \code{custom_methods}.
+Creates one raster for each requested method. Thin-plate splines (\code{"TPS"})
+remain the software default for backward compatibility, but method selection
+should reflect the hydrogeologic setting, monitoring-network geometry,
+spatial trend, sample density, prediction support, validation design, and
+intended map use. Other built-in methods are inverse-distance weighting
+(\code{"IDW"}), ordinary kriging (\code{"OK"}), and universal kriging (\code{"UK"}) with a
+quadratic drift. Named custom functions are also supported.
+}
+\details{
+Requested methods are never silently replaced. Kriging conditions and fit
+information, TPS selection information, prediction ranges, and method
+messages are available in the opt-in structured result.
 }
 \examples{
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-surfaces <- ps_interpolate(pts, grid_res = 100)
-names(surfaces)
+result <- ps_interpolate(
+  pts, methods = c("IDW", "TPS"), grid_res = 150,
+  return = "result", support = TRUE
+)
+ps_surfaces(result)
+ps_diagnostics(result, "TPS")
 }
