@@ -1,0 +1,65 @@
+:root {
+  --pm-ink: #17252d;
+  --pm-muted: #52646d;
+  --pm-blue: #176b87;
+  --pm-blue-soft: #e8f3f6;
+  --pm-warm: #a4492d;
+  --pm-warm-soft: #fff0e8;
+  --pm-border: #d7e1e5;
+}
+
+body { color: var(--pm-ink); }
+
+/* GitHub needs the README logo; pkgdown already provides one in its header. */
+.github-readme-logo { display: none; }
+.figure img, img.r-plt { background: #fff; }
+
+.navbar-brand img { max-height: 42px; width: auto; margin-right: .45rem; }
+
+.pm-hero-title { max-width: 17ch; margin-top: 2.4rem; font-size: clamp(2.1rem, 5vw, 3.1rem); line-height: 1.04; }
+.pm-hero-lede { max-width: 66ch; color: var(--pm-muted); font-size: 1.16rem; }
+.pm-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin: 1.3rem 0 0; }
+.pm-actions .btn { font-weight: 650; }
+
+.pm-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0; padding: 0; list-style: none; }
+.pm-card { border: 1px solid var(--pm-border); border-radius: .75rem; padding: 1.05rem; background: #fff; }
+.pm-card h3 { font-size: 1.05rem; margin-top: 0; }
+
+.pm-science-note {
+  border-left: .35rem solid var(--pm-warm);
+  border-radius: .25rem;
+  background: var(--pm-warm-soft);
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0;
+}
+
+.pm-method-note {
+  border-left: .35rem solid var(--pm-blue);
+  border-radius: .25rem;
+  background: var(--pm-blue-soft);
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0;
+}
+
+.gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+.gallery-card { border: 1px solid var(--pm-border); border-radius: .65rem; overflow: hidden; background: #fff; }
+.gallery-card img { display: block; width: 100%; height: auto; }
+.gallery-card div { padding: .9rem 1rem; }
+.gallery-card h3 { font-size: 1.02rem; margin: 0 0 .35rem; }
+.gallery-card p { font-size: .92rem; color: var(--pm-muted); margin: 0; }
+
+pre { border-radius: .45rem; }
+.table { display: block; overflow-x: auto; }
+.figure-caption, figcaption { color: var(--pm-muted); font-size: .92rem; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #ffbf47; outline-offset: 2px; }
+
+@media (max-width: 900px) {
+  .pm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .page-header .logo { display: block; float: none; width: 108px; margin: 1.2rem auto .9rem; }
+  .pm-hero-title { max-width: none; margin-top: 0; font-size: 2.15rem; hyphens: none; overflow-wrap: normal; word-break: normal; }
+  .pm-grid, .gallery-grid { grid-template-columns: 1fr; }
+  .pm-actions .btn { width: 100%; }
+}

@@ -1,0 +1,142 @@
+---
+title: "Preparing groundwater observations"
+description: "Direct head measurements and every released depth-to-water pathway, with data-frame, sf, and terra inputs."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preparing groundwater observations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white", fig.width = 8, fig.height = 5, dpi = 144, fig.align = "center")
+library(potentiomap)
+library(terra)
+data("synthetic_wells", package = "potentiomap")
+```
+
+The package standardizes groundwater head in `Z` and observation names in
+`Name`. Keep horizontal units, head units, measuring-point corrections, and the
+vertical datum explicit in project metadata. The synthetic examples do not
+claim a field vertical datum.
+
+## Direct groundwater-elevation measurements
+
+```{r direct-head}
+direct <- ps_make_points(
+  synthetic_wells,
+  x = "x", y = "y",
+  value = "gw_elevation",
+  name_col = "well_id",
+  crs = "EPSG:26916"
+)
+head(values(direct)[, c("well_id", "gw_elevation", "Name", "Z")])
+```
+
+## Positive depth to water plus a DEM
+
+`ps_potentiometric_points()` applies:
+
+\[
+\text{groundwater elevation} = \text{land-surface elevation} - \text{depth to water}.
+\]
+
+Positive depth means below land surface. A negative value describes head above
+land surface, but users should verify that convention in the source record.
+
+<figure class="figure">
+  <img src="../depth-to-water-cross-section.png"
+       class="figure-img img-fluid"
+       alt="Groundwater cross-section on a white background. A sloping land surface lies above a horizontal groundwater surface and documented vertical datum. Double-ended dimension arrows show land-surface elevation from datum to land, positive depth to water measured downward from land to groundwater, and groundwater elevation from datum to groundwater. The equation states groundwater elevation equals land-surface elevation minus depth to water.">
+</figure>
+
+```{r dem-pathway}
+data("synthetic_dem", package = "potentiomap")
+from_dem <- ps_potentiometric_points(
+  synthetic_wells,
+  x = "x", y = "y",
+  depth_col = "depth_to_water",
+  surface = synthetic_dem,
+  name_col = "well_id",
+  crs = "EPSG:26916"
+)
+head(values(from_dem)[, c("Name", "surface_elevation", "depth_to_water", "Z")])
+```
+
+The raster and wells must represent compatible horizontal coordinates. Surface
+elevation and depth to water must use the same vertical units.
+
+## Depth to water plus an elevation column
+
+```{r column-pathway}
+from_column <- ps_potentiometric_points(
+  synthetic_wells,
+  x = "x", y = "y",
+  depth_col = "depth_to_water",
+  surface_col = "surface_elevation",
+  name_col = "well_id",
+  crs = "EPSG:26916"
+)
+head(values(from_column)[, c("Name", "surface_elevation", "depth_to_water", "Z")])
+```
+
+## Depth to water plus separate surface-elevation points
+
+Separate surface observations are matched by name when possible; otherwise the
+released function interpolates surface elevation to the depth points with IDW.
+
+```{r separate-surface}
+data("synthetic_surface_points", package = "potentiomap")
+from_separate <- ps_potentiometric_points(
+  synthetic_wells,
+  x = "x", y = "y",
+  depth_col = "depth_to_water",
+  surface = synthetic_surface_points,
+  surface_col = "surface_elevation",
+  name_col = "well_id",
+  surface_name_col = "point_id",
+  crs = "EPSG:26916",
+  idw_power = 2
+)
+head(values(from_separate)[, c("Name", "surface_elevation", "depth_to_water", "Z")])
+```
+
+This pathway adds a surface-interpolation assumption. Record the source-point
+network and do not treat the calculated elevation as more precise than its
+inputs.
+
+## Data frame, sf, and terra inputs
+
+```{r sf-input}
+wells_sf <- sf::st_as_sf(synthetic_wells, coords = c("x", "y"), crs = 26916)
+from_sf <- ps_make_points(
+  wells_sf,
+  value = "gw_elevation",
+  name_col = "well_id"
+)
+c(class = class(from_sf)[1], crs = crs(from_sf, proj = TRUE), rows = nrow(from_sf))
+```
+
+```{r terra-input}
+wells_vect <- vect(synthetic_wells, geom = c("x", "y"), crs = "EPSG:26916")
+from_terra <- ps_make_points(
+  wells_vect,
+  value = "gw_elevation",
+  name_col = "well_id"
+)
+head(values(from_terra)[, c("Name", "Z")])
+```
+
+```{r pathway-check}
+data.frame(
+  pathway = c("direct head", "depth + DEM", "depth + column", "depth + separate points", "sf", "terra"),
+  observations = c(nrow(direct), nrow(from_dem), nrow(from_column), nrow(from_separate), nrow(from_sf), nrow(from_terra)),
+  finite_Z = c(sum(is.finite(values(direct)$Z)), sum(is.finite(values(from_dem)$Z)),
+               sum(is.finite(values(from_column)$Z)), sum(is.finite(values(from_separate)$Z)),
+               sum(is.finite(values(from_sf)$Z)), sum(is.finite(values(from_terra)$Z)) )
+)
+```
+
+Assigning a CRS declares what coordinates already mean; transforming a CRS
+recalculates coordinates. See [input formats and coordinate systems](input-formats-crs.html)
+before interpolating field observations.

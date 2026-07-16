@@ -8,7 +8,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white")
 ```
 
 Groundwater elevation calculated from depth requires an explicit sign and
@@ -29,7 +29,10 @@ points <- ps_potentiometric_points(
   metadata_mode = "strict"
 )
 ps_metadata(points)
-head(terra::values(points)$Z)
+knitr::kable(data.frame(
+  well = head(terra::values(points)$Name),
+  groundwater_elevation_ft = head(terra::values(points)$Z)
+))
 ```
 
 The supported length units are metres and international feet, using exactly
@@ -52,7 +55,7 @@ grouped <- ps_interpolate_grouped(
   name_col = "well_id", crs = "EPSG:26916",
   methods = "IDW", grid_res = 400
 )
-grouped$manifest
+knitr::kable(grouped$manifest)
 ```
 
 Each row is assigned to exactly one group. A shared template standardizes output

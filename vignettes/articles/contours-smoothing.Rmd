@@ -1,0 +1,92 @@
+---
+title: "Contours and surface smoothing"
+description: "Regular and explicit contours plus mean, median, one-pass, and multi-pass focal smoothing with scientific cautions."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Contours and surface smoothing}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white", fig.width = 9, fig.height = 5, dpi = 144, fig.align = "center")
+library(potentiomap)
+library(terra)
+cols <- hcl.colors(64, "RdYlBu", rev = TRUE)
+data("synthetic_wells", package = "potentiomap")
+points <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916")
+surface <- ps_interpolate(points, "Z", "TPS", grid_res = 75,
+                          mask = ps_sample_aoi(), padding = 0)$TPS
+```
+
+## Regular intervals and explicit levels
+
+```{r contour-types}
+regular <- ps_contours(surface, interval = 1)
+explicit <- ps_contours(surface, levels = c(166, 168, 170))
+data.frame(
+  contour_set = c("1-unit interval", "explicit 166, 168, 170"),
+  line_features = c(nrow(regular), nrow(explicit)),
+  attributes = c(paste(names(regular), collapse = ", "),
+                 paste(names(explicit), collapse = ", "))
+)
+```
+
+```{r raw-contours, fig.alt="Synthetic TPS surface shaded from cool low heads to warm high heads, beside a contour-only map with one-unit lines and monitoring locations."}
+par(mfrow = c(1, 2), mar = c(3, 3, 3, 1))
+plot(surface, col = cols, main = "Raw modeled surface")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+plot(ps_sample_aoi(), col = "#f7fafb", border = "#52646d", main = "Raw 1-unit contours")
+plot(regular, add = TRUE, col = "#176b87", lwd = 1.2)
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+```
+
+## Mean and median smoothing
+
+```{r smooth-variants}
+mean_one <- ps_smooth_surface(surface, window_size = 5, method = "mean", iterations = 1)
+median_one <- ps_smooth_surface(surface, window_size = 5, method = "median", iterations = 1)
+mean_three <- ps_smooth_surface(surface, window_size = 5, method = "mean", iterations = 3)
+
+data.frame(
+  surface = c("original", "mean one pass", "median one pass", "mean three passes"),
+  minimum = vapply(list(surface, mean_one, median_one, mean_three), function(x) minmax(x)[1], numeric(1)),
+  maximum = vapply(list(surface, mean_one, median_one, mean_three), function(x) minmax(x)[2], numeric(1)),
+  standard_deviation = vapply(list(surface, mean_one, median_one, mean_three),
+                              function(x) global(x, "sd", na.rm = TRUE)[[1]], numeric(1))
+)
+```
+
+```{r smooth-surfaces, fig.width=10, fig.height=8, fig.alt="Four synthetic modeled surfaces on a common head scale: original TPS, one-pass mean smoothing, one-pass median smoothing, and three-pass mean smoothing."}
+all_surfaces <- list(original = surface, mean_one = mean_one,
+                     median_one = median_one, mean_three = mean_three)
+shared <- range(unlist(lapply(all_surfaces, minmax)), finite = TRUE)
+par(mfrow = c(2, 2), mar = c(3, 3, 3, 1))
+for (nm in names(all_surfaces)) {
+  plot(all_surfaces[[nm]], col = cols, range = shared,
+       main = gsub("_", " ", nm))
+  plot(points, add = TRUE, pch = 21, bg = "white", cex = .5)
+}
+```
+
+```{r smoothed-contours, fig.alt="Original and mean-smoothed TPS surfaces displayed side by side with one-unit contours, showing small changes in contour shape after smoothing."}
+mean_contours <- ps_contours(mean_one, interval = 1)
+par(mfrow = c(1, 2), mar = c(3, 3, 3, 1))
+plot(surface, col = cols, range = shared, main = "Original surface and contours")
+plot(regular, add = TRUE, col = "#17252d")
+plot(mean_one, col = cols, range = shared, main = "Mean-smoothed surface and contours")
+plot(mean_contours, add = TRUE, col = "#17252d")
+```
+
+```{r preserve-footprint}
+data.frame(
+  object = c("original", "smoothed"),
+  missing_cells = c(global(is.na(surface), "sum")[[1]],
+                    global(is.na(mean_one), "sum")[[1]]),
+  same_geometry = c(TRUE, compareGeom(surface, mean_one, stopOnError = FALSE))
+)
+```
+
+<div class="pm-science-note">
+Smoothing changes the modeled surface; it is not an accuracy correction. Retain the unsmoothed result, record the method, window, and number of passes, and review whether local variation is being obscured. Contours derived from a smoothed raster describe that smoothed model, not the original interpolation.
+</div>

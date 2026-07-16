@@ -1,0 +1,130 @@
+---
+title: "Interpolation parameters and common grid geometry"
+description: "See how resolution, padding, masks, IDW controls, TPS smoothing, kriging lags, and templates affect the modeled product."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Interpolation parameters and common grid geometry}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white", fig.width = 9, fig.height = 5, dpi = 144, fig.align = "center")
+library(potentiomap)
+library(terra)
+head_cols <- hcl.colors(64, "RdYlBu", rev = TRUE)
+data("synthetic_wells", package = "potentiomap")
+points <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916")
+aoi <- ps_sample_aoi()
+```
+
+Parameters define the numerical and spatial problem. Record them with each
+monitoring event. More cells or a smoother image do not create new observations.
+
+## Coarse and fine resolution
+
+```{r resolution-build}
+coarse <- ps_interpolate(points, "Z", "TPS", grid_res = 200, mask = aoi, padding = 0)$TPS
+fine <- ps_interpolate(points, "Z", "TPS", grid_res = 50, mask = aoi, padding = 0)$TPS
+data.frame(
+  grid = c("coarse", "fine"),
+  cell_size_m = c(res(coarse)[1], res(fine)[1]),
+  cells = c(ncell(coarse), ncell(fine)),
+  cells_with_values = c(global(coarse, "notNA")[[1]], global(fine, "notNA")[[1]])
+)
+```
+
+```{r resolution-plot, fig.alt="Side-by-side synthetic TPS surfaces at 200-metre and 50-metre cell sizes; both show the same broad head pattern while the finer raster contains more display detail."}
+shared <- range(minmax(coarse), minmax(fine))
+par(mfrow = c(1, 2), mar = c(3, 3, 3, 1))
+plot(coarse, col = head_cols, range = shared, main = "200 m cells")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+plot(fine, col = head_cols, range = shared, main = "50 m cells")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+```
+
+## Padding and the AOI mask
+
+Padding expands the prediction extent around the point or AOI extent. A mask
+then limits the published footprint to the analysis polygon.
+
+```{r padding-build}
+pad_small <- ps_interpolate(points, methods = "IDW", grid_res = 100, padding = 100)$IDW
+pad_large <- ps_interpolate(points, methods = "IDW", grid_res = 100, padding = 700)$IDW
+rbind(
+  small_padding = as.vector(ext(pad_small)),
+  large_padding = as.vector(ext(pad_large))
+)
+```
+
+```{r padding-plot, fig.alt="Side-by-side unmasked IDW rasters with 100-metre and 700-metre padding, showing how padding changes prediction extent beyond the monitoring network."}
+par(mfrow = c(1, 2), mar = c(3, 3, 3, 1))
+plot(pad_small, col = head_cols, main = "100 m padding")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+plot(pad_large, col = head_cols, main = "700 m padding")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+```
+
+Predictions outside the support of the monitoring network are extrapolations,
+regardless of whether a rectangular raster is displayed.
+
+## IDW power and neighbor limit
+
+```{r idw-power}
+idw_1 <- ps_interpolate(points, methods = "IDW", grid_res = 75, mask = aoi,
+                        padding = 0, idw_power = 1, idw_nmax = 15)$IDW
+idw_3 <- ps_interpolate(points, methods = "IDW", grid_res = 75, mask = aoi,
+                        padding = 0, idw_power = 3, idw_nmax = 8)$IDW
+data.frame(
+  setting = c("power 1, nmax 15", "power 3, nmax 8"),
+  minimum = c(minmax(idw_1)[1], minmax(idw_3)[1]),
+  maximum = c(minmax(idw_1)[2], minmax(idw_3)[2])
+)
+```
+
+```{r idw-power-plot, fig.alt="Two synthetic IDW surfaces on a common scale; power one with fifteen neighbors is more regionally blended, while power three with eight neighbors emphasizes nearby wells more strongly."}
+shared <- range(minmax(idw_1), minmax(idw_3))
+par(mfrow = c(1, 2), mar = c(3, 3, 3, 1))
+plot(idw_1, col = head_cols, range = shared, main = "IDW power 1; nmax 15")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+plot(idw_3, col = head_cols, range = shared, main = "IDW power 3; nmax 8")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = .6)
+```
+
+## TPS and kriging controls
+
+```{r tps-kriging-controls}
+tps_fixed <- ps_interpolate(
+  points, methods = "TPS", grid_res = 100, mask = aoi, padding = 0,
+  tps_lambda = 0.001
+)$TPS
+
+ok_manual <- ps_interpolate(
+  points, methods = "OK", grid_res = 100, mask = aoi, padding = 0,
+  kr_auto_cutoff = FALSE, kr_cutoff = 1400, kr_width = 100
+)$OK
+
+data.frame(
+  surface = c("TPS lambda 0.001", "OK cutoff 1400 m; width 100 m"),
+  minimum = c(minmax(tps_fixed)[1], minmax(ok_manual)[1]),
+  maximum = c(minmax(tps_fixed)[2], minmax(ok_manual)[2])
+)
+```
+
+`tps_lambda = NULL` delegates smoothing selection to `fields::Tps()` by GCV.
+Kriging lag choices affect the empirical variogram and fit. Inspect warnings;
+do not treat automatic or manually supplied settings as validation.
+
+## Reuse one template
+
+```{r common-template}
+template <- rast(crs = crs(points), ext = ext(aoi), resolution = 100)
+same_grid <- ps_interpolate(
+  points, methods = c("TPS", "IDW"), template = template, mask = aoi
+)
+compareGeom(same_grid$TPS, same_grid$IDW, stopOnError = FALSE)
+```
+
+Common geometry is essential for cell-by-cell differences and repeated-event
+comparisons. Save the template or its CRS, extent, resolution, origin, and mask
+with the project record.

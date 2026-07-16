@@ -1,0 +1,110 @@
+---
+title: "Five-minute quick start"
+description: "A copy-paste workflow from released synthetic groundwater observations to a surface, contours, quicklook, and hydraulic-gradient arrows."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Five-minute quick start}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white", fig.width = 8, fig.height = 6, dpi = 144, fig.align = "center")
+library(potentiomap)
+library(terra)
+palette_head <- hcl.colors(64, "RdYlBu", rev = TRUE)
+```
+
+This workflow is runnable after `install.packages("potentiomap")`. It uses
+released synthetic data in EPSG:26916. The head values are synthetic elevation
+units rather than field measurements.
+
+## Prepare the observations
+
+```{r prepare-points}
+data("synthetic_wells", package = "potentiomap")
+
+points <- ps_make_points(
+  synthetic_wells,
+  x = "x", y = "y",
+  value = "gw_elevation",
+  name_col = "well_id",
+  crs = "EPSG:26916"
+)
+
+head(values(points)[, c("Name", "Z")])
+```
+
+`Z` is the standardized head field and `Name` identifies each observation.
+
+## Build the surface and contours
+
+```{r interpolate}
+aoi <- ps_sample_aoi()
+surfaces <- ps_interpolate(
+  points,
+  methods = "TPS",
+  grid_res = 100,
+  mask = aoi,
+  padding = 0
+)
+contours <- ps_contours(surfaces$TPS, interval = 1)
+
+data.frame(
+  output = names(surfaces),
+  rows = nrow(surfaces$TPS),
+  columns = ncol(surfaces$TPS),
+  cells_with_values = global(surfaces$TPS, "notNA")[[1]],
+  contour_features = nrow(contours)
+)
+```
+
+## Preserve the native quicklook
+
+```{r quicklook, fig.alt="Native potentiomap quicklook of a synthetic TPS surface, with blue and white one-unit contours and labeled monitoring wells."}
+ps_quicklook(
+  surfaces$TPS,
+  contours = contours,
+  points = points,
+  title = "Synthetic TPS potentiometric surface"
+)
+```
+
+## Derive inferred hydraulic-gradient arrows
+
+```{r flow-objects}
+flow <- ps_flow_arrows(
+  surfaces$TPS,
+  res_factor = 8,
+  scale = 75,
+  min_gradient = 1e-5,
+  endpoint_action = "shorten"
+)
+tips <- ps_arrow_vertices(flow$arrows, which = "last")
+bases <- ps_arrow_vertices(flow$arrows, which = "first")
+
+data.frame(
+  gradient_layers = paste(names(flow$raster), collapse = ", "),
+  arrow_sample_points = nrow(flow$points),
+  arrow_lines = nrow(flow$arrows),
+  tips = nrow(tips),
+  bases = nrow(bases)
+)
+```
+
+```{r flow-map, fig.alt="Synthetic TPS potentiometric surface with dark arrows pointing generally from warmer high modeled heads toward cooler low modeled heads."}
+plot(surfaces$TPS, col = palette_head, main = "Inferred hydraulic-gradient direction")
+plot(contours, add = TRUE, col = "#52646d", lwd = 1)
+bxy <- crds(bases)
+txy <- crds(tips)
+arrows(bxy[, 1], bxy[, 2], txy[, 1], txy[, 2], length = 0.055, col = "#111111", lwd = 1.2)
+plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.75)
+```
+
+<div class="pm-science-note">
+These lines represent direction derived from the interpolated head surface. Their lengths are cartographically scaled. They are not groundwater velocities, travel times, particle paths, or contaminant-transport trajectories.
+</div>
+
+Continue with [preparing observations](preparing-observations.html),
+[comparing interpolation methods](interpolation-methods.html), or
+[exporting GIS-ready products](exporting-products.html).

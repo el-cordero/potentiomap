@@ -8,7 +8,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white")
 ```
 
 potentiomap turns groundwater-level observations into mapped potentiometric
@@ -62,7 +62,10 @@ exports <- ps_export_surfaces(
   result, output_dir, out_stub = "synthetic", points = points,
   vector_format = "gpkg"
 )
-data.frame(method = exports$method, raster = basename(exports$raster))
+knitr::kable(data.frame(
+  method = exports$method,
+  raster = basename(exports$raster)
+))
 ```
 
 A finite raster is not proof that every cell is well supported. Inspect the

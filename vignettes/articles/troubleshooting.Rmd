@@ -1,0 +1,157 @@
+---
+title: "Troubleshooting and common errors"
+description: "Observed potentiomap errors and practical checks for CRS, missing values, duplicates, kriging, grids, arrows, contours, and exports."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Troubleshooting and common errors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white", fig.width = 8, fig.height = 5, dpi = 144)
+library(potentiomap)
+library(terra)
+data("synthetic_wells", package = "potentiomap")
+capture_error <- function(expr) tryCatch(expr, error = function(e) conditionMessage(e))
+```
+
+The messages below are captured from the released package; they are not
+invented examples.
+
+## Input and CRS errors
+
+```{r observed-input-errors}
+data.frame(
+  situation = c("coordinate table without CRS", "missing groundwater-elevation column"),
+  observed_message = c(
+    capture_error(ps_make_points(synthetic_wells, "x", "y", "gw_elevation", "well_id")),
+    capture_error(ps_make_points(synthetic_wells, "x", "y", "not_a_field", "well_id", "EPSG:26916"))
+  )
+)
+```
+
+Check `terra::is.lonlat()` and transform longitude/latitude observations to an
+appropriate projected CRS before distance-based interpolation or support
+classification. Assigning a projected CRS to longitude and latitude numbers is
+not a transformation.
+
+## Too few observations and unsupported methods
+
+```{r observed-interpolation-errors}
+points <- ps_make_points(
+  synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916"
+)
+data.frame(
+  situation = c("four observations", "unknown method"),
+  observed_message = c(
+    capture_error(ps_interpolate(points[1:4], methods = "IDW", grid_res = 100)),
+    capture_error(ps_interpolate(points, methods = "UNKNOWN", grid_res = 100))
+  )
+)
+```
+
+Kriging can also fail or warn when the point count, spatial configuration, lag
+classes, or empirical variogram do not support a stable fit. Preserve the
+actual warning, inspect the variogram and fit, reconsider cutoff and width, and
+do not silently substitute a preferred-looking surface.
+
+## Missing values and duplicate coordinates
+
+`ps_make_points()` drops rows whose coordinate or value cannot be converted to
+a finite number. Compare row counts before and after standardization.
+
+```{r missing-duplicate-check}
+problem <- synthetic_wells
+problem$gw_elevation[2] <- NA
+problem <- rbind(problem, problem[1, ])
+prepared <- ps_make_points(problem, "x", "y", "gw_elevation", "well_id", "EPSG:26916")
+xy <- as.data.frame(crds(prepared))
+data.frame(
+  input_rows = nrow(problem),
+  prepared_rows = nrow(prepared),
+  duplicate_coordinate_rows = sum(duplicated(xy) | duplicated(xy, fromLast = TRUE))
+)
+```
+
+Do not assume coincident observations are interchangeable. Review
+whether duplicates represent repeat readings, nested wells, or data errors;
+resolve them according to the monitoring design before interpolation.
+
+## Smoothing and contour errors
+
+```{r observed-output-errors}
+surface <- ps_interpolate(points, methods = "IDW", grid_res = 100)$IDW
+empty_surface <- surface
+values(empty_surface) <- NA_real_
+data.frame(
+  situation = c("even smoothing window", "surface without finite values"),
+  observed_message = c(
+    capture_error(ps_smooth_surface(surface, window_size = 4)),
+    capture_error(ps_contours(empty_surface, interval = 1))
+  )
+)
+```
+
+If contours are excessively dense or sparse, compare the interval with the
+surface range and head precision. Explicit `levels` can be clearer than a very
+small regular interval.
+
+## AOI, grid size, and memory
+
+Check that observations and the AOI overlap after transformation. An explicit
+overlap check remains part of QA even when the interpolation method can return
+finite predictions away from the monitoring network.
+
+```{r grid-estimate}
+aoi <- ps_sample_aoi()
+width_m <- xmax(aoi) - xmin(aoi)
+height_m <- ymax(aoi) - ymin(aoi)
+resolutions <- c(200, 100, 25, 5)
+data.frame(
+  resolution_m = resolutions,
+  approximate_cells = ceiling(width_m / resolutions) * ceiling(height_m / resolutions)
+)
+```
+
+Cell count grows with the inverse square of cell size. Start with a resolution
+supported by well spacing and intended map scale; test finer grids only when
+there is a defensible need.
+
+## Flat surfaces and arrow density
+
+Flat or nearly flat gradients can be removed by `min_gradient`. Reduce it only
+when small gradients are meaningful relative to measurement and interpolation
+uncertainty. Increase `res_factor` to reduce arrow density; adjust `scale` for
+cartographic length. Neither setting creates additional monitoring information.
+
+## Export checks
+
+- Test `file.access(output_directory, 2) == 0` before a long export.
+- Review `overwrite` behavior and use a deliberate event-specific directory.
+- Keep every `.shp`, `.shx`, `.dbf`, `.prj`, and `.cpg` component together.
+- Read outputs back with `terra::rast()` or `terra::vect()` and compare CRS,
+  dimensions, attribute names, and feature counts.
+- If files become too large, revisit domain extent, raster resolution, number
+  of methods, and whether every intermediate belongs in the deliverable.
+
+## Quick diagnostic table
+
+```{r troubleshooting-table, echo=FALSE}
+knitr::kable(data.frame(
+  symptom = c(
+    "Missing or implausible map",
+    "Kriging fit warning",
+    "Too many or too few contours",
+    "Cluttered or off-map arrows",
+    "Unexpected export contents"
+  ),
+  first_check = c(
+    "CRS, coordinate ranges, AOI overlap, and finite Z values",
+    "Point count, spatial geometry, lag classes, variogram, and conditions",
+    "Surface range, precision, interval, and requested-level manifest",
+    "res_factor, scale, finite support, and endpoint validation",
+    "Output directory, vector format, manifest, and read-back validation"
+  )
+))
+```

@@ -1,0 +1,43 @@
+---
+title: "Citing potentiomap"
+description: "CRAN availability, DOI, package version, license, citation, and BibTeX."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Citing potentiomap}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The website documents **potentiomap 0.2.0**. Version 0.2.0 has been submitted
+to CRAN; use the CRAN page and the installed package citation to confirm the
+currently available release.
+
+```{r release-metadata, echo=FALSE}
+knitr::kable(data.frame(
+  item = c("Website version", "CRAN package", "Permanent DOI", "License"),
+  value = c(
+    "0.2.0",
+    "potentiomap",
+    "10.32614/CRAN.package.potentiomap",
+    "GPL-3"
+  )
+))
+```
+
+- CRAN: <https://CRAN.R-project.org/package=potentiomap>
+- DOI: <https://doi.org/10.32614/CRAN.package.potentiomap>
+- Source: <https://github.com/el-cordero/potentiomap>
+- License: GPL-3
+
+## Recommended citation
+
+Always prefer the result returned by the installed version:
+
+```{r citation-output}
+citation("potentiomap")
+```
+
+The printed citation includes BibTeX output when used through
+`toBibtex(citation("potentiomap"))`. Authorship and availability information
+comes from the installed package metadata; no affiliation or biography is
+added by this website.

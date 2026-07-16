@@ -8,7 +8,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white")
 ```
 
 Different interpolation methods express different assumptions. potentiomap
@@ -56,7 +56,7 @@ fit impossible, in which case the function returns a classed error rather than
 another interpolation method.
 
 ```{r support}
-result$support$summary
+knitr::kable(result$support$summary)
 head(result$support$records)
 ```
 
@@ -74,7 +74,7 @@ classified <- suppressWarnings(ps_contour_support(
   contours, support = result$support,
   supported_distance = 500, approximate_distance = 1200
 ))
-classified$summary
+knitr::kable(classified$summary)
 ```
 
 Distance-derived contour classes describe local observation support. They are

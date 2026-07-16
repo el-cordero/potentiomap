@@ -1,0 +1,65 @@
+---
+title: "Output gallery"
+description: "Actual potentiomap outputs from synthetic data and the attributed USGS public-data example."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Output gallery}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Every image below shows an output generated with `potentiomap`. Synthetic head
+values are labeled as synthetic units and should not be
+interpreted as field elevations. Warm colors represent higher modeled head and
+cool colors represent lower modeled head; contours, symbols, and arrowheads
+provide non-color cues.
+
+<div class="gallery-grid">
+
+<figure class="gallery-card"><img src="../gallery/01-monitoring-network.png" alt="Synthetic monitoring wells distributed inside an irregular area of interest, with point fill progressing from blue lower heads to red higher heads."><div><h3>Monitoring network</h3><p><strong>Method:</strong> released synthetic points. <strong>Units:</strong> UTM metres; synthetic head units. Network geometry conditions every interpolation. <a href="preparing-observations.html">Preparation code</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/02-standardized-points.png" alt="Synthetic well points labeled with standardized observation names inside the area of interest."><div><h3>Standardized potentiometric points</h3><p><strong>Method:</strong> <code>ps_make_points()</code>. <strong>Units:</strong> UTM metres; synthetic head units in <code>Z</code>. <a href="preparing-observations.html">Preparation pathways</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/03-tps-surface.png" alt="Thin-plate spline surface shaded blue at lower synthetic heads and red at higher heads, with monitoring wells."><div><h3>TPS surface</h3><p><strong>Method:</strong> thin-plate spline. <strong>Units:</strong> synthetic head units; 75-metre cells. <a href="interpolation-methods.html">Method comparison</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/04-idw-surface.png" alt="Inverse-distance-weighted surface shaded blue at lower synthetic heads and red at higher heads, with monitoring wells."><div><h3>IDW surface</h3><p><strong>Method:</strong> inverse distance weighting. <strong>Units:</strong> synthetic head units; 75-metre cells. <a href="interpolation-parameters.html">IDW parameters</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/05-ok-surface.png" alt="Ordinary-kriging surface shaded blue at lower synthetic heads and red at higher heads, with monitoring wells."><div><h3>Ordinary-kriging surface</h3><p><strong>Method:</strong> ordinary kriging with the released variogram workflow. <strong>Units:</strong> synthetic head units; 75-metre cells. <a href="interpolation-methods.html">Warnings and comparison</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/06-uk-surface.png" alt="Universal-kriging surface shaded blue at lower synthetic heads and red at higher heads, with monitoring wells."><div><h3>Universal-kriging surface</h3><p><strong>Method:</strong> universal kriging with quadratic drift. <strong>Units:</strong> synthetic head units; 75-metre cells. <a href="interpolation-methods.html">Warnings and comparison</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/07-methods-comparison.png" alt="Four panels compare TPS, IDW, ordinary kriging, and universal kriging using one head scale, the same grid, contours, and wells."><div><h3>Four-method comparison</h3><p><strong>Methods:</strong> TPS, IDW, OK, UK. <strong>Units:</strong> synthetic head units; identical 75-metre cells. No method is universally preferred. <a href="interpolation-methods.html">Full comparison</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/08-contours-only.png" alt="One-unit TPS contours drawn as blue lines over the area of interest with monitoring wells."><div><h3>Contour-only product</h3><p><strong>Method:</strong> <code>ps_contours()</code> from TPS. <strong>Units:</strong> one synthetic head unit. <a href="contours-smoothing.html">Contour settings</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/09-surface-contours.png" alt="TPS modeled surface with dark one-unit contour lines and white monitoring wells."><div><h3>Surface plus contours</h3><p><strong>Method:</strong> TPS and regular contours. <strong>Units:</strong> synthetic head units. <a href="quick-start.html">Quick start</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/10-labeled-wells.png" alt="IDW modeled surface and contours with each synthetic monitoring well labeled by identifier."><div><h3>Surface plus labeled wells</h3><p><strong>Method:</strong> IDW with point labels. <strong>Units:</strong> synthetic head units. Labels connect the map to reviewable observations. <a href="preparing-observations.html">Observation fields</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/11-smoothing-surfaces.png" alt="Three panels compare the original TPS surface, one-pass mean smoothing, and two-pass median smoothing on one head scale."><div><h3>Unsmoothed and smoothed surfaces</h3><p><strong>Methods:</strong> original TPS, focal mean, focal median. <strong>Units:</strong> synthetic head units. Smoothing changes the model. <a href="contours-smoothing.html">Smoothing cautions</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/12-smoothing-contours.png" alt="Original and mean-smoothed TPS surfaces with one-unit contours, displayed side by side."><div><h3>Unsmoothed and smoothed contours</h3><p><strong>Method:</strong> contours before and after focal mean smoothing. <strong>Units:</strong> synthetic head units. <a href="contours-smoothing.html">Retain the original</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/13-gradient-raster.png" alt="Hydraulic-gradient magnitude raster colored from light yellow lower magnitude to dark red higher magnitude, with modeled-head contours."><div><h3>Hydraulic-gradient raster</h3><p><strong>Method:</strong> terrain derivative of the TPS surface. <strong>Units:</strong> head change per horizontal map unit. <a href="flow-arrows.html">Gradient products</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/14-arrows-sparse.png" alt="TPS surface and contours with a sparse set of black arrowheads pointing toward decreasing modeled head."><div><h3>Sparse arrow layout</h3><p><strong>Method:</strong> <code>ps_flow_arrows()</code>, larger <code>res_factor</code>. <strong>Units:</strong> direction from modeled head; length is cartographic. <a href="flow-arrows.html">Arrow controls</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/15-arrows-dense.png" alt="TPS surface and contours with a denser set of black arrowheads pointing toward decreasing modeled head."><div><h3>Dense arrow layout</h3><p><strong>Method:</strong> <code>ps_flow_arrows()</code>, smaller <code>res_factor</code>. <strong>Units:</strong> direction from modeled head; density is not monitoring density. <a href="flow-arrows.html">Arrow controls</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/16-arrow-tips.png" alt="Sparse arrow lines over a TPS surface with orange circular symbols marking the final vertex of each line."><div><h3>Arrow-tip points</h3><p><strong>Method:</strong> <code>ps_arrow_vertices(which = "last")</code>. <strong>Units:</strong> UTM metres. Tips support the downgradient check. <a href="flow-arrows.html">Direction verification</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/17-arrow-bases.png" alt="Sparse arrow lines over a TPS surface with blue square symbols marking the first vertex of each line."><div><h3>Arrow-base points</h3><p><strong>Method:</strong> <code>ps_arrow_vertices(which = "first")</code>. <strong>Units:</strong> UTM metres. <a href="flow-arrows.html">Direction verification</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/18-exported-quicklook.png" alt="Native potentiomap quicklook PNG of the synthetic TPS surface with blue and white contours and labeled wells."><div><h3>Exported native quicklook</h3><p><strong>Method:</strong> <code>ps_export_surfaces()</code> and <code>ps_quicklook()</code>. <strong>Units:</strong> synthetic head units. <a href="exporting-products.html">Export and read back</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/19-repeated-events.png" alt="Three synthetic monitoring-event TPS surfaces shown on the same grid and head scale for January, April, and July 2026."><div><h3>Repeated monitoring events</h3><p><strong>Method:</strong> external R iteration around TPS on a common template. <strong>Units:</strong> synthetic head units. <a href="repeated-events.html">Event workflow</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/20-real-world-network.png" alt="Thirty-six public USGS Stanley Shale wells shown inside a buffered analysis polygon near Hot Springs, Arkansas."><div><h3>Public monitoring network</h3><p><strong>Source:</strong> USGS 2017 Stanley Shale subset. <strong>Units:</strong> NAD83 UTM zone 15N metres. <a href="real-world-usgs.html">Source and filtering</a>.</p></div></figure>
+
+<figure class="gallery-card"><img src="../gallery/21-real-world-surface.png" alt="TPS surface from 36 USGS Stanley Shale wells, with twenty-foot contours and well points, shaded blue at lower and red at higher groundwater-level altitude."><div><h3>Public-data software example</h3><p><strong>Method:</strong> TPS with 20-foot contours. <strong>Units:</strong> feet above NAVD 88; 75-metre cells. This is not the official interpreted surface. <a href="real-world-usgs.html">Complete example</a>.</p></div></figure>
+
+</div>
+
+Hydraulic-gradient arrows in this gallery indicate decreasing modeled head.
+They do not represent groundwater velocity, travel time, particle paths, or
+contaminant transport.

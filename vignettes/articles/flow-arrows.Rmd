@@ -1,0 +1,137 @@
+---
+title: "Hydraulic-gradient arrows"
+description: "Inspect gradient rasters, arrow lines, bases and tips, cartographic controls, filtering, log options, and a programmatic downgradient check."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hydraulic-gradient arrows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white", fig.width = 9, fig.height = 6, dpi = 144, fig.align = "center")
+library(potentiomap)
+library(terra)
+cols <- hcl.colors(64, "RdYlBu", rev = TRUE)
+data("synthetic_wells", package = "potentiomap")
+points <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916")
+surface <- ps_interpolate(points, "Z", "TPS", grid_res = 50,
+                          mask = ps_sample_aoi(), padding = 0)$TPS
+contours <- ps_contours(surface, interval = 1)
+draw_lines <- function(lines, col = "#111111", length = .05) {
+  b <- crds(ps_arrow_vertices(lines, "first"))
+  t <- crds(ps_arrow_vertices(lines, "last"))
+  arrows(b[, 1], b[, 2], t[, 1], t[, 2], length = length, angle = 24, col = col)
+}
+```
+
+`ps_flow_arrows()` derives slope, aspect, gradient magnitude, sampled points,
+and line features from the interpolated raster. Aspect supplies the direction
+toward decreasing modeled head.
+
+```{r flow-products}
+flow <- ps_flow_arrows(
+  surface,
+  res_factor = 8,
+  scale = 75,
+  min_gradient = 1e-5,
+  endpoint_action = "shorten"
+)
+bases <- ps_arrow_vertices(flow$arrows, "first")
+tips <- ps_arrow_vertices(flow$arrows, "last")
+
+data.frame(
+  product = c("gradient raster", "sample points", "arrow lines", "arrow bases", "arrow tips"),
+  layers_or_features = c(nlyr(flow$raster), nrow(flow$points), nrow(flow$arrows), nrow(bases), nrow(tips))
+)
+```
+
+```{r gradient-map, fig.alt="Hydraulic-gradient magnitude raster derived from a synthetic TPS head surface, using a light-yellow to dark-red magnitude scale with head contours overlaid."}
+plot(flow$raster[["igrad"]], col = hcl.colors(64, "YlOrRd"),
+     main = "Hydraulic-gradient magnitude")
+plot(contours, add = TRUE, col = "#52646d", lwd = .8)
+```
+
+```{r arrow-map, fig.alt="Synthetic TPS head surface with contours and black arrowheads pointing toward decreasing modeled head; square blue symbols mark arrow bases and orange circles mark tips."}
+plot(surface, col = cols, main = "Inferred hydraulic-gradient direction")
+plot(contours, add = TRUE, col = "#52646d")
+draw_lines(flow$arrows)
+plot(bases, add = TRUE, pch = 22, bg = "#6ab7cf", cex = .6)
+plot(tips, add = TRUE, pch = 21, bg = "#f08a5d", cex = .6)
+legend("bottomleft", c("base", "tip"), pch = c(22, 21),
+       pt.bg = c("#6ab7cf", "#f08a5d"), bty = "n")
+```
+
+## Verify that sampled tips are downgradient
+
+The check samples the modeled head at every base and tip. Tips outside the
+masked raster are reported and excluded. A 0.01-head-unit tolerance addresses
+raster sampling and the released synthetic data precision; it does not excuse a
+systematic uphill direction.
+
+```{r direction-check}
+base_head <- extract(surface, bases)[, 2]
+tip_head <- extract(surface, tips)[, 2]
+direction_check <- data.frame(
+  arrow_id = seq_len(nrow(flow$arrows)),
+  base_head = base_head,
+  tip_head = tip_head,
+  head_difference = tip_head - base_head
+)
+tolerance <- 0.01
+direction_check$pass <- with(
+  direction_check,
+  is.finite(base_head) & is.finite(tip_head) & tip_head <= base_head + tolerance
+)
+sampled <- is.finite(direction_check$base_head) & is.finite(direction_check$tip_head)
+pass_rate <- mean(direction_check$pass[sampled])
+stopifnot(pass_rate >= 0.95)
+
+head(direction_check, 10)
+```
+
+```{r direction-summary}
+data.frame(
+  arrows = nrow(direction_check),
+  sampled_at_base_and_tip = sum(sampled),
+  tips_outside_surface = sum(!sampled),
+  passes_within_tolerance = sum(direction_check$pass[sampled]),
+  pass_rate_percent = round(100 * pass_rate, 1),
+  tolerance_head_units = tolerance
+)
+```
+
+## Density, scale, filtering, and log options
+
+```{r arrow-variants}
+sparse <- ps_flow_arrows(surface, res_factor = 12, scale = 90,
+                         min_gradient = 1e-5, endpoint_action = "shorten")
+dense <- ps_flow_arrows(surface, res_factor = 5, scale = 60,
+                        min_gradient = 1e-5, endpoint_action = "shorten")
+filtered <- ps_flow_arrows(surface, res_factor = 8, scale = 75,
+                           min_gradient = 0.002, endpoint_action = "shorten")
+logged <- ps_flow_arrows(surface, res_factor = 8, scale = 90,
+                         min_gradient = 1e-5, log_gradient = TRUE,
+                         log_arrow = TRUE, endpoint_action = "shorten")
+data.frame(
+  setting = c("sparse", "dense", "minimum gradient 0.002", "log gradient and length"),
+  lines = c(nrow(sparse$arrows), nrow(dense$arrows), nrow(filtered$arrows), nrow(logged$arrows))
+)
+```
+
+```{r density-scale-map, fig.alt="Two synthetic TPS head maps: a sparse layout with longer cartographically scaled arrows and a denser layout with shorter arrows; both point toward lower modeled head."}
+par(mfrow = c(1, 2), mar = c(3, 3, 3, 1))
+plot(surface, col = cols, main = "res_factor 12; scale 90")
+draw_lines(sparse$arrows, length = .065)
+plot(surface, col = cols, main = "res_factor 5; scale 60")
+draw_lines(dense$arrows, length = .04)
+```
+
+`res_factor` controls sampling density, not monitoring density. `scale` and
+`log_arrow` affect cartographic length. `min_gradient` can remove flat or nearly
+flat areas. Log transformation changes the displayed or stored magnitude; it
+does not convert gradient into velocity.
+
+<div class="pm-science-note">
+Arrows represent inferred hydraulic-gradient direction from the interpolated surface. Arrow length may be cartographically scaled. They are not groundwater velocities, travel times, particle paths, or contaminant-transport trajectories, and the package is not a process-based groundwater-flow model.
+</div>

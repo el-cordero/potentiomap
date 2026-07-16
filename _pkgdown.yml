@@ -10,53 +10,137 @@ template:
       google: Source Sans 3
     heading_font:
       google: Source Sans 3
+    code_font:
+      google: Source Code Pro
+  opengraph:
+    image:
+      src: man/figures/social-preview.png
+      alt: >
+        potentiomap logo beside stylized blue-to-red potentiometric contours
+        and the tagline reproducible groundwater surfaces in R.
 
 home:
-  title: "potentiomap: potentiometric surfaces in R"
+  title: "potentiomap: reproducible potentiometric surfaces in R"
   description: >
     Prepare groundwater observations, interpolate potentiometric surfaces,
-    inspect diagnostics and prediction support, and create contours and
-    hydraulic-gradient arrow symbols.
+    review diagnostics and prediction support, and create GIS-ready contours
+    and hydraulic-gradient symbols.
+
+repo:
+  branch: main
+  url:
+    home: https://github.com/el-cordero/potentiomap/
+    issue: https://github.com/el-cordero/potentiomap/issues/
 
 navbar:
+  bg: primary
+  type: dark
   structure:
-    left: [intro, articles, reference, news]
-    right: [github, issues, search]
+    left: [home, getstarted, examples, guides, reference, news]
+    right: [search, cran, github, lightswitch]
   components:
-    intro:
+    home:
+      text: Home
+      href: index.html
+    getstarted:
       text: Get started
-      href: articles/getting-started.html
-    articles:
-      text: Articles
+      href: articles/quick-start.html
+    examples:
+      text: Examples
       menu:
-        - text: Getting started with potentiomap
+        - text: Start here
+        - text: Five-minute quick start
+          href: articles/quick-start.html
+        - text: Complete groundwater-surface workflow
+          href: articles/exporting-products.html
+        - text: Prepare observations
+        - text: Preparing groundwater observations
+          href: articles/preparing-observations.html
+        - text: Input formats and coordinate systems
+          href: articles/input-formats-crs.html
+        - text: Build surfaces
+        - text: Compare interpolation methods
+          href: articles/interpolation-methods.html
+        - text: Interpolation parameters
+          href: articles/interpolation-parameters.html
+        - text: Custom interpolation functions
+          href: articles/custom-interpolation.html
+        - text: Contours and smoothing
+          href: articles/contours-smoothing.html
+        - text: Create products
+        - text: Hydraulic-gradient arrows
+          href: articles/flow-arrows.html
+        - text: Export GIS-ready products
+          href: articles/exporting-products.html
+        - text: Repeated monitoring events
+          href: articles/repeated-events.html
+        - text: Applied examples
+        - text: Public USGS groundwater example
+          href: articles/real-world-usgs.html
+        - text: Output gallery
+          href: articles/output-gallery.html
+    guides:
+      text: Guides
+      menu:
+        - text: 0.2.0 feature guide
           href: articles/getting-started.html
-        - text: Interpolation diagnostics and prediction support
+        - text: Diagnostics and prediction support
           href: articles/diagnostics-and-support.html
-        - text: Contours and hydraulic-gradient arrows
+        - text: Contour support and arrows
           href: articles/contours-and-arrows.html
-        - text: Units, vertical references, and grouped observations
+        - text: Units, vertical references, and groups
           href: articles/units-and-groups.html
+        - text: Interpretation and limitations
+          href: articles/interpretation-limitations.html
+        - text: Troubleshooting
+          href: articles/troubleshooting.html
+        - text: Citation
+          href: articles/citation.html
     reference:
       text: Reference
       href: reference/index.html
     news:
       text: News
       href: news/index.html
-    github:
-      text: GitHub
-      href: https://github.com/el-cordero/potentiomap
-    issues:
-      text: Issues
-      href: https://github.com/el-cordero/potentiomap/issues
+    cran:
+      text: CRAN
+      href: https://CRAN.R-project.org/package=potentiomap
+      target: _blank
 
 articles:
-  - title: Articles
+  - title: Start here
+    contents:
+      - articles/quick-start
+  - title: Prepare observations
+    contents:
+      - articles/preparing-observations
+      - articles/input-formats-crs
+  - title: Build surfaces
+    contents:
+      - articles/interpolation-methods
+      - articles/interpolation-parameters
+      - articles/custom-interpolation
+      - articles/contours-smoothing
+  - title: Create products
+    contents:
+      - articles/flow-arrows
+      - articles/exporting-products
+      - articles/repeated-events
+  - title: Applied examples
+    contents:
+      - articles/real-world-usgs
+      - articles/output-gallery
+  - title: 0.2.0 guides
     contents:
       - getting-started
       - diagnostics-and-support
       - contours-and-arrows
       - units-and-groups
+  - title: Scientific guidance
+    contents:
+      - articles/interpretation-limitations
+      - articles/troubleshooting
+      - articles/citation
 
 reference:
   - title: Prepare groundwater observations
@@ -105,4 +189,8 @@ reference:
 footer:
   structure:
     left: developed_by
-    right: built_with
+    right: [cran, doi, github, built_with]
+  components:
+    cran: '<a href="https://CRAN.R-project.org/package=potentiomap">CRAN</a>'
+    doi: '<a href="https://doi.org/10.32614/CRAN.package.potentiomap">DOI</a>'
+    github: '<a href="https://github.com/el-cordero/potentiomap">GitHub</a>'

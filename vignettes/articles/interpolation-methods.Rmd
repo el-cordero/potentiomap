@@ -1,0 +1,117 @@
+---
+title: "Comparing TPS, IDW, ordinary kriging, and universal kriging"
+description: "Four released interpolation methods on one projected grid, with common scales, contours, and difference rasters."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing TPS, IDW, ordinary kriging, and universal kriging}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white", fig.width = 9, fig.height = 7, dpi = 144, fig.align = "center")
+library(potentiomap)
+library(terra)
+head_cols <- hcl.colors(64, "RdYlBu", rev = TRUE)
+diff_cols <- hcl.colors(64, "Blue-Red 3", rev = TRUE)
+```
+
+Interpolation choice should reflect monitoring-network geometry, site
+understanding, assumptions, and validation—not visual smoothness alone. This
+comparison holds the observations, projected CRS, area of interest, 100-metre
+grid, raster geometry, and mask constant.
+
+## One common template
+
+```{r common-inputs}
+data("synthetic_wells", package = "potentiomap")
+points <- ps_make_points(
+  synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916"
+)
+aoi <- ps_sample_aoi()
+
+template <- rast(crs = crs(points), ext = ext(aoi), resolution = 100)
+template
+```
+
+## Fit all four released methods
+
+```{r fit-methods}
+surfaces <- ps_interpolate(
+  points,
+  methods = c("TPS", "IDW", "OK", "UK"),
+  template = template,
+  mask = aoi,
+  idw_power = 2,
+  idw_nmax = 15,
+  tps_lambda = NULL,
+  kr_auto_cutoff = TRUE
+)
+names(surfaces)
+```
+
+The displayed TPS or variogram warnings are part of the actual fit. A warning
+does not establish that a model is fit for a consequential decision; inspect
+diagnostics and validate against withheld observations when that decision
+requires it.
+
+```{r method-summaries}
+do.call(rbind, lapply(names(surfaces), function(method) {
+  r <- surfaces[[method]]
+  data.frame(
+    method = method,
+    rows = nrow(r), columns = ncol(r),
+    x_resolution_m = res(r)[1], y_resolution_m = res(r)[2],
+    minimum = minmax(r)[1], maximum = minmax(r)[2]
+  )
+}))
+```
+
+## Surfaces and contours on one head scale
+
+```{r method-maps, fig.width=10, fig.height=9, fig.alt="Four synthetic potentiometric-surface maps for TPS, IDW, ordinary kriging, and universal kriging using one blue-low to red-high head scale, identical grid geometry, one-unit contours, and the same monitoring points."}
+common_range <- range(unlist(lapply(surfaces, minmax)), finite = TRUE)
+contours <- lapply(surfaces, ps_contours, interval = 1)
+
+par(mfrow = c(2, 2), mar = c(3, 3, 3, 1))
+for (method in names(surfaces)) {
+  plot(surfaces[[method]], col = head_cols, range = common_range, main = method)
+  plot(contours[[method]], add = TRUE, col = "#17252d", lwd = .9)
+  plot(points, add = TRUE, pch = 21, bg = "white", cex = .55)
+}
+```
+
+TPS uses a thin-plate spline and its smoothing parameter; IDW is controlled by
+power and neighbor selection. OK estimates a constant-mean geostatistical
+surface, while UK uses the released quadratic drift specification. The package
+fits an empirical variogram for the kriging methods.
+
+## Differences relative to TPS
+
+```{r difference-summary}
+differences <- lapply(surfaces[c("IDW", "OK", "UK")], function(x) x - surfaces$TPS)
+do.call(rbind, lapply(names(differences), function(method) {
+  x <- differences[[method]]
+  data.frame(
+    comparison = paste(method, "minus TPS"),
+    mean_difference = global(x, "mean", na.rm = TRUE)[[1]],
+    mean_absolute_difference = global(abs(x), "mean", na.rm = TRUE)[[1]],
+    maximum_absolute_difference = global(abs(x), "max", na.rm = TRUE)[[1]]
+  )
+}))
+```
+
+```{r difference-maps, fig.width=10, fig.height=4, fig.alt="Three difference rasters showing IDW minus TPS, ordinary kriging minus TPS, and universal kriging minus TPS with a centered blue-white-red difference scale."}
+limit <- max(abs(unlist(lapply(differences, minmax))), na.rm = TRUE)
+par(mfrow = c(1, 3), mar = c(3, 3, 3, 1))
+for (method in names(differences)) {
+  plot(differences[[method]], col = diff_cols, range = c(-limit, limit),
+       main = paste(method, "− TPS"))
+  plot(points, add = TRUE, pch = 21, bg = "white", cex = .45)
+}
+```
+
+No method is universally best. Compare results against hydrogeologic
+boundaries, screened intervals, surface-water controls, network spacing, and an
+appropriate validation strategy. Increased smoothness or visual detail is not
+evidence of increased accuracy.

@@ -25,4 +25,4 @@
 ^doc$
 ^Meta$
 ^inst/logo\.png$
-^man/figures/(arrow_density|arrow_scale|contour_intervals|grid_resolution|interpolation_methods|raster_smoothing|tps_smoothing)\.png$
+^man/figures/(arrow_density|arrow_scale|contour_intervals|grid_resolution|interpolation_methods|raster_smoothing|social-preview|tps_smoothing)\.png$
