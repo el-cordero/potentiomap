@@ -8,7 +8,11 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white")
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.bg = "white",
+  dev.args = list(bg = "white"), fig.width = 8, fig.height = 6,
+  dpi = 144, fig.align = "center"
+)
 ```
 
 Different interpolation methods express different assumptions. potentiomap
@@ -60,6 +64,25 @@ knitr::kable(result$support$summary)
 head(result$support$records)
 ```
 
+```{r support-distance-map, fig.alt="Nearest-observation-distance raster for a synthetic monitoring network, with the training convex hull outlined and observation wells shown as points."}
+distance <- result$support$rasters[["nearest_observation_distance"]]
+
+par(bg = "white")
+terra::plot(
+  distance, col = hcl.colors(64, "YlGnBu"),
+  main = "Local observation support: nearest-well distance"
+)
+terra::plot(
+  terra::convHull(points), add = TRUE, border = "#9b3d2f",
+  lwd = 2, lty = 2
+)
+terra::plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.75)
+legend(
+  "topleft", legend = "Training convex hull", lty = 2, lwd = 2,
+  col = "#9b3d2f", bty = "n"
+)
+```
+
 The convex hull is a description of the training network, not an aquifer
 boundary. Nearest-observation distances require projected coordinates by
 default because longitude and latitude degrees are not linear ground-distance
@@ -76,6 +99,10 @@ classified <- suppressWarnings(ps_contour_support(
 ))
 knitr::kable(classified$summary)
 ```
+
+See the [contour-support threshold comparison](contour-support-thresholds.html)
+for maps showing how tighter, broader, and network-relative distance criteria
+change the same contour lines.
 
 Distance-derived contour classes describe local observation support. They are
 not statistical confidence intervals. An identified uncertainty raster can be

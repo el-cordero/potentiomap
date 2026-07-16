@@ -8,7 +8,11 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white")
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.bg = "white",
+  dev.args = list(bg = "white"), fig.width = 8, fig.height = 6,
+  dpi = 144, fig.align = "center"
+)
 ```
 
 Groundwater elevation calculated from depth requires an explicit sign and
@@ -35,6 +39,36 @@ knitr::kable(data.frame(
 ))
 ```
 
+```{r vertical-reference-plot, fig.alt="Land-surface and calculated groundwater elevations for synthetic wells, with vertical connecting lines representing positive depth to water."}
+point_values <- terra::values(points)
+land_surface_ft <- synthetic_wells$surface_elevation / 0.3048
+order_wells <- order(land_surface_ft)
+x <- seq_along(order_wells)
+
+par(bg = "white")
+plot(
+  x, land_surface_ft[order_wells], type = "n",
+  ylim = range(c(land_surface_ft, point_values$Z)),
+  xlab = "Synthetic wells ordered by land-surface elevation",
+  ylab = "Elevation above synthetic datum (ft)",
+  main = "Vertical reference used to calculate groundwater elevation"
+)
+segments(
+  x, land_surface_ft[order_wells],
+  x, point_values$Z[order_wells],
+  col = "#7b8790", lwd = 1.5
+)
+points(x, land_surface_ft[order_wells], pch = 24, bg = "#c77b30")
+points(x, point_values$Z[order_wells], pch = 21, bg = "#2c7fb8")
+legend(
+  "topleft",
+  legend = c("Land surface", "Groundwater elevation", "Depth to water"),
+  pch = c(24, 21, NA), pt.bg = c("#c77b30", "#2c7fb8", NA),
+  lty = c(NA, NA, 1), col = c("#17252d", "#17252d", "#7b8790"),
+  bty = "n"
+)
+```
+
 The supported length units are metres and international feet, using exactly
 `1 ft = 0.3048 m`. A horizontal CRS does not supply a vertical datum.
 potentiomap records the stated datum but does not transform between vertical
@@ -56,6 +90,28 @@ grouped <- ps_interpolate_grouped(
   methods = "IDW", grid_res = 400
 )
 knitr::kable(grouped$manifest)
+```
+
+```{r grouped-maps, fig.width=10, fig.height=8, fig.alt="Four synthetic IDW surfaces for spring and autumn observations in upper and lower units, displayed with a common modeled-head scale."}
+group_surfaces <- lapply(grouped$results, function(x) x$surfaces$IDW)
+common_range <- range(vapply(
+  group_surfaces,
+  function(x) as.numeric(terra::minmax(x)),
+  numeric(2)
+))
+common_range <- common_range + c(-1, 1) * diff(common_range) * 0.001
+
+old_par <- par(mfrow = c(2, 2), bg = "white", mar = c(3, 3, 3, 4))
+for (group_id in names(group_surfaces)) {
+  terra::plot(
+    group_surfaces[[group_id]],
+    col = hcl.colors(48, "RdYlBu", rev = TRUE),
+    type = "continuous", range = common_range, fill_range = TRUE,
+    plg = list(nice = 5),
+    main = gsub("__", " — ", group_id)
+  )
+}
+par(old_par)
 ```
 
 Each row is assigned to exactly one group. A shared template standardizes output

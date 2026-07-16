@@ -67,6 +67,8 @@ navbar:
           href: articles/custom-interpolation.html
         - text: Contours and smoothing
           href: articles/contours-smoothing.html
+        - text: Compare contour-support thresholds
+          href: articles/contour-support-thresholds.html
         - text: Create products
         - text: Hydraulic-gradient arrows
           href: articles/flow-arrows.html
@@ -121,6 +123,7 @@ articles:
       - articles/interpolation-parameters
       - articles/custom-interpolation
       - articles/contours-smoothing
+      - articles/contour-support-thresholds
   - title: Create products
     contents:
       - articles/flow-arrows

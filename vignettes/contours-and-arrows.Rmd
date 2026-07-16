@@ -8,7 +8,11 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.bg = "white")
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.bg = "white",
+  dev.args = list(bg = "white"), fig.width = 8, fig.height = 6,
+  dpi = 144, fig.align = "center"
+)
 ```
 
 ```{r surface}
@@ -17,7 +21,11 @@ data("synthetic_wells")
 points <- ps_make_points(
   synthetic_wells, "x", "y", "gw_elevation", "well_id", "EPSG:26916"
 )
-surface <- ps_interpolate(points, methods = "IDW", grid_res = 300)$IDW
+aoi <- ps_sample_aoi()
+surface <- suppressWarnings(ps_interpolate(
+  points, methods = "TPS", grid_res = 150, mask = aoi, padding = 0
+)$TPS)
+head_cols <- hcl.colors(64, "RdYlBu", rev = TRUE)
 ```
 
 The default contour result is a line `SpatVector`. A structured result adds an
@@ -25,14 +33,26 @@ inventory of every requested level.
 
 ```{r contours}
 contours <- ps_contours(
-  surface, levels = c(166, 168, 170), return = "result"
+  surface, interval = 1, return = "result"
 )
 contours$manifest
 ```
 
-Explicit levels outside the finite surface range remain in the manifest and
-produce a classed warning. Open lines are not silently closed or converted to
-polygons.
+The one-unit interval produces enough lines to show the TPS surface clearly.
+Use `levels = c(...)` when specific regulatory or interpretive elevations are
+required. Explicit levels outside the finite surface range remain in the
+manifest and produce a classed warning. Open lines are not silently closed or
+converted to polygons.
+
+```{r contour-map, fig.alt="Synthetic thin-plate-spline potentiometric surface shaded blue at lower heads and red at higher heads, with one-unit dark contours and groundwater observation wells."}
+par(bg = "white")
+terra::plot(
+  surface, col = head_cols,
+  main = "TPS surface with one-unit contours"
+)
+terra::plot(contours$contours, add = TRUE, col = "#263845", lwd = 1.2)
+terra::plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.75)
+```
 
 Individual contour lines can be divided where local support changes.
 
@@ -46,10 +66,29 @@ classified <- suppressWarnings(ps_contour_support(
 classified$summary
 ```
 
-```{r contour-support-map, fig.width=7, fig.height=4, fig.alt="Synthetic potentiometric contours divided into solid supported sections and dashed approximate sections, with groundwater observation wells shown as points."}
-plot(classified, show_unsupported = FALSE, legend_position = "topright")
-terra::plot(points, add = TRUE, pch = 20)
+```{r contour-support-map, fig.width=8, fig.height=6, fig.alt="Synthetic potentiometric contours divided into green solid supported sections and orange dashed approximate sections, with groundwater observation wells shown as points."}
+support_colors <- c(supported = "#176b4d", approximate = "#c56a00")
+support_lty <- c(supported = 1, approximate = 2)
+segment_values <- terra::values(classified$segments)
+
+par(bg = "white", fg = "#263845")
+terra::plot(
+  aoi, col = "#f7f5ef", border = "#8b969c",
+  main = "Contour support from user-defined criteria"
+)
+for (support_class in names(support_lty)) {
+  keep <- segment_values$support_class == support_class
+  if (!any(keep)) next
+  terra::plot(
+    classified$segments[keep], add = TRUE,
+    col = support_colors[support_class],
+    lty = support_lty[support_class], lwd = 2
+  )
+}
+terra::plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.7)
 ```
+
+Solid green sections are supported; dashed orange sections are approximate.
 
 The `line_type` field suggests solid, dashed, or dotted symbology while keeping
 the support class and reason as GIS attributes. The classes use thresholds
@@ -58,12 +97,16 @@ that a contour is correct, distance does not prove that it is wrong, and every
 section remains an interpolation from the modeled surface. Coarse support cells
 can shift the apparent solid-to-dashed transition.
 
+The [contour-support threshold comparison](contour-support-thresholds.html)
+applies tight, balanced, broad, and network-relative criteria to the same
+modeled contours so their effects can be compared directly.
+
 Hydraulic-gradient arrows point along the local negative modeled-head gradient.
 The following deliberately uses short, sparse display symbols.
 
 ```{r arrows}
 flow <- ps_flow_arrows(
-  surface, scale = 25, res_factor = 10, endpoint_action = "shorten"
+  surface, scale = 25, res_factor = 8, endpoint_action = "shorten"
 )
 flow$validation_summary
 head(flow$validation)
@@ -73,6 +116,25 @@ head(flow$validation)
 `"shorten"` repeatedly halves their length along the original direction.
 `"drop"` removes failures. `"none"` retains the version 0.1.0 unvalidated
 geometry for comparison. No policy reverses or bends an arrow.
+
+```{r arrow-map, fig.alt="Synthetic TPS potentiometric surface with one-unit contours, groundwater observation wells, and short sparse arrows pointing toward decreasing modeled head."}
+bases <- ps_arrow_vertices(flow$arrows, "first")
+tips <- ps_arrow_vertices(flow$arrows, "last")
+b <- terra::crds(bases)
+t <- terra::crds(tips)
+
+par(bg = "white")
+terra::plot(
+  surface, col = head_cols,
+  main = "Inferred negative-gradient direction"
+)
+terra::plot(contours$contours, add = TRUE, col = "#52646d", lwd = 0.9)
+arrows(
+  b[, 1], b[, 2], t[, 1], t[, 2],
+  length = 0.06, col = "#111111"
+)
+terra::plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.65)
+```
 
 Arrow length is a cartographic convention based on gradient, cell size, and the
 chosen scale. The line is not a velocity, travel time, particle path, or traced
