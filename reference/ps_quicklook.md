@@ -14,7 +14,10 @@ ps_quicklook(
   label_points = TRUE,
   width = 1600,
   height = 1200,
-  res = 180
+  res = 180,
+  contour_units = NULL,
+  label_contours = TRUE,
+  overwrite = TRUE
 )
 ```
 
@@ -22,19 +25,19 @@ ps_quicklook(
 
 - surface:
 
-  A `SpatRaster`.
+  One-layer `SpatRaster`.
 
 - contours:
 
-  Optional contour `SpatVector`.
+  Optional contour `SpatVector` or contour result.
 
 - points:
 
-  Optional observation point `SpatVector`.
+  Optional observation points.
 
 - file:
 
-  Optional PNG output path. When `NULL`, plots to the active device.
+  Optional PNG path. No file is written when `NULL`.
 
 - title:
 
@@ -42,11 +45,23 @@ ps_quicklook(
 
 - label_points:
 
-  Label points with `Name` and `Z`.
+  Label points with `Name` and `Z` when available.
 
 - width, height, res:
 
-  PNG dimensions and resolution.
+  Positive PNG dimensions and resolution.
+
+- contour_units:
+
+  Optional units appended to contour labels.
+
+- label_contours:
+
+  Draw contour labels.
+
+- overwrite:
+
+  Overwrite `file` when it exists.
 
 ## Value
 
@@ -58,7 +73,6 @@ Invisibly returns `file`.
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-#> [inverse distance weighted interpolation]
-ps_quicklook(s$IDW, points = pts, title = "Synthetic IDW")
+surface <- ps_interpolate(pts, methods = "IDW", grid_res = 150)$IDW
+ps_quicklook(surface, points = pts, title = "Synthetic IDW")
 ```

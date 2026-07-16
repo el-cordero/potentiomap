@@ -1,7 +1,7 @@
 # Synthetic surface elevation measurement points
 
-Artificial land-surface elevation points for demonstrating workflows
-that do not start with a DEM raster.
+Artificial land-surface elevation points for analyses that do not start
+with a DEM raster.
 
 ## Usage
 

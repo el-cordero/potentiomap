@@ -1,12 +1,28 @@
 # Make groundwater observation points
 
-Convert a coordinate table, `sf` point object, or `terra` vector to a
-`SpatVector` with standard `Z` and `Name` fields.
+Converts a coordinate table, `sf` point object, or `terra` point vector
+to a `SpatVector` with standard `Z` and `Name` fields. Optional unit and
+vertical reference information is retained as package metadata; a
+horizontal CRS is never interpreted as a vertical datum.
 
 ## Usage
 
 ``` r
-ps_make_points(data, x = "x", y = "y", value, name_col = NULL, crs = NULL)
+ps_make_points(
+  data,
+  x = "x",
+  y = "y",
+  value,
+  name_col = NULL,
+  crs = NULL,
+  metadata = NULL,
+  head_unit = NULL,
+  output_unit = NULL,
+  vertical_datum = NULL,
+  surface_reference = NULL,
+  metadata_mode = c("legacy", "warn", "strict"),
+  invalid_action = c("drop", "error")
+)
 ```
 
 ## Arguments
@@ -14,7 +30,8 @@ ps_make_points(data, x = "x", y = "y", value, name_col = NULL, crs = NULL)
 - data:
 
   A data frame, `sf` object, or
-  [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html).
+  [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
+  containing point observations.
 
 - x, y:
 
@@ -32,11 +49,47 @@ ps_make_points(data, x = "x", y = "y", value, name_col = NULL, crs = NULL)
 
   Coordinate reference system for tabular data, such as `"EPSG:26916"`.
 
+- metadata:
+
+  Optional named list containing scientific metadata.
+
+- head_unit:
+
+  Unit of `value`; accepted spellings represent metres or the
+  international foot.
+
+- output_unit:
+
+  Desired unit of `Z`. When supplied with `head_unit`, values are
+  converted using exactly 1 ft = 0.3048 m.
+
+- vertical_datum:
+
+  Documented vertical datum. It is recorded, not transformed.
+
+- surface_reference:
+
+  Measurement reference, such as `"land_surface"` or
+  `"measuring_point"`.
+
+- metadata_mode:
+
+  One of `"legacy"`, `"warn"`, or `"strict"`. Legacy mode accepts
+  numeric data without metadata; warning mode reports omissions; strict
+  mode rejects them.
+
+- invalid_action:
+
+  Either `"drop"` to report and remove invalid records or `"error"` to
+  stop.
+
 ## Value
 
 A point
 [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
-with standardized attributes.
+with standardized attributes and optional metadata available through
+[`ps_metadata()`](https://el-cordero.github.io/potentiomap/reference/ps_metadata.md).
+The `dropped_records` attribute summarizes invalid observations.
 
 ## Examples
 
@@ -47,7 +100,10 @@ pts <- ps_make_points(
   x = "x", y = "y",
   value = "gw_elevation",
   name_col = "well_id",
-  crs = "EPSG:26916"
+  crs = "EPSG:26916",
+  head_unit = "m", output_unit = "m",
+  vertical_datum = "synthetic example datum",
+  surface_reference = "land_surface"
 )
 pts
 #> class       : SpatVector

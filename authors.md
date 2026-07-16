@@ -6,17 +6,17 @@
 
 ## Citation
 
-Cordero E (2026). *potentiomap: Build Potentiometric Surfaces and Flow
-Arrows*.
-[doi:10.32614/CRAN.package.potentiomap](https://doi.org/10.32614/CRAN.package.potentiomap),
-R package version 0.1.0,
-<https://CRAN.R-project.org/package=potentiomap>.
+Source:
+[`DESCRIPTION`](https://github.com/el-cordero/potentiomap/blob/main/DESCRIPTION)
+
+Cordero E (2026). *potentiomap: Build Potentiometric Surfaces and
+Hydraulic-Gradient Arrows*. R package version 0.2.0,
+<https://el-cordero.github.io/potentiomap/>.
 
     @Manual{,
-      title = {potentiomap: Build Potentiometric Surfaces and Flow Arrows},
+      title = {potentiomap: Build Potentiometric Surfaces and Hydraulic-Gradient Arrows},
       author = {Elvin Cordero},
       year = {2026},
-      note = {R package version 0.1.0},
-      url = {https://CRAN.R-project.org/package=potentiomap},
-      doi = {10.32614/CRAN.package.potentiomap},
+      note = {R package version 0.2.0},
+      url = {https://el-cordero.github.io/potentiomap/},
     }

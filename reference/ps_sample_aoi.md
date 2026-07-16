@@ -12,7 +12,8 @@ ps_sample_aoi()
 
 A
 [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
-polygon in EPSG:26916.
+polygon in EPSG:26916. Coordinates are synthetic and expressed in
+metres.
 
 ## Examples
 

@@ -1,8 +1,9 @@
 # Synthetic groundwater monitoring wells
 
-A real-looking artificial monitoring dataset with coordinates,
-land-surface elevation, depth to water, and calculated groundwater
-elevation.
+A small artificial monitoring dataset with coordinates, land-surface
+elevation, positive depth below land surface, and calculated groundwater
+elevation. Elevations and depths are synthetic metres relative to a
+synthetic example datum.
 
 ## Usage
 
@@ -20,23 +21,23 @@ A data frame with 32 rows and 6 columns:
 
 - x:
 
-  Easting in EPSG:26916 map units.
+  Synthetic easting in EPSG:26916 metres.
 
 - y:
 
-  Northing in EPSG:26916 map units.
+  Synthetic northing in EPSG:26916 metres.
 
 - surface_elevation:
 
-  Land-surface elevation.
+  Synthetic land-surface elevation in metres.
 
 - depth_to_water:
 
-  Depth to groundwater below land surface.
+  Positive depth below land surface in metres.
 
 - gw_elevation:
 
-  Groundwater elevation.
+  Synthetic groundwater elevation in metres.
 
 ## Examples
 

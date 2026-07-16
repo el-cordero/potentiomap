@@ -1,7 +1,10 @@
-# Generate hydraulic-gradient flow arrows
+# Generate hydraulic-gradient arrows
 
-Derives slope, aspect, hydraulic gradient, and downgradient arrows from
-a potentiometric surface raster.
+Derives the local negative modeled-head gradient from a potentiometric
+surface. Arrow direction comes from raster aspect; arrow length is a
+display convention based on gradient, raster resolution, and `scale`.
+Arrows are map symbols, not groundwater velocities, travel times,
+particle paths, or traced groundwater paths.
 
 ## Usage
 
@@ -14,7 +17,12 @@ ps_flow_arrows(
   log_gradient = FALSE,
   log_arrow = FALSE,
   out_dir = NULL,
-  out_stub = "gw"
+  out_stub = "gw",
+  endpoint_action = c("flag", "shorten", "drop", "none"),
+  endpoint_tolerance = 1e-06,
+  endpoint_extraction = c("bilinear", "simple"),
+  max_shortening = 12L,
+  overwrite = TRUE
 )
 ```
 
@@ -22,41 +30,73 @@ ps_flow_arrows(
 
 - surface:
 
-  A groundwater elevation `SpatRaster`.
+  A one-layer groundwater-elevation `SpatRaster`.
 
 - res_factor:
 
-  Factor used to thin arrows by resampling to a coarser grid.
+  Positive integer used to thin arrows on a coarser grid.
 
 - scale:
 
-  Arrow length multiplier.
+  Positive cartographic length multiplier.
 
 - min_gradient:
 
-  Gradients below this value are dropped.
+  Nonnegative gradient threshold.
 
 - log_gradient:
 
-  Store [`log1p()`](https://rdrr.io/r/base/Log.html) transformed
-  gradient in the output raster.
+  Store [`log1p()`](https://rdrr.io/r/base/Log.html) gradient in the
+  returned raster.
 
 - log_arrow:
 
-  Use [`log1p()`](https://rdrr.io/r/base/Log.html) transformed gradient
-  for arrow lengths.
+  Use [`log1p()`](https://rdrr.io/r/base/Log.html) gradient for arrow
+  display length.
 
 - out_dir:
 
-  Optional output directory. When supplied, files are written.
+  Optional output directory. No files are written when `NULL`.
 
 - out_stub:
 
-  File prefix used when writing outputs.
+  Safe file prefix.
+
+- endpoint_action:
+
+  One of `"flag"`, `"shorten"`, `"drop"`, or `"none"`. `"flag"`
+  preserves geometry and warns; `"shorten"` retains direction while
+  reducing failed lines; `"drop"` removes failures; `"none"` reproduces
+  the version 0.1.0 unvalidated geometry.
+
+- endpoint_tolerance:
+
+  Nonnegative head tolerance.
+
+- endpoint_extraction:
+
+  Either `"bilinear"` or `"simple"` raster extraction.
+
+- max_shortening:
+
+  Positive maximum number of length halvings.
+
+- overwrite:
+
+  Overwrite gradient files when `out_dir` is supplied.
 
 ## Value
 
-A list with `raster`, `points`, and `arrows`.
+A list containing at least `raster`, `points`, and `arrows`, plus
+`tips`, `bases`, `validation`, and `validation_summary`.
+
+## Details
+
+Endpoint checking compares each straight line with the supplied raster.
+It can flag, shorten, or drop lines whose tip is nonfinite or higher
+than the base. Shortening retains the original direction and repeatedly
+halves length; arrows are never reversed or bent. A passing check does
+not establish that the interpolated surface is physically correct.
 
 ## Examples
 
@@ -64,19 +104,13 @@ A list with `raster`, `points`, and `arrows`.
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-#> [inverse distance weighted interpolation]
-arrows <- ps_flow_arrows(s$IDW, res_factor = 4, scale = 60)
-arrows$arrows
-#> class       : SpatVector
-#> geometry    : lines
-#> dimensions  : 49, 3  (geometries, attributes)
-#> extent      : 500355.7, 502850.4, 4640185, 4642660  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / UTM zone 16N (EPSG:26916)
-#> names       :     gwe      igrad  aspect
-#> type        :   <num>      <num>   <num>
-#> values      : 169.599 0.00199533 6.89488
-#>                169.23 0.00196999 40.4709
-#>               168.636 0.00183209 77.1184
-#>               ...
+surface <- ps_interpolate(pts, methods = "IDW", grid_res = 150)$IDW
+flow <- ps_flow_arrows(surface, res_factor = 6, scale = 30,
+                       endpoint_action = "shorten")
+#> Warning: 1 hydraulic-gradient arrow endpoint(s) failed validation under `endpoint_action = "shorten"`.
+flow$validation_summary
+#>   endpoint_action arrows_generated arrows_retained finite_support downhill_pass
+#> 1         shorten                9               9              9             8
+#>   failed shortened dropped
+#> 1      1         1       0
 ```

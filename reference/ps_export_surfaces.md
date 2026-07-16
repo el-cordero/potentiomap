@@ -1,6 +1,10 @@
-# Export surfaces, contours, and quicklook PNGs
+# Export potentiometric-surface products
 
-Export surfaces, contours, and quicklook PNGs
+Writes deterministic GeoTIFF, vector, contour-manifest, quicklook,
+support, and diagnostic products only when an output directory is
+supplied. GeoPackage is recommended because it preserves field names and
+supports multiple layers better than shapefiles; the shapefile default
+is retained for compatibility.
 
 ## Usage
 
@@ -13,7 +17,16 @@ ps_export_surfaces(
   points = NULL,
   write_raster = TRUE,
   write_contours = TRUE,
-  write_png = TRUE
+  write_png = TRUE,
+  contour_levels = NULL,
+  vector_format = c("shapefile", "gpkg"),
+  support = NULL,
+  diagnostics = NULL,
+  write_contour_manifest = TRUE,
+  write_support = FALSE,
+  write_diagnostics = FALSE,
+  write_manifest = TRUE,
+  overwrite = TRUE
 )
 ```
 
@@ -21,8 +34,7 @@ ps_export_surfaces(
 
 - surfaces:
 
-  A named list of `SpatRaster` objects, such as the result of
-  [`ps_interpolate()`](https://el-cordero.github.io/potentiomap/reference/ps_interpolate.md).
+  Named raster list or `potentiomap_result`.
 
 - out_dir:
 
@@ -30,23 +42,49 @@ ps_export_surfaces(
 
 - out_stub:
 
-  File prefix.
+  Safe file prefix.
 
 - contour_interval:
 
-  Contour interval.
+  Positive contour interval.
 
 - points:
 
-  Optional observation points to draw on quicklook figures.
+  Optional observation points for quicklooks.
 
 - write_raster, write_contours, write_png:
 
-  Choose which outputs to write.
+  Choose outputs.
+
+- contour_levels:
+
+  Optional explicit levels.
+
+- vector_format:
+
+  Either `"shapefile"` or `"gpkg"`.
+
+- support:
+
+  Optional `potentiomap_support`; defaults to support stored in a
+  structured interpolation result.
+
+- diagnostics:
+
+  Optional diagnostic list; defaults to structured-result diagnostics.
+
+- write_contour_manifest, write_support, write_diagnostics,
+  write_manifest:
+
+  Choose sidecar products.
+
+- overwrite:
+
+  Overwrite existing outputs.
 
 ## Value
 
-A data frame listing written files.
+A data frame describing written files.
 
 ## Examples
 
@@ -54,11 +92,12 @@ A data frame listing written files.
 data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
-s <- ps_interpolate(pts, methods = "IDW", grid_res = 100)
-#> [inverse distance weighted interpolation]
-out <- ps_export_surfaces(s, points = pts, out_dir = tempdir())
-out[] <- lapply(out, basename)
-out
-#>     method             raster            contours            quicklook
-#> IDW    IDW gw_IDW_surface.tif gw_IDW_contours.shp gw_IDW_quicklook.png
+surfaces <- ps_interpolate(pts, methods = "IDW", grid_res = 200)
+ps_export_surfaces(surfaces, tempdir(), points = pts)
+#>   method                             raster                            contours
+#> 1    IDW /tmp/RtmpiVJPaU/gw_IDW_surface.tif /tmp/RtmpiVJPaU/gw_IDW_contours.shp
+#>                              quicklook
+#> 1 /tmp/RtmpiVJPaU/gw_IDW_quicklook.png
+#>                              contour_manifest
+#> 1 /tmp/RtmpiVJPaU/gw_IDW_contour_manifest.csv
 ```

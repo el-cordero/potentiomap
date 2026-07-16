@@ -75,10 +75,7 @@ data("synthetic_wells")
 pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
                       "well_id", "EPSG:26916")
 s <- ps_interpolate(pts, grid_res = 100)
-#> Warning: 
-#> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-#>   (GCV) Generalized Cross-Validation 
-#>    minimum at  right endpoint  lambda  =  1.812476e-05 (eff. df= 30.40003 )
+#> Warning: TPS GCV selected lambda 1.81248e-05 at a search boundary; inspect sensitivity and prediction support.
 smoothed <- ps_smooth_surface(s$TPS, window_size = 5)
 smoothed
 #> class       : SpatRaster
