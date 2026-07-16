@@ -12,10 +12,14 @@
 ^pkgdown$
 ^cran-comments\.md$
 ^CITATION\.cff$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
 ^dev$
 ^LICENSE$
 ^data-raw$
 ^paper$
+^SECURITY\.md$
+^SUPPORT\.md$
 ^potentiomap\.Rcheck$
 ^potentiomap_[0-9].*\.tar\.gz$
 ^doc$
