@@ -95,9 +95,9 @@ pts <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
 surfaces <- ps_interpolate(pts, methods = "IDW", grid_res = 200)
 ps_export_surfaces(surfaces, tempdir(), points = pts)
 #>   method                             raster                            contours
-#> 1    IDW /tmp/RtmpLfMHVD/gw_IDW_surface.tif /tmp/RtmpLfMHVD/gw_IDW_contours.shp
+#> 1    IDW /tmp/RtmpbHazRA/gw_IDW_surface.tif /tmp/RtmpbHazRA/gw_IDW_contours.shp
 #>                              quicklook
-#> 1 /tmp/RtmpLfMHVD/gw_IDW_quicklook.png
+#> 1 /tmp/RtmpbHazRA/gw_IDW_quicklook.png
 #>                              contour_manifest
-#> 1 /tmp/RtmpLfMHVD/gw_IDW_contour_manifest.csv
+#> 1 /tmp/RtmpbHazRA/gw_IDW_contour_manifest.csv
 ```

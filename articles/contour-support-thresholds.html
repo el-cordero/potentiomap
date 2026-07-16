@@ -195,19 +195,17 @@ nearest-neighbor spacing.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">threshold_table</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">threshold_table</span>, digits <span class="op">=</span> <span class="fl">2</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="17%">
-<col width="17%">
-<col width="15%">
-<col width="12%">
-<col width="13%">
-<col width="12%">
-<col width="13%">
+<col width="20%">
+<col width="18%">
+<col width="14%">
+<col width="16%">
+<col width="14%">
+<col width="16%">
 </colgroup>
 <thead><tr class="header">
-<th align="left"></th>
 <th align="left">scenario</th>
 <th align="left">reference</th>
 <th align="right">supported_supplied</th>
@@ -218,39 +216,35 @@ nearest-neighbor spacing.</p>
 <tbody>
 <tr class="odd">
 <td align="left">Tight map-unit criteria</td>
-<td align="left">Tight map-unit criteria</td>
 <td align="left">map_units</td>
-<td align="right">250.0</td>
+<td align="right">250.00</td>
 <td align="right">600.0</td>
-<td align="right">250.0</td>
-<td align="right">600</td>
+<td align="right">250.00</td>
+<td align="right">600.00</td>
 </tr>
 <tr class="even">
 <td align="left">Balanced map-unit criteria</td>
-<td align="left">Balanced map-unit criteria</td>
 <td align="left">map_units</td>
-<td align="right">500.0</td>
+<td align="right">500.00</td>
 <td align="right">1200.0</td>
-<td align="right">500.0</td>
-<td align="right">1200</td>
+<td align="right">500.00</td>
+<td align="right">1200.00</td>
 </tr>
 <tr class="odd">
 <td align="left">Broad map-unit criteria</td>
-<td align="left">Broad map-unit criteria</td>
 <td align="left">map_units</td>
-<td align="right">900.0</td>
+<td align="right">900.00</td>
 <td align="right">1800.0</td>
-<td align="right">900.0</td>
-<td align="right">1800</td>
+<td align="right">900.00</td>
+<td align="right">1800.00</td>
 </tr>
 <tr class="even">
 <td align="left">Network-relative criteria</td>
-<td align="left">Network-relative criteria</td>
 <td align="left">median_nearest_neighbor</td>
-<td align="right">0.8</td>
+<td align="right">0.75</td>
 <td align="right">1.5</td>
-<td align="right">183.5</td>
-<td align="right">367</td>
+<td align="right">183.49</td>
+<td align="right">366.97</td>
 </tr>
 </tbody>
 </table>
@@ -302,7 +296,7 @@ silently.</p>
 <span>    total_length_km <span class="op">=</span> <span class="va">totals</span><span class="op">$</span><span class="va">segment_length</span> <span class="op">/</span> <span class="fl">1000</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">length_summary</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">length_summary</span>, digits <span class="op">=</span> <span class="fl">2</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">scenario</th>

@@ -90,15 +90,15 @@ threshold_table <- data.frame(
     numeric(1)
   )
 )
-knitr::kable(threshold_table, digits = 1)
+knitr::kable(threshold_table, digits = 2, row.names = FALSE)
 ```
 
-|  | scenario | reference | supported_supplied | approximate_supplied | supported_actual_m | approximate_actual_m |
-|:---|:---|:---|---:|---:|---:|---:|
-| Tight map-unit criteria | Tight map-unit criteria | map_units | 250.0 | 600.0 | 250.0 | 600 |
-| Balanced map-unit criteria | Balanced map-unit criteria | map_units | 500.0 | 1200.0 | 500.0 | 1200 |
-| Broad map-unit criteria | Broad map-unit criteria | map_units | 900.0 | 1800.0 | 900.0 | 1800 |
-| Network-relative criteria | Network-relative criteria | median_nearest_neighbor | 0.8 | 1.5 | 183.5 | 367 |
+| scenario | reference | supported_supplied | approximate_supplied | supported_actual_m | approximate_actual_m |
+|:---|:---|---:|---:|---:|---:|
+| Tight map-unit criteria | map_units | 250.00 | 600.0 | 250.00 | 600.00 |
+| Balanced map-unit criteria | map_units | 500.00 | 1200.0 | 500.00 | 1200.00 |
+| Broad map-unit criteria | map_units | 900.00 | 1800.0 | 900.00 | 1800.00 |
+| Network-relative criteria | median_nearest_neighbor | 0.75 | 1.5 | 183.49 | 366.97 |
 
 The relative scenario records both the supplied multipliers and the
 actual calculated map distances. No universal threshold is selected
@@ -161,7 +161,7 @@ length_summary <- do.call(rbind, lapply(names(classified), function(scenario) {
     total_length_km = totals$segment_length / 1000
   )
 }))
-knitr::kable(length_summary, digits = 2)
+knitr::kable(length_summary, digits = 2, row.names = FALSE)
 ```
 
 | scenario                   | support_class | total_length_km |
