@@ -59,6 +59,24 @@ test_that("smoothing validates controls and preserves raster geometry", {
                class = "potentiomap_input_error")
 })
 
+test_that("smoothing supports explicit weights, median, and file output", {
+  r <- make_plane("east")
+  r[1:4] <- NA
+  file <- file.path(tempdir(), "potentiomap-weighted-smoothing.tif")
+  unlink(file)
+  smoothed <- ps_smooth_surface(
+    r, method = "median", weights = matrix(1, 3, 3),
+    preserve_na = FALSE, filename = file
+  )
+  expect_s4_class(smoothed, "SpatRaster")
+  expect_true(file.exists(file))
+  expect_identical(names(smoothed), names(r))
+  expect_error(ps_smooth_surface(r, weights = matrix("a", 3, 3)),
+               class = "potentiomap_input_error")
+  expect_error(ps_smooth_surface(r, na.rm = NA),
+               class = "potentiomap_input_error")
+})
+
 test_that("sample AOI is a projected polygon", {
   aoi <- ps_sample_aoi()
   expect_s4_class(aoi, "SpatVector")

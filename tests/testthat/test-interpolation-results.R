@@ -18,6 +18,11 @@ test_that("legacy and structured interpolation returns remain available", {
   expect_identical(ps_diagnostics(result, "IDW"), result$diagnostics$IDW)
   expect_s3_class(summary(result), "summary.potentiomap_result")
   expect_output(print(result), "observations")
+  expect_output(print(summary(result)), "interpolation summary")
+  expect_identical(ps_diagnostics(result), result$diagnostics)
+  expect_identical(ps_surfaces(result$surfaces), result$surfaces)
+  expect_error(ps_diagnostics(result, "missing"),
+               class = "potentiomap_input_error")
 })
 
 test_that("method and grid controls fail with classed errors", {
