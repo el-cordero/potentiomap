@@ -5,9 +5,8 @@ Date: 2026-07-17
 ## Repository and API
 
 - Original commit: `358185faa657b8c2ef4154c5314ecfede306fe9e`
-- Final commit: no new commit was created; the completed working tree remains
-  based on `358185faa657b8c2ef4154c5314ecfede306fe9e` on local branch
-  `release/0.2.0`.
+- The completed expansion was committed, pushed, and fast-forwarded to `main`;
+  the CRAN resubmission candidate adds the requested README URI correction.
 - Original exports: 18; final exports: 46; new exports: 28.
 - The 28 new names are listed in `API_COMPATIBILITY_REPORT.md`. In addition,
   `ps_interpolate()` was extended with appended trend, covariate, variogram,
@@ -40,34 +39,33 @@ and an offline HTML/DOCX report template with selectable sections.
 - Complete synthetic integration: passed.
 - Extended fixed-seed stress suite: passed.
 - Spelling: zero findings after a reviewed technical word list.
-- URL audit: all 13 external URLs correct.
+- URL audit: all 15 external URLs correct, including both corrected policy
+  links reported by CRAN.
 - Local pkgdown: 174 HTML pages, zero broken local links; desktop and mobile
-  visual QA passed. The site was not deployed.
+  visual QA passed. The version 0.2.0 site was deployed successfully.
 - Performance benchmark: completed; see `PERFORMANCE_REPORT.md`.
 - Reverse dependencies: none registered on the current CRAN index.
 - Exact ordinary check: Status OK.
-- Exact isolated `--as-cran`: 0 errors, 0 warnings, one local old-HTML-Tidy
-  NOTE; all package checks passed.
+- Exact isolated `--as-cran`: 0 errors, 0 warnings, two local host-environment
+  NOTEs (unverifiable host time and old HTML Tidy); all package checks passed.
 
 ## Candidate
 
 - Path: `/Users/ec/Documents/Data/PotentiometricSurfPackage/potentiomap/potentiomap_0.2.0.tar.gz`
-- SHA-256: `9c89c6bffe7018ae786f71cb7f4270862b6f9b6daded8c17b54c14124853ae59`
-- Compressed size: 2,512,158 bytes; installed size: 3,732 KiB; 238 entries.
+- SHA-256: `59428803f2df3485daee06587b9ac933466a2c8e4678b3de78bf685252839a1f`
+- Compressed size: 2,511,956 bytes; installed size: 3,732 KiB; 238 entries.
 - Content inspection found no manuscript, `paper/`, private data, development
   directory, rendered website, nested check output, or generated plotting file.
 
 ## Readiness and unresolved gates
 
 - Ready for maintainer review: **yes**.
-- Ready to commit: **yes, after the maintainer reviews scope and the untracked
-  user-owned `LICENSE`**.
-- Ready to merge: **no**. The uncommitted changes and configured Linux,
-  Windows, macOS, R-devel, Win-builder, and external-service checks remain.
-- Ready to submit to CRAN: **no**. Cross-platform checks, current HTML Tidy,
-  merge-commit rebuild, byte-identical final check, and authorized 0.2.0 site
-  publication remain.
+- Ready to commit and push the URI/OIDC correction: **yes**; the unrelated
+  user-owned `LICENSE` remains untracked.
+- Ready to submit the corrected source archive to CRAN: **yes**, subject to the
+  maintainer's normal resubmission action. The two local NOTEs are explicitly
+  host-environment checks, not package defects.
 
 No manuscript file was modified or analysis run. No out-of-scope downloader,
 GUI, MODFLOW, particle-tracking, transport, pumping-test, budget, or 3-D model
-feature was added. No remote or release action occurred.
+feature was added.

@@ -3,8 +3,8 @@
 Candidate: `/Users/ec/Documents/Data/PotentiometricSurfPackage/potentiomap/potentiomap_0.2.0.tar.gz`
 
 - version: 0.2.0
-- SHA-256: `9c89c6bffe7018ae786f71cb7f4270862b6f9b6daded8c17b54c14124853ae59`
-- compressed size: **2,512,158 bytes**
+- SHA-256: `59428803f2df3485daee06587b9ac933466a2c8e4678b3de78bf685252839a1f`
+- compressed size: **2,511,956 bytes**
 - tar entries: **238**
 
 The archive contains R sources, 11 small synthetic datasets, generated Rd
