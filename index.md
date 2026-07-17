@@ -108,7 +108,9 @@ plans.
   reference](https://el-cordero.github.io/potentiomap/reference/)
 - [Issue tracker](https://github.com/el-cordero/potentiomap/issues)
 - [Contributing
-  guide](https://el-cordero.github.io/potentiomap/CONTRIBUTING.md)
+  guide](https://github.com/el-cordero/potentiomap/blob/main/CONTRIBUTING.md)
+- [Code of
+  Conduct](https://github.com/el-cordero/potentiomap/blob/main/CODE_OF_CONDUCT.md)
 
 Do not post confidential well coordinates, client data, private site
 identifiers, or restricted environmental data in public issues.

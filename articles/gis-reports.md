@@ -15,7 +15,7 @@ style$manifest
 ```
 
     ##                                   file format  layer_type field units
-    ## 1 /tmp/RtmpI4rI6O/file4918249f9c21.sld    sld head_raster  <NA>     m
+    ## 1 /tmp/RtmpVFcSls/file498c17cb059d.sld    sld head_raster  <NA>     m
     ##   break_count              xml_root validated
     ## 1           7 StyledLayerDescriptor      TRUE
 
