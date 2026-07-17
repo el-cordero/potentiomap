@@ -42,6 +42,8 @@ monitoring-network analyses, regional interpolation, depth/profile/section
 products, GIS styles, and offline technical reports. Existing default returns
 and positional calls remain available.
 
-Linux, Windows, R-devel, Win-builder, current-HTML-Tidy, and external macOS
-checks must be completed on the committed candidate before this file is used
-for submission. No submission has been made.
+GitHub Actions passed on Linux with R-release and R-devel, Windows with
+R-release, and macOS with R-release. The Codecov OIDC upload and pkgdown site
+deployment also passed. Separate Win-builder and external macOS services were
+not run. This corrected source archive is ready for CRAN resubmission; no
+resubmission has yet been made.
