@@ -1,8 +1,17 @@
 # Five-minute quick start
 
-This workflow is runnable after `install.packages("potentiomap")`. It
-uses released synthetic data in EPSG:26916. The head values are
-synthetic elevation units rather than field measurements.
+CRAN currently serves `potentiomap` 0.1.0, while this website documents
+0.2.0. Install the website version from GitHub when you need the full
+workflow below:
+
+``` r
+
+install.packages("pak")
+pak::pak("el-cordero/potentiomap")
+```
+
+The example uses released synthetic data in EPSG:26916. The head values
+are synthetic elevation units rather than field measurements.
 
 ## Prepare the observations
 

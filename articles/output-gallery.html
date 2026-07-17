@@ -47,7 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
 <li><h6 class="dropdown-header" data-toc-skip>Start here</h6></li>
     <li><a class="dropdown-item" href="../articles/quick-start.html">Five-minute quick start</a></li>
-    <li><a class="dropdown-item" href="../articles/exporting-products.html">Complete groundwater-surface workflow</a></li>
+    <li><a class="dropdown-item" href="../articles/complete-synthetic-aquifer.html">Complete groundwater-surface workflow</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Prepare observations</h6></li>
     <li><a class="dropdown-item" href="../articles/preparing-observations.html">Preparing groundwater observations</a></li>
     <li><a class="dropdown-item" href="../articles/input-formats-crs.html">Input formats and coordinate systems</a></li>
@@ -64,6 +64,7 @@
     <li><h6 class="dropdown-header" data-toc-skip>Applied examples</h6></li>
     <li><a class="dropdown-item" href="../articles/real-world-usgs.html">Public USGS groundwater example</a></li>
     <li><a class="dropdown-item" href="../articles/output-gallery.html">Output gallery</a></li>
+    <li><a class="dropdown-item" href="../articles/index.html">Browse all articles</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -76,6 +77,7 @@
     <li><a class="dropdown-item" href="../articles/interpretation-limitations.html">Interpretation and limitations</a></li>
     <li><a class="dropdown-item" href="../articles/troubleshooting.html">Troubleshooting</a></li>
     <li><a class="dropdown-item" href="../articles/citation.html">Citation</a></li>
+    <li><a class="dropdown-item" href="../articles/index.html">Browse all articles</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -327,6 +329,109 @@ Public-data software example
 <strong>Units:</strong> feet above NAVD 88; 75-metre cells. This is not
 the official interpreted surface.
 <a href="real-world-usgs.html">Complete example</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/22-observation-qa-events.png" alt="Two panels summarize retained, removed, warning, and error counts from synthetic observation QA and show the selected measurement time for each spring-event well around a noon target."><div>
+<h3>
+Observation QA and event selection
+</h3>
+<p>
+<strong>Methods:</strong> <code><a href="../reference/ps_check_observations.html">ps_check_observations()</a></code> and
+<code><a href="../reference/ps_select_event.html">ps_select_event()</a></code>. <strong>Settings:</strong> nearest
+reading in a three-hour window around noon UTC. A time window does not
+guarantee hydraulic synchroneity.
+<a href="observation-qa-events-screens.html">QA and event workflow</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/23-validation-comparison.png" alt="Observed versus predicted synthetic heads for IDW and TPS beside a bar chart of three-fold validation RMSE, with a dashed one-to-one line."><div>
+<h3>
+Held-out-well validation
+</h3>
+<p>
+<strong>Methods:</strong> IDW and TPS; three-fold direct prediction with
+seed 21. <strong>Units:</strong> synthetic head units. The errors
+describe this held-out-well task, not continuous area-wide accuracy.
+<a href="validation-designs.html">Validation designs</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/24-prediction-support.png" alt="Categorical prediction-support map in green, yellow, and muted red with the synthetic monitoring wells overlaid."><div>
+<h3>
+Prediction support
+</h3>
+<p>
+<strong>Method:</strong> support retained by
+<code><a href="../reference/ps_interpolate.html">ps_interpolate()</a></code>. <strong>Settings:</strong> 300-metre grid
+and declared geometric criteria. Classes describe support, not
+confidence or correctness.
+<a href="diagnostics-and-support.html">Support guidance</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/25-method-disagreement.png" alt="Raster of the absolute modeled-head range between IDW and TPS, colored pale yellow at lower disagreement and dark red at higher disagreement."><div>
+<h3>
+Method disagreement
+</h3>
+<p>
+<strong>Method:</strong> cellwise IDW–TPS range from
+<code><a href="../reference/ps_method_disagreement.html">ps_method_disagreement()</a></code>. <strong>Units:</strong> synthetic
+head units. Method spread is descriptive and is not statistical
+uncertainty. <a href="ensembles-disagreement.html">Ensembles and
+disagreement</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/26-kriging-uncertainty.png" alt="Ordinary-kriging prediction standard error raster colored pale yellow at lower model-conditional error and dark red at higher error, with wells overlaid."><div>
+<h3>
+Model-conditional kriging uncertainty
+</h3>
+<p>
+<strong>Method:</strong> ordinary-kriging prediction standard error.
+<strong>Units:</strong> synthetic head units. It is conditional on the
+fitted covariance model and is not a universal error bound.
+<a href="conditional-simulation.html">Uncertainty scope</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/27-head-change.png" alt="Modeled autumn-minus-spring head-change raster with blue negative changes, red positive changes, and paired synthetic event wells."><div>
+<h3>
+Monitoring-event head change
+</h3>
+<p>
+<strong>Method:</strong> paired wells and common-grid IDW surfaces.
+<strong>Units:</strong> synthetic head units; autumn minus spring.
+Modeled head change is not storage change.
+<a href="monitoring-events.html">Event comparison</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/28-well-influence.png" alt="Bar chart ranking seven synthetic wells by the RMSE difference between a full IDW surface and each leave-one-well surface."><div>
+<h3>
+Leave-one-well influence
+</h3>
+<p>
+<strong>Method:</strong> <code><a href="../reference/ps_well_influence.html">ps_well_influence()</a></code> with IDW and
+400-metre cells. <strong>Units:</strong> synthetic head units. Ranking
+depends on the method, grid, network, and comparison metric.
+<a href="well-influence-network-thinning.html">Network sensitivity</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/29-candidate-network.png" alt="Existing synthetic monitoring wells shown as blue circles, feasible candidates as yellow triangles, and two sequentially selected spatial-coverage candidates as red triangles."><div>
+<h3>
+Candidate monitoring locations
+</h3>
+<p>
+<strong>Method:</strong> sequential spatial-coverage scoring with two
+selections. <strong>Units:</strong> projected metres. Scores do not
+replace access, screen design, feasibility, budget, or permitting
+review. <a href="candidate-locations.html">Candidate constraints</a>.
+</p>
+</div>
+</figure><figure class="gallery-card"><img src="../gallery/30-depth-profile-section.png" alt="Depth to the modeled potentiometric surface with a transect line beside a plot-ready section of modeled head and land elevation, labeled with three-times vertical exaggeration."><div>
+<h3>
+Depth surface and transect section
+</h3>
+<p>
+<strong>Methods:</strong> <code><a href="../reference/ps_depth_to_water_surface.html">ps_depth_to_water_surface()</a></code> and
+<code><a href="../reference/ps_cross_section.html">ps_cross_section()</a></code>. <strong>Units:</strong> synthetic
+metres; section uses declared 3× vertical exaggeration. The section
+samples surfaces and does not invent hydrostratigraphy.
+<a href="profiles-cross-sections.html">Profiles and sections</a>.
 </p>
 </div>
 </figure>

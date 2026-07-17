@@ -38,11 +38,32 @@ Existing surface and contour workflows remain available with their
 ordinary return values. Rich result objects are optional when
 diagnostics, support, and manifests are needed.
 
+![Two synthetic maps: a potentiometric surface with observation wells,
+contours, and model-gradient arrows; and contour segments drawn with
+line patterns for user-defined support
+classes.](reference/figures/home-overview.png)
+
+A reproducible overview from the installed synthetic data: a fitted
+surface (left) and checked model-gradient symbols with contours (right).
+Arrow length is a display convention, not groundwater velocity or a
+traced flow path.
+
 ## Installation
+
+> **Version note:** CRAN currently serves `potentiomap` 0.1.0. This
+> website documents 0.2.0 while that release is being reviewed. Use CRAN
+> for the published release, or install the 0.2.0 source from GitHub
+> when you need the features documented here.
 
 ``` r
 
 install.packages("potentiomap")
+```
+
+``` r
+
+install.packages("pak")
+pak::pak("el-cordero/potentiomap")
 ```
 
 ## Minimal workflow
@@ -111,6 +132,10 @@ plans.
   guide](https://github.com/el-cordero/potentiomap/blob/main/CONTRIBUTING.md)
 - [Code of
   Conduct](https://github.com/el-cordero/potentiomap/blob/main/CODE_OF_CONDUCT.md)
+- [Support
+  guide](https://github.com/el-cordero/potentiomap/blob/main/SUPPORT.md)
+- [Security
+  policy](https://github.com/el-cordero/potentiomap/blob/main/SECURITY.md)
 
 Do not post confidential well coordinates, client data, private site
 identifiers, or restricted environmental data in public issues.

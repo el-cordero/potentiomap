@@ -216,6 +216,118 @@ groundwater-level altitude.](../gallery/21-real-world-surface.png)
 75-metre cells. This is not the official interpreted surface. [Complete
 example](https://el-cordero.github.io/potentiomap/articles/real-world-usgs.md).
 
+![Two panels summarize retained, removed, warning, and error counts from
+synthetic observation QA and show the selected measurement time for each
+spring-event well around a noon
+target.](../gallery/22-observation-qa-events.png)
+
+### Observation QA and event selection
+
+**Methods:**
+[`ps_check_observations()`](https://el-cordero.github.io/potentiomap/reference/ps_check_observations.md)
+and
+[`ps_select_event()`](https://el-cordero.github.io/potentiomap/reference/ps_select_event.md).
+**Settings:** nearest reading in a three-hour window around noon UTC. A
+time window does not guarantee hydraulic synchroneity. [QA and event
+workflow](https://el-cordero.github.io/potentiomap/articles/observation-qa-events-screens.md).
+
+![Observed versus predicted synthetic heads for IDW and TPS beside a bar
+chart of three-fold validation RMSE, with a dashed one-to-one
+line.](../gallery/23-validation-comparison.png)
+
+### Held-out-well validation
+
+**Methods:** IDW and TPS; three-fold direct prediction with seed 21.
+**Units:** synthetic head units. The errors describe this held-out-well
+task, not continuous area-wide accuracy. [Validation
+designs](https://el-cordero.github.io/potentiomap/articles/validation-designs.md).
+
+![Categorical prediction-support map in green, yellow, and muted red
+with the synthetic monitoring wells
+overlaid.](../gallery/24-prediction-support.png)
+
+### Prediction support
+
+**Method:** support retained by
+[`ps_interpolate()`](https://el-cordero.github.io/potentiomap/reference/ps_interpolate.md).
+**Settings:** 300-metre grid and declared geometric criteria. Classes
+describe support, not confidence or correctness. [Support
+guidance](https://el-cordero.github.io/potentiomap/articles/diagnostics-and-support.md).
+
+![Raster of the absolute modeled-head range between IDW and TPS, colored
+pale yellow at lower disagreement and dark red at higher
+disagreement.](../gallery/25-method-disagreement.png)
+
+### Method disagreement
+
+**Method:** cellwise IDW–TPS range from
+[`ps_method_disagreement()`](https://el-cordero.github.io/potentiomap/reference/ps_method_disagreement.md).
+**Units:** synthetic head units. Method spread is descriptive and is not
+statistical uncertainty. [Ensembles and
+disagreement](https://el-cordero.github.io/potentiomap/articles/ensembles-disagreement.md).
+
+![Ordinary-kriging prediction standard error raster colored pale yellow
+at lower model-conditional error and dark red at higher error, with
+wells overlaid.](../gallery/26-kriging-uncertainty.png)
+
+### Model-conditional kriging uncertainty
+
+**Method:** ordinary-kriging prediction standard error. **Units:**
+synthetic head units. It is conditional on the fitted covariance model
+and is not a universal error bound. [Uncertainty
+scope](https://el-cordero.github.io/potentiomap/articles/conditional-simulation.md).
+
+![Modeled autumn-minus-spring head-change raster with blue negative
+changes, red positive changes, and paired synthetic event
+wells.](../gallery/27-head-change.png)
+
+### Monitoring-event head change
+
+**Method:** paired wells and common-grid IDW surfaces. **Units:**
+synthetic head units; autumn minus spring. Modeled head change is not
+storage change. [Event
+comparison](https://el-cordero.github.io/potentiomap/articles/monitoring-events.md).
+
+![Bar chart ranking seven synthetic wells by the RMSE difference between
+a full IDW surface and each leave-one-well
+surface.](../gallery/28-well-influence.png)
+
+### Leave-one-well influence
+
+**Method:**
+[`ps_well_influence()`](https://el-cordero.github.io/potentiomap/reference/ps_well_influence.md)
+with IDW and 400-metre cells. **Units:** synthetic head units. Ranking
+depends on the method, grid, network, and comparison metric. [Network
+sensitivity](https://el-cordero.github.io/potentiomap/articles/well-influence-network-thinning.md).
+
+![Existing synthetic monitoring wells shown as blue circles, feasible
+candidates as yellow triangles, and two sequentially selected
+spatial-coverage candidates as red
+triangles.](../gallery/29-candidate-network.png)
+
+### Candidate monitoring locations
+
+**Method:** sequential spatial-coverage scoring with two selections.
+**Units:** projected metres. Scores do not replace access, screen
+design, feasibility, budget, or permitting review. [Candidate
+constraints](https://el-cordero.github.io/potentiomap/articles/candidate-locations.md).
+
+![Depth to the modeled potentiometric surface with a transect line
+beside a plot-ready section of modeled head and land elevation, labeled
+with three-times vertical
+exaggeration.](../gallery/30-depth-profile-section.png)
+
+### Depth surface and transect section
+
+**Methods:**
+[`ps_depth_to_water_surface()`](https://el-cordero.github.io/potentiomap/reference/ps_depth_to_water_surface.md)
+and
+[`ps_cross_section()`](https://el-cordero.github.io/potentiomap/reference/ps_cross_section.md).
+**Units:** synthetic metres; section uses declared 3× vertical
+exaggeration. The section samples surfaces and does not invent
+hydrostratigraphy. [Profiles and
+sections](https://el-cordero.github.io/potentiomap/articles/profiles-cross-sections.md).
+
 Hydraulic-gradient arrows in this gallery indicate decreasing modeled
 head. They do not represent groundwater velocity, travel time, particle
 paths, or contaminant transport.

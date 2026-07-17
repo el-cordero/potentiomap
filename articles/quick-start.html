@@ -47,7 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
 <li><h6 class="dropdown-header" data-toc-skip>Start here</h6></li>
     <li><a class="dropdown-item" href="../articles/quick-start.html">Five-minute quick start</a></li>
-    <li><a class="dropdown-item" href="../articles/exporting-products.html">Complete groundwater-surface workflow</a></li>
+    <li><a class="dropdown-item" href="../articles/complete-synthetic-aquifer.html">Complete groundwater-surface workflow</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Prepare observations</h6></li>
     <li><a class="dropdown-item" href="../articles/preparing-observations.html">Preparing groundwater observations</a></li>
     <li><a class="dropdown-item" href="../articles/input-formats-crs.html">Input formats and coordinate systems</a></li>
@@ -64,6 +64,7 @@
     <li><h6 class="dropdown-header" data-toc-skip>Applied examples</h6></li>
     <li><a class="dropdown-item" href="../articles/real-world-usgs.html">Public USGS groundwater example</a></li>
     <li><a class="dropdown-item" href="../articles/output-gallery.html">Output gallery</a></li>
+    <li><a class="dropdown-item" href="../articles/index.html">Browse all articles</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -76,6 +77,7 @@
     <li><a class="dropdown-item" href="../articles/interpretation-limitations.html">Interpretation and limitations</a></li>
     <li><a class="dropdown-item" href="../articles/troubleshooting.html">Troubleshooting</a></li>
     <li><a class="dropdown-item" href="../articles/citation.html">Citation</a></li>
+    <li><a class="dropdown-item" href="../articles/index.html">Browse all articles</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -108,14 +110,18 @@
 
     
     
-<p>This workflow is runnable after
-<code>install.packages("potentiomap")</code>. It uses released synthetic
-data in EPSG:26916. The head values are synthetic elevation units rather
-than field measurements.</p>
+<p>CRAN currently serves <code>potentiomap</code> 0.1.0, while this
+website documents 0.2.0. Install the website version from GitHub when
+you need the full workflow below:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"el-cordero/potentiomap"</span><span class="op">)</span></span></code></pre></div>
+<p>The example uses released synthetic data in EPSG:26916. The head
+values are synthetic elevation units rather than field measurements.</p>
 <div class="section level2">
 <h2 id="prepare-the-observations">Prepare the observations<a class="anchor" aria-label="anchor" href="#prepare-the-observations"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"synthetic_wells"</span>, package <span class="op">=</span> <span class="st">"potentiomap"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">points</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_make_points.html">ps_make_points</a></span><span class="op">(</span></span>
@@ -140,7 +146,7 @@ identifies each observation.</p>
 <div class="section level2">
 <h2 id="build-the-surface-and-contours">Build the surface and contours<a class="anchor" aria-label="anchor" href="#build-the-surface-and-contours"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aoi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_sample_aoi.html">ps_sample_aoi</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">surfaces</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_interpolate.html">ps_interpolate</a></span><span class="op">(</span></span>
 <span>  <span class="va">points</span>,</span>
@@ -166,7 +172,7 @@ identifies each observation.</p>
 <div class="section level2">
 <h2 id="preserve-the-native-quicklook">Preserve the native quicklook<a class="anchor" aria-label="anchor" href="#preserve-the-native-quicklook"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ps_quicklook.html">ps_quicklook</a></span><span class="op">(</span></span>
 <span>  <span class="va">surfaces</span><span class="op">$</span><span class="va">TPS</span>,</span>
 <span>  contours <span class="op">=</span> <span class="va">contours</span>,</span>
@@ -178,7 +184,7 @@ identifies each observation.</p>
 <div class="section level2">
 <h2 id="derive-inferred-hydraulic-gradient-arrows">Derive inferred hydraulic-gradient arrows<a class="anchor" aria-label="anchor" href="#derive-inferred-hydraulic-gradient-arrows"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">flow</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ps_flow_arrows.html">ps_flow_arrows</a></span><span class="op">(</span></span>
 <span>  <span class="va">surfaces</span><span class="op">$</span><span class="va">TPS</span>,</span>
 <span>  res_factor <span class="op">=</span> <span class="fl">8</span>,</span>
@@ -198,7 +204,7 @@ identifies each observation.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;      gradient_layers arrow_sample_points arrow_lines tips bases</span></span>
 <span><span class="co">#&gt; 1 gwe, igrad, aspect                  13          13   13    13</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">surfaces</span><span class="op">$</span><span class="va">TPS</span>, col <span class="op">=</span> <span class="va">palette_head</span>, main <span class="op">=</span> <span class="st">"Inferred hydraulic-gradient direction"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">contours</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"#52646d"</span>, lwd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">bxy</span> <span class="op">&lt;-</span> <span class="fu">crds</span><span class="op">(</span><span class="va">bases</span><span class="op">)</span></span>

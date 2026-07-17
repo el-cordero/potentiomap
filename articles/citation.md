@@ -1,20 +1,29 @@
 # Citing potentiomap
 
-The website documents **potentiomap 0.2.0**. Version 0.2.0 has been
-submitted to CRAN; use the CRAN page and the installed package citation
-to confirm the currently available release.
+The website documents **potentiomap 0.2.0**. CRAN currently distributes
+**0.1.0** while 0.2.0 is under review. The GitHub repository provides
+the 0.2.0 source; use the installed package citation to identify the
+version used in an analysis.
 
-| item            | value                             |
-|:----------------|:----------------------------------|
-| Website version | 0.2.0                             |
-| CRAN package    | potentiomap                       |
-| Permanent DOI   | 10.32614/CRAN.package.potentiomap |
-| License         | GPL-3                             |
+| item                 | value                             |
+|:---------------------|:----------------------------------|
+| Website version      | 0.2.0                             |
+| Current CRAN version | 0.1.0                             |
+| Permanent DOI        | 10.32614/CRAN.package.potentiomap |
+| License              | GPL-3                             |
 
 - CRAN: <https://CRAN.R-project.org/package=potentiomap>
 - DOI: <https://doi.org/10.32614/CRAN.package.potentiomap>
 - Source: <https://github.com/el-cordero/potentiomap>
 - License: GPL-3
+
+To install the website version while CRAN remains at 0.1.0:
+
+``` r
+
+install.packages("pak")
+pak::pak("el-cordero/potentiomap")
+```
 
 ## Recommended citation
 

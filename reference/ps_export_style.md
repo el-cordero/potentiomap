@@ -70,8 +70,8 @@ r <- terra::rast(nrows = 2, ncols = 2, xmin = 0, xmax = 2,
 file <- tempfile(fileext = ".qml")
 style <- ps_export_style(r, file, "qml", "head_raster", units = "m")
 style$manifest
-#>                                   file format  layer_type field units
-#> 1 /tmp/RtmpCNDnfY/file1d4c6e721625.qml    qml head_raster  <NA>     m
+#>                                  file format  layer_type field units
+#> 1 /tmp/Rtmpn0KTQ2/file1d85a49b9eb.qml    qml head_raster  <NA>     m
 #>   break_count xml_root validated
 #> 1           7     qgis      TRUE
 # GIS versions can render optional style properties differently.

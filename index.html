@@ -49,7 +49,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
 <li><h6 class="dropdown-header" data-toc-skip>Start here</h6></li>
     <li><a class="dropdown-item" href="articles/quick-start.html">Five-minute quick start</a></li>
-    <li><a class="dropdown-item" href="articles/exporting-products.html">Complete groundwater-surface workflow</a></li>
+    <li><a class="dropdown-item" href="articles/complete-synthetic-aquifer.html">Complete groundwater-surface workflow</a></li>
     <li><h6 class="dropdown-header" data-toc-skip>Prepare observations</h6></li>
     <li><a class="dropdown-item" href="articles/preparing-observations.html">Preparing groundwater observations</a></li>
     <li><a class="dropdown-item" href="articles/input-formats-crs.html">Input formats and coordinate systems</a></li>
@@ -66,6 +66,7 @@
     <li><h6 class="dropdown-header" data-toc-skip>Applied examples</h6></li>
     <li><a class="dropdown-item" href="articles/real-world-usgs.html">Public USGS groundwater example</a></li>
     <li><a class="dropdown-item" href="articles/output-gallery.html">Output gallery</a></li>
+    <li><a class="dropdown-item" href="articles/index.html">Browse all articles</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -78,6 +79,7 @@
     <li><a class="dropdown-item" href="articles/interpretation-limitations.html">Interpretation and limitations</a></li>
     <li><a class="dropdown-item" href="articles/troubleshooting.html">Troubleshooting</a></li>
     <li><a class="dropdown-item" href="articles/citation.html">Citation</a></li>
+    <li><a class="dropdown-item" href="articles/index.html">Browse all articles</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
@@ -121,17 +123,26 @@
 <li>checked downgradient arrow symbols, open GIS styles, and technical reports.</li>
 </ul>
 <p>Existing surface and contour workflows remain available with their ordinary return values. Rich result objects are optional when diagnostics, support, and manifests are needed.</p>
+<figure class="pm-home-overview"><img src="reference/figures/home-overview.png" alt="Two synthetic maps: a potentiometric surface with observation wells, contours, and model-gradient arrows; and contour segments drawn with line patterns for user-defined support classes."><figcaption>
+A reproducible overview from the installed synthetic data: a fitted surface (left) and checked model-gradient symbols with contours (right). Arrow length is a display convention, not groundwater velocity or a traced flow path.
+</figcaption></figure>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<blockquote>
+<p><strong>Version note:</strong> CRAN currently serves <code>potentiomap</code> 0.1.0. This website documents 0.2.0 while that release is being reviewed. Use CRAN for the published release, or install the 0.2.0 source from GitHub when you need the features documented here.</p>
+</blockquote>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"potentiomap"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"el-cordero/potentiomap"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="minimal-workflow">Minimal workflow<a class="anchor" aria-label="anchor" href="#minimal-workflow"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://el-cordero.github.io/potentiomap/">potentiomap</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"synthetic_wells"</span><span class="op">)</span></span>
@@ -171,6 +182,8 @@
 <li><a href="https://github.com/el-cordero/potentiomap/issues" class="external-link">Issue tracker</a></li>
 <li><a href="https://github.com/el-cordero/potentiomap/blob/main/CONTRIBUTING.md" class="external-link">Contributing guide</a></li>
 <li><a href="https://github.com/el-cordero/potentiomap/blob/main/CODE_OF_CONDUCT.md" class="external-link">Code of Conduct</a></li>
+<li><a href="https://github.com/el-cordero/potentiomap/blob/main/SUPPORT.md" class="external-link">Support guide</a></li>
+<li><a href="https://github.com/el-cordero/potentiomap/blob/main/SECURITY.md" class="external-link">Security policy</a></li>
 </ul>
 <p>Do not post confidential well coordinates, client data, private site identifiers, or restricted environmental data in public issues.</p>
 <p>Run <code>citation("potentiomap")</code> for the package citation.</p>
@@ -211,7 +224,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Elvin Cordero <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Elvin Cordero <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0003-8025-283X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -220,6 +233,7 @@
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=potentiomap" class="external-link"><img src="https://www.r-pkg.org/badges/version/potentiomap" alt="CRAN status"></a></li>
 <li><a href="https://doi.org/10.32614/CRAN.package.potentiomap" class="external-link"><img src="https://img.shields.io/badge/DOI-10.32614%2FCRAN.package.potentiomap-blue" alt="DOI"></a></li>
+<li><a href="https://github.com/el-cordero/potentiomap/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/el-cordero/potentiomap/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 
