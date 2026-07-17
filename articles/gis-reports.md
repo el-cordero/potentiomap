@@ -14,8 +14,8 @@ style <- ps_export_style(r, style_file, "sld", "head_raster", units = "m")
 style$manifest
 ```
 
-    ##                                   file format  layer_type field units
-    ## 1 /tmp/RtmpVFcSls/file498c17cb059d.sld    sld head_raster  <NA>     m
+    ##                                  file format  layer_type field units
+    ## 1 /tmp/RtmpvzznLm/file48bc32d4c63.sld    sld head_raster  <NA>     m
     ##   break_count              xml_root validated
     ## 1           7 StyledLayerDescriptor      TRUE
 
