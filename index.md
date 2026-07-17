@@ -2,27 +2,37 @@
 
 ![potentiomap hexagon logo](reference/figures/logo.png)
 
-`potentiomap` turns groundwater-level observations into reproducible
-potentiometric surfaces, contours, prediction-support products, and
-hydraulic-gradient symbols for review in R or GIS.
+`potentiomap` turns groundwater-level observations into auditable
+potentiometric-surface analyses, validation and uncertainty summaries,
+monitoring-network diagnostics, contours, profiles, and GIS-ready
+products.
 
 [Website](https://el-cordero.github.io/potentiomap/) ·
 [Examples](https://el-cordero.github.io/potentiomap/articles/) ·
 [Function
 reference](https://el-cordero.github.io/potentiomap/reference/) ·
+[Source](https://github.com/el-cordero/potentiomap) ·
+[Issues](https://github.com/el-cordero/potentiomap/issues) ·
 [CRAN](https://CRAN.R-project.org/package=potentiomap)
 
 ## What it provides
 
 - preparation of measured head and positive depth-to-water observations;
+- observation QA, monitoring-event selection, and explicit screen
+  grouping;
 - TPS, IDW, ordinary-kriging, universal-kriging, and custom
   interpolation;
-- retained diagnostics and local prediction-support information;
+- variograms, external drift, validation, nested tuning, and retained
+  fits;
+- prediction support, model-conditional uncertainty, method ensembles,
+  and disagreement summaries;
+- event change, vertical gradients, well influence, network thinning,
+  and constrained candidate-site ranking;
+- depth surfaces, transect profiles, and plot-ready cross-sections;
 - contours that can be divided into supported, approximate, and
   unsupported sections using user-defined criteria;
-- checked downgradient arrow symbols and GIS-ready exports; and
-- explicit grouping for separate monitoring events or water-bearing
-  units.
+- checked downgradient arrow symbols, open GIS styles, and technical
+  reports.
 
 Existing surface and contour workflows remain available with their
 ordinary return values. Rich result objects are optional when
@@ -65,6 +75,8 @@ section:
   support](https://el-cordero.github.io/potentiomap/articles/diagnostics-and-support.html)
 - [Contours and hydraulic-gradient
   arrows](https://el-cordero.github.io/potentiomap/articles/contours-and-arrows.html)
+- [Expanded 0.2.0 validation, uncertainty, monitoring-network, and
+  profile articles](https://el-cordero.github.io/potentiomap/articles/)
 - [Public USGS groundwater
   example](https://el-cordero.github.io/potentiomap/articles/real-world-usgs.html)
 - [Output
@@ -82,6 +94,12 @@ result; they do not establish that a contour is correct and are not
 statistical confidence intervals. Hydraulic-gradient arrows point toward
 decreasing modeled head. Their length is a display convention, not
 velocity, travel time, or a traced groundwater path.
+
+Cross-validation describes its recorded prediction task, not automatic
+area-wide map accuracy. Kriging variance is model conditional, method
+spread is not statistical uncertainty, modeled head change is not
+storage change, and network rankings are not globally optimal drilling
+plans.
 
 ## Documentation and support
 

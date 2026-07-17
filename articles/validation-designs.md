@@ -1,0 +1,18 @@
+# Leave-one-out, spatial-block, and independent validation
+
+Leave-one-out asks how a measured location is predicted by nearly the
+full network. Spatial blocks ask about transfer into separated areas.
+Independent validation uses a separate sample and is not
+cross-validation.
+[`ps_validate()`](https://el-cordero.github.io/potentiomap/reference/ps_validate.md)
+records exact training IDs, holdouts, support, failed predictions,
+seeds, and partition hashes. Compare designs only after stating the
+intended prediction task; none is automatically area-wide map accuracy.
+
+``` r
+
+loocv <- ps_validate(points, "IDW", "loocv", prediction_mode="direct")
+blocks <- ps_validate(points, "IDW", "spatial_block", folds=5, seed=9)
+independent <- ps_validate(points, "IDW", "independent",
+                           validation_points=validation_points)
+```

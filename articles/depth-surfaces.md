@@ -1,0 +1,13 @@
+# Depth to water and depth to a potentiometric surface
+
+Depth equals land-surface elevation minus head after explicit geometry,
+unit, and datum checks. Negative values are retained for review rather
+than clipped. They can reflect artesian conditions, discharge, local
+interpolation behavior, measurement or DEM uncertainty, or incompatible
+references. A confined potentiometric surface is not relabeled a water
+table.
+
+``` r
+
+depth <- ps_depth_to_water_surface(head, dem, surface_type="potentiometric")
+```

@@ -2,27 +2,55 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  articles/candidate-locations: candidate-locations.html
   articles/citation: citation.html
+  articles/comparing-methods: comparing-methods.html
+  articles/complete-synthetic-aquifer: complete-synthetic-aquifer.html
+  articles/conditional-simulation: conditional-simulation.html
   articles/contour-support-thresholds: contour-support-thresholds.html
+  articles/contour-uncertainty: contour-uncertainty.html
   contours-and-arrows: contours-and-arrows.html
   articles/contours-smoothing: contours-smoothing.html
   articles/custom-interpolation: custom-interpolation.html
+  articles/depth-surfaces: depth-surfaces.html
   diagnostics-and-support: diagnostics-and-support.html
+  articles/directional-variograms: directional-variograms.html
+  articles/ensembles-disagreement: ensembles-disagreement.html
   articles/exporting-products: exporting-products.html
+  articles/external-drift: external-drift.html
   articles/flow-arrows: flow-arrows.html
   getting-started: getting-started.html
+  gis-reports: gis-reports.html
+  articles/gis-styles: gis-styles.html
   articles/input-formats-crs: input-formats-crs.html
   articles/interpolation-methods: interpolation-methods.html
   articles/interpolation-parameters: interpolation-parameters.html
   articles/interpretation-limitations: interpretation-limitations.html
+  articles/monitoring-events: monitoring-events.html
+  monitoring-network: monitoring-network.html
+  articles/nested-tuning: nested-tuning.html
+  observation-checks: observation-checks.html
+  articles/observation-qa-events-screens: observation-qa-events-screens.html
   articles/output-gallery: output-gallery.html
   articles/preparing-observations: preparing-observations.html
+  articles/profiles-cross-sections: profiles-cross-sections.html
+  profiles-depth: profiles-depth.html
   articles/quick-start: quick-start.html
   articles/real-world-usgs: real-world-usgs.html
+  articles/regional-interpolation: regional-interpolation.html
   articles/repeated-events: repeated-events.html
+  articles/surface-sensitivity: surface-sensitivity.html
+  articles/technical-reports: technical-reports.html
+  temporal-vertical: temporal-vertical.html
   articles/troubleshooting: troubleshooting.html
+  uncertainty-support: uncertainty-support.html
   units-and-groups: units-and-groups.html
-last_built: 2026-07-16T16:57Z
+  articles/validation-designs: validation-designs.html
+  validation-methods: validation-methods.html
+  variograms-trends: variograms-trends.html
+  articles/vertical-gradient-sign: vertical-gradient-sign.html
+  articles/well-influence-network-thinning: well-influence-network-thinning.html
+last_built: 2026-07-17T16:43Z
 urls:
   reference: https://el-cordero.github.io/potentiomap/reference
   article: https://el-cordero.github.io/potentiomap/articles

@@ -101,6 +101,65 @@
   arrows](https://el-cordero.github.io/potentiomap/articles/contours-and-arrows.md):
 - [Units, vertical references, and grouped groundwater
   observations](https://el-cordero.github.io/potentiomap/articles/units-and-groups.md):
+- [Preparing and checking groundwater
+  observations](https://el-cordero.github.io/potentiomap/articles/observation-checks.md):
+- [Validating and comparing interpolation
+  methods](https://el-cordero.github.io/potentiomap/articles/validation-methods.md):
+- [Variograms, anisotropy, and external
+  drift](https://el-cordero.github.io/potentiomap/articles/variograms-trends.md):
+- [Prediction support, surface uncertainty, and contour
+  uncertainty](https://el-cordero.github.io/potentiomap/articles/uncertainty-support.md):
+- [Temporal head change and vertical hydraulic
+  gradients](https://el-cordero.github.io/potentiomap/articles/temporal-vertical.md):
+- [Monitoring-network sensitivity and candidate
+  locations](https://el-cordero.github.io/potentiomap/articles/monitoring-network.md):
+- [Surface profiles, depth to water, and
+  cross-sections](https://el-cordero.github.io/potentiomap/articles/profiles-depth.md):
+- [Exporting GIS products and technical
+  reports](https://el-cordero.github.io/potentiomap/articles/gis-reports.md):
+
+### Expanded analysis articles
+
+- [Observation QA, event selection, and screen
+  grouping](https://el-cordero.github.io/potentiomap/articles/observation-qa-events-screens.md):
+- [Leave-one-out, spatial-block, and independent
+  validation](https://el-cordero.github.io/potentiomap/articles/validation-designs.md):
+- [Nested tuning without information
+  leakage](https://el-cordero.github.io/potentiomap/articles/nested-tuning.md):
+- [Comparing TPS, IDW, OK, and
+  UK](https://el-cordero.github.io/potentiomap/articles/comparing-methods.md):
+- [Ensembles versus method
+  disagreement](https://el-cordero.github.io/potentiomap/articles/ensembles-disagreement.md):
+- [Conditional simulation and model-conditional
+  uncertainty](https://el-cordero.github.io/potentiomap/articles/conditional-simulation.md):
+- [Pointwise contour uncertainty versus approximate
+  contours](https://el-cordero.github.io/potentiomap/articles/contour-uncertainty.md):
+- [Comparing monitoring
+  events](https://el-cordero.github.io/potentiomap/articles/monitoring-events.md):
+- [Vertical-gradient sign
+  conventions](https://el-cordero.github.io/potentiomap/articles/vertical-gradient-sign.md):
+- [Well influence and network
+  thinning](https://el-cordero.github.io/potentiomap/articles/well-influence-network-thinning.md):
+- [Candidate monitoring locations and design
+  constraints](https://el-cordero.github.io/potentiomap/articles/candidate-locations.md):
+- [Grid, boundary, and parameter
+  sensitivity](https://el-cordero.github.io/potentiomap/articles/surface-sensitivity.md):
+- [Directional variograms and
+  anisotropy](https://el-cordero.github.io/potentiomap/articles/directional-variograms.md):
+- [Universal kriging with hydrogeologic
+  covariates](https://el-cordero.github.io/potentiomap/articles/external-drift.md):
+- [Interpolation within user-defined hydrogeologic
+  regions](https://el-cordero.github.io/potentiomap/articles/regional-interpolation.md):
+- [Depth to water and depth to a potentiometric
+  surface](https://el-cordero.github.io/potentiomap/articles/depth-surfaces.md):
+- [Profiles and
+  cross-sections](https://el-cordero.github.io/potentiomap/articles/profiles-cross-sections.md):
+- [QGIS and SLD style
+  exports](https://el-cordero.github.io/potentiomap/articles/gis-styles.md):
+- [Building a technical analysis
+  report](https://el-cordero.github.io/potentiomap/articles/technical-reports.md):
+- [Complete synthetic aquifer
+  example](https://el-cordero.github.io/potentiomap/articles/complete-synthetic-aquifer.md):
 
 ### Scientific guidance
 

@@ -43,6 +43,37 @@ Main functions:
   [`ps_export_contour_support()`](https://el-cordero.github.io/potentiomap/reference/ps_export_contour_support.md)
   review and save products.
 
+- [`ps_check_observations()`](https://el-cordero.github.io/potentiomap/reference/ps_check_observations.md),
+  [`ps_select_event()`](https://el-cordero.github.io/potentiomap/reference/ps_select_event.md),
+  and
+  [`ps_screen_groups()`](https://el-cordero.github.io/potentiomap/reference/ps_screen_groups.md)
+  document observation, timing, and screen-selection decisions.
+
+- [`ps_validate()`](https://el-cordero.github.io/potentiomap/reference/ps_validate.md),
+  [`ps_compare_methods()`](https://el-cordero.github.io/potentiomap/reference/ps_compare_methods.md),
+  and
+  [`ps_tune_interpolation()`](https://el-cordero.github.io/potentiomap/reference/ps_tune_interpolation.md)
+  evaluate explicit prediction tasks without calling them map truth.
+
+- [`ps_surface_uncertainty()`](https://el-cordero.github.io/potentiomap/reference/ps_surface_uncertainty.md)
+  and
+  [`ps_contour_uncertainty()`](https://el-cordero.github.io/potentiomap/reference/ps_contour_uncertainty.md)
+  retain model-conditional or resampling assumptions.
+
+- [`ps_head_change()`](https://el-cordero.github.io/potentiomap/reference/ps_head_change.md),
+  [`ps_vertical_gradient()`](https://el-cordero.github.io/potentiomap/reference/ps_vertical_gradient.md),
+  [`ps_well_influence()`](https://el-cordero.github.io/potentiomap/reference/ps_well_influence.md),
+  and
+  [`ps_network_thinning()`](https://el-cordero.github.io/potentiomap/reference/ps_network_thinning.md)
+  support event and monitoring-network review.
+
+- [`ps_surface_profile()`](https://el-cordero.github.io/potentiomap/reference/ps_surface_profile.md),
+  [`ps_cross_section()`](https://el-cordero.github.io/potentiomap/reference/ps_cross_section.md),
+  [`ps_export_style()`](https://el-cordero.github.io/potentiomap/reference/ps_export_style.md),
+  and
+  [`ps_report()`](https://el-cordero.github.io/potentiomap/reference/ps_report.md)
+  create review and exchange products.
+
 Hydraulic-gradient arrows are map symbols derived from the local
 gradient of a modeled surface. Their lengths are display conventions.
 They are not traced groundwater paths, groundwater velocities, or travel

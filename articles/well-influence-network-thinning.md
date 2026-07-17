@@ -1,0 +1,15 @@
+# Well influence and network thinning
+
+Leave-one-well influence compares fixed-geometry reduced fits with a
+full reference and extracts the held-out residual. Influence can arise
+from location, network geometry, local gradient, unique hydrogeologic
+information, or an anomalous value; it does not classify a well as
+erroneous. Network thinning separates held-out predictive error from
+descriptive difference against the full-network surface and records
+duplicate retained sets.
+
+``` r
+
+influence <- ps_well_influence(points, "TPS", grid_res=100)
+thin <- ps_network_thinning(points, retain=c(.75,.5), repeats=20, seed=5)
+```

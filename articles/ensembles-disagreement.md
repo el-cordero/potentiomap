@@ -1,0 +1,16 @@
+# Ensembles versus method disagreement
+
+[`ps_surface_ensemble()`](https://el-cordero.github.io/potentiomap/reference/ps_surface_ensemble.md)
+combines geometrically and vertically compatible head surfaces using
+explicit weights or summary statistics.
+[`ps_method_disagreement()`](https://el-cordero.github.io/potentiomap/reference/ps_method_disagreement.md)
+maps range, spread, pairwise head differences, and circular
+down-gradient direction differences. Component spread describes method
+disagreement, not sampling uncertainty or a confidence interval. An
+ensemble is not automatically more accurate than its components.
+
+``` r
+
+ensemble <- ps_surface_ensemble(result, statistic="weighted_mean", weights=w)
+disagreement <- ps_method_disagreement(result)
+```

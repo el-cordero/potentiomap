@@ -13,9 +13,7 @@
 <link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_3-0.4.10/font.css" rel="stylesheet">
-<link href="deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
-<link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="potentiomap: reproducible potentiometric surfaces in R">
@@ -106,18 +104,21 @@
 <p><img class="github-readme-logo" src="reference/figures/logo.png" align="right" width="160" alt="potentiomap hexagon logo"></p>
 <!-- badges: start -->
 
-<p><code>potentiomap</code> turns groundwater-level observations into reproducible potentiometric surfaces, contours, prediction-support products, and hydraulic-gradient symbols for review in R or GIS.</p>
-<p><a href="https://el-cordero.github.io/potentiomap/">Website</a> · <a href="https://el-cordero.github.io/potentiomap/articles/">Examples</a> · <a href="https://el-cordero.github.io/potentiomap/reference/">Function reference</a> · <a href="https://CRAN.R-project.org/package=potentiomap" class="external-link">CRAN</a></p>
+<p><code>potentiomap</code> turns groundwater-level observations into auditable potentiometric-surface analyses, validation and uncertainty summaries, monitoring-network diagnostics, contours, profiles, and GIS-ready products.</p>
+<p><a href="https://el-cordero.github.io/potentiomap/">Website</a> · <a href="https://el-cordero.github.io/potentiomap/articles/">Examples</a> · <a href="https://el-cordero.github.io/potentiomap/reference/">Function reference</a> · <a href="https://github.com/el-cordero/potentiomap" class="external-link">Source</a> · <a href="https://github.com/el-cordero/potentiomap/issues" class="external-link">Issues</a> · <a href="https://CRAN.R-project.org/package=potentiomap" class="external-link">CRAN</a></p>
 <div class="section level2">
 <h2 id="what-it-provides">What it provides<a class="anchor" aria-label="anchor" href="#what-it-provides"></a>
 </h2>
 <ul>
 <li>preparation of measured head and positive depth-to-water observations;</li>
+<li>observation QA, monitoring-event selection, and explicit screen grouping;</li>
 <li>TPS, IDW, ordinary-kriging, universal-kriging, and custom interpolation;</li>
-<li>retained diagnostics and local prediction-support information;</li>
+<li>variograms, external drift, validation, nested tuning, and retained fits;</li>
+<li>prediction support, model-conditional uncertainty, method ensembles, and disagreement summaries;</li>
+<li>event change, vertical gradients, well influence, network thinning, and constrained candidate-site ranking;</li>
+<li>depth surfaces, transect profiles, and plot-ready cross-sections;</li>
 <li>contours that can be divided into supported, approximate, and unsupported sections using user-defined criteria;</li>
-<li>checked downgradient arrow symbols and GIS-ready exports; and</li>
-<li>explicit grouping for separate monitoring events or water-bearing units.</li>
+<li>checked downgradient arrow symbols, open GIS styles, and technical reports.</li>
 </ul>
 <p>Existing surface and contour workflows remain available with their ordinary return values. Rich result objects are optional when diagnostics, support, and manifests are needed.</p>
 </div>
@@ -149,6 +150,7 @@
 <li><a href="https://el-cordero.github.io/potentiomap/articles/interpolation-methods.html">Compare interpolation methods</a></li>
 <li><a href="https://el-cordero.github.io/potentiomap/articles/diagnostics-and-support.html">Diagnostics and prediction support</a></li>
 <li><a href="https://el-cordero.github.io/potentiomap/articles/contours-and-arrows.html">Contours and hydraulic-gradient arrows</a></li>
+<li><a href="https://el-cordero.github.io/potentiomap/articles/">Expanded 0.2.0 validation, uncertainty, monitoring-network, and profile articles</a></li>
 <li><a href="https://el-cordero.github.io/potentiomap/articles/real-world-usgs.html">Public USGS groundwater example</a></li>
 <li><a href="https://el-cordero.github.io/potentiomap/articles/output-gallery.html">Output gallery</a></li>
 </ul>
@@ -158,6 +160,7 @@
 </h2>
 <p><code>potentiomap</code> is not a groundwater-flow or contaminant-transport model. Interpolated surfaces depend on monitoring-network geometry, data quality, aquifer selection, screened intervals, boundary conditions, and method assumptions.</p>
 <p>Prediction-support classes describe support available for a mapped result; they do not establish that a contour is correct and are not statistical confidence intervals. Hydraulic-gradient arrows point toward decreasing modeled head. Their length is a display convention, not velocity, travel time, or a traced groundwater path.</p>
+<p>Cross-validation describes its recorded prediction task, not automatic area-wide map accuracy. Kriging variance is model conditional, method spread is not statistical uncertainty, modeled head change is not storage change, and network rankings are not globally optimal drilling plans.</p>
 </div>
 <div class="section level2">
 <h2 id="documentation-and-support">Documentation and support<a class="anchor" aria-label="anchor" href="#documentation-and-support"></a>
