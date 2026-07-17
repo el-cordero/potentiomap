@@ -1,0 +1,15 @@
+---
+title: "Comparing TPS, IDW, OK, and UK"
+output: rmarkdown::html_vignette
+---
+
+TPS, IDW, ordinary kriging, and universal kriging encode different assumptions.
+Request them explicitly and inspect method conditions, support, residuals, and
+fit objects. `ps_compare_methods()` ranks only within one validation design,
+support subset, and objective. It does not identify a universally best method,
+and a requested method is never silently replaced.
+
+```{r, eval=FALSE}
+v <- ps_validate(points, c("TPS","IDW","OK","UK"), "spatial_block", folds=5)
+ps_compare_methods(v, metric="rmse", support_subset="supported")
+```

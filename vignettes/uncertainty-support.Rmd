@@ -1,0 +1,30 @@
+---
+title: "Prediction support, surface uncertainty, and contour uncertainty"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Prediction support, surface uncertainty, and contour uncertainty}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(potentiomap)
+data("synthetic_wells")
+p <- ps_make_points(synthetic_wells[1:16, ], "x", "y", "gw_elevation",
+                    "well_id", "EPSG:26916")
+fit <- suppressWarnings(ps_interpolate(p, methods = "OK", grid_res = 350,
+                                      support = TRUE, return = "result"))
+```
+
+```{r uncertainty}
+fit$support$summary
+u <- ps_surface_uncertainty(fit, approach = "kriging_variance")
+u$method_manifest
+band <- ps_contour_uncertainty(u, 168, method = "gaussian_pointwise",
+                               accept_gaussian = TRUE)
+band$level_manifest
+```
+
+Support categories are not confidence classes. Kriging variance is conditional
+on the fitted covariance model, and the contour product is pointwise rather
+than a simultaneous confidence region.

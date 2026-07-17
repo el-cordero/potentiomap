@@ -1,0 +1,32 @@
+---
+title: "Surface profiles, depth to water, and cross-sections"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Surface profiles, depth to water, and cross-sections}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(potentiomap)
+data("synthetic_wells")
+data("synthetic_transect")
+p <- ps_make_points(synthetic_wells, "x", "y", "gw_elevation",
+                    "well_id", "EPSG:26916")
+head <- ps_interpolate(p, methods = "IDW", grid_res = 300)$IDW
+land <- head * 0 + 185
+line <- terra::vect(synthetic_transect, geom = "wkt", crs = "EPSG:26916")
+```
+
+```{r products}
+depth <- ps_depth_to_water_surface(head, land, "potentiometric")
+depth$summary
+profile <- ps_surface_profile(line, list(head = head, land = land), n = 12)
+head(profile$profile)
+section <- ps_cross_section(line, head, land, step = 300,
+                            vertical_exaggeration = 3)
+section$summary
+```
+
+A confined potentiometric surface is not relabeled a water table. The
+cross-section does not invent hydrostratigraphy or represent a 3-D flow model.

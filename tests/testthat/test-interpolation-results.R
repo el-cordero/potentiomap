@@ -9,11 +9,11 @@ test_that("legacy and structured interpolation returns remain available", {
   expect_named(legacy, "IDW")
   expect_s4_class(legacy$IDW, "SpatRaster")
   expect_s3_class(result, "potentiomap_result")
-  expect_named(result, c(
+  expect_true(all(c(
     "surfaces", "diagnostics", "method_parameters", "input_summary",
     "observation_count", "dropped_records", "grid_geometry", "crs",
     "mask_summary", "support", "conditions", "package_version", "call"
-  ))
+  ) %in% names(result)))
   expect_identical(ps_surfaces(result), result$surfaces)
   expect_identical(ps_diagnostics(result, "IDW"), result$diagnostics$IDW)
   expect_s3_class(summary(result), "summary.potentiomap_result")

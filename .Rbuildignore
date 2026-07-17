@@ -6,7 +6,9 @@
 ^\.Rhistory$
 ^\.RData$
 ^README 2\.md$
+^README\.html$
 ^README\.Rmd$
+^Rplots\.pdf$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$

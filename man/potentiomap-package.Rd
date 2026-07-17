@@ -25,6 +25,16 @@ and where predictions have limited observational support.
 negative-gradient symbols.
 \item \code{\link[=ps_quicklook]{ps_quicklook()}}, \code{\link[=ps_export_surfaces]{ps_export_surfaces()}}, and
 \code{\link[=ps_export_contour_support]{ps_export_contour_support()}} review and save products.
+\item \code{\link[=ps_check_observations]{ps_check_observations()}}, \code{\link[=ps_select_event]{ps_select_event()}}, and \code{\link[=ps_screen_groups]{ps_screen_groups()}}
+document observation, timing, and screen-selection decisions.
+\item \code{\link[=ps_validate]{ps_validate()}}, \code{\link[=ps_compare_methods]{ps_compare_methods()}}, and \code{\link[=ps_tune_interpolation]{ps_tune_interpolation()}}
+evaluate explicit prediction tasks without calling them map truth.
+\item \code{\link[=ps_surface_uncertainty]{ps_surface_uncertainty()}} and \code{\link[=ps_contour_uncertainty]{ps_contour_uncertainty()}} retain
+model-conditional or resampling assumptions.
+\item \code{\link[=ps_head_change]{ps_head_change()}}, \code{\link[=ps_vertical_gradient]{ps_vertical_gradient()}}, \code{\link[=ps_well_influence]{ps_well_influence()}}, and
+\code{\link[=ps_network_thinning]{ps_network_thinning()}} support event and monitoring-network review.
+\item \code{\link[=ps_surface_profile]{ps_surface_profile()}}, \code{\link[=ps_cross_section]{ps_cross_section()}}, \code{\link[=ps_export_style]{ps_export_style()}}, and
+\code{\link[=ps_report]{ps_report()}} create review and exchange products.
 }
 
 Hydraulic-gradient arrows are map symbols derived from the local gradient of

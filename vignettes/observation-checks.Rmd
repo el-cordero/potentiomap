@@ -1,0 +1,32 @@
+---
+title: "Preparing and checking groundwater observations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preparing and checking groundwater observations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(potentiomap)
+data("synthetic_events")
+```
+
+Observation review should precede interpolation. The issue table records
+deterministic failures and review flags without declaring unusual values wrong.
+
+```{r qa}
+spring <- subset(synthetic_events, event == "spring")
+attr(spring, "crs") <- "EPSG:26916"
+checked <- ps_check_observations(
+  spring, x = "x", y = "y", value = "head", id = "well_id",
+  datetime = "datetime", unit = "unit", vertical_datum = "vertical_datum"
+)
+checked$summary
+event <- ps_select_event(spring, "well_id", "datetime",
+                         as.POSIXct("2025-03-15 12:00", tz = "UTC"), 3 * 3600)
+event$summary
+```
+
+Records inside a time window are not automatically synoptic. Screen bins are
+descriptive unless explicit hydrogeologic rules support unit names.

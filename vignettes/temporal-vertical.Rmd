@@ -1,0 +1,29 @@
+---
+title: "Temporal head change and vertical hydraulic gradients"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Temporal head change and vertical hydraulic gradients}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(potentiomap)
+data("synthetic_events")
+a <- subset(synthetic_events, event == "spring")
+b <- subset(synthetic_events, event == "autumn")
+pa <- ps_make_points(a, "x", "y", "head", "well_id", "EPSG:26916")
+pb <- ps_make_points(b, "x", "y", "head", "well_id", "EPSG:26916")
+```
+
+```{r change}
+change <- ps_head_change(pa, pb, "well_id", method = "IDW", grid_res = 350)
+change$summary
+gradient <- ps_vertical_gradient(upper_head = 10, lower_head = 12,
+                                 upper_elevation = 100, lower_elevation = 80,
+                                 positive = "upward")
+gradient[c("signed_gradient", "direction_class", "sign_convention")]
+```
+
+Paired measured change and modeled surface change remain separate. Head change
+is not storage change, and a vertical hydraulic gradient is not flux.

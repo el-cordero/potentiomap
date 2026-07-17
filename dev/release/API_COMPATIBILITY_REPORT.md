@@ -1,69 +1,54 @@
 # API compatibility report
 
-Release candidate: potentiomap 0.2.0
-Baseline: potentiomap 0.1.0 at `1adc6dab36f8e842d526adc3aa89545c20e9a4a6`
+Date: 2026-07-17
 
-## Preserved defaults
+Baseline commit: `358185faa657b8c2ef4154c5314ecfede306fe9e`
 
-- `ps_make_points()` and `ps_potentiometric_points()` still return point
-  `SpatVector` objects.
-- `ps_interpolate()` still returns a named list of `SpatRaster` surfaces by
-  default. Structured output is opt-in with `return = "result"`.
-- `ps_contours()` still returns a line `SpatVector` by default. Its manifest is
-  opt-in with `return = "result"`.
-- `ps_flow_arrows()` still returns a list containing `raster`, `points`, and
-  `arrows`; validation fields are additive.
-- Existing names and pre-0.2.0 positional arguments remain in their original
-  order. New arguments were appended.
-- Named custom interpolation methods remain supported.
-- TPS remains the software default for compatibility.
+Candidate: potentiomap 0.2.0 working tree on `release/0.2.0`
 
-## Existing functions changed additively
+## Preserved API
 
-- `ps_make_points()` adds metadata, unit conversion, metadata-mode, and invalid
-  record controls.
-- `ps_potentiometric_points()` adds metadata, unit, reference, sign, measuring
-  point, and invalid-record controls.
-- `ps_interpolate()` adds structured returns, duplicate-coordinate policy,
-  geographic-distance control, UK coordinate scaling and diagnostics, and
-  optional prediction support.
-- `ps_contours()` adds the structured manifest return.
-- `ps_flow_arrows()` adds endpoint policies, extraction/tolerance controls,
-  deterministic shortening, validation records, and overwrite control. The new
-  default `endpoint_action = "flag"` preserves original line geometry while
-  reporting failed tips; `"none"` reproduces unvalidated 0.1.0 geometry.
-- `ps_arrow_vertices()` adds explicit overwrite control.
-- `ps_quicklook()` adds contour units, contour-label and overwrite controls.
-- `ps_export_surfaces()` adds explicit levels, GeoPackage, support, diagnostic,
-  contour-manifest and output-manifest products, plus overwrite control.
-- `ps_smooth_surface()` retains its signature and now uses classed validation
-  and export errors consistently.
+All 18 baseline exports remain available: `ps_arrow_vertices()`,
+`ps_contour_support()`, `ps_contours()`, `ps_diagnostics()`,
+`ps_export_contour_support()`, `ps_export_surfaces()`, `ps_flow_arrows()`,
+`ps_interpolate()`, `ps_interpolate_grouped()`, `ps_make_points()`,
+`ps_metadata()`, `ps_potentiometric_points()`, `ps_prediction_support()`,
+`ps_quicklook()`, `ps_sample_aoi()`, `ps_smooth_surface()`, `ps_surfaces()`, and
+`ps_validate_arrows()`.
 
-## New exported functions
+The candidate exports 46 functions. The 28 new exports are:
 
-- `ps_contour_support()`
-- `ps_diagnostics()`
-- `ps_export_contour_support()`
-- `ps_interpolate_grouped()`
-- `ps_metadata()`
-- `ps_prediction_support()`
-- `ps_surfaces()`
-- `ps_validate_arrows()`
+- `ps_anisotropy()`, `ps_variogram()`, and `ps_variogram_compare()`;
+- `ps_validate()`, `ps_compare_methods()`, `ps_validation_plot()`, and
+  `ps_tune_interpolation()`;
+- `ps_surface_ensemble()`, `ps_method_disagreement()`,
+  `ps_surface_uncertainty()`, and `ps_contour_uncertainty()`;
+- `ps_compare_surfaces()`, `ps_head_change()`, `ps_vertical_gradient()`, and
+  `ps_depth_to_water_surface()`;
+- `ps_well_influence()`, `ps_network_thinning()`, `ps_candidate_network()`, and
+  `ps_surface_sensitivity()`;
+- `ps_split_domain()`, `ps_interpolate_regions()`, `ps_surface_profile()`, and
+  `ps_cross_section()`;
+- `ps_check_observations()`, `ps_select_event()`, `ps_screen_groups()`,
+  `ps_export_style()`, and `ps_report()`.
 
-New S3 behavior includes print/summary methods for structured interpolation
-results, print/plot methods for contour-support results, and print support for
-arrow-validation results.
+## Return and signature compatibility
 
-## Deliberate scientific behavior changes
-
+- `ps_interpolate()` still returns a named list of `SpatRaster` objects by
+  default; `return = "result"` remains opt-in.
+- `ps_contours()` still returns a `SpatVector` by default.
+- `ps_flow_arrows()` retains its documented components, and
+  `endpoint_action = "none"` retains legacy unvalidated geometry.
+- Existing positional arguments retain their order. Extended kriging arguments
+  (`trend`, `covariates`, alignment, standardization, explicit variogram,
+  anisotropy, and neighborhood controls) were appended to `ps_interpolate()`.
 - Requested interpolation methods are never silently substituted.
-- Duplicate coordinates default to a classed error and require an explicit
-  aggregation policy.
-- Distance-based interpolation and support calculations reject geographic
-  degree coordinates by default.
-- Quadratic-drift UK uses centered and scaled coordinates by default;
-  `uk_coordinate_scaling = "none"` retains legacy comparison behavior.
-- Important errors and warnings now have stable `potentiomap_*` classes.
+- Existing S3 classes and condition parents remain registered; new result
+  classes add concise print and natural `as.data.frame()` methods.
 
-These changes preserve valid 0.1.0 calls while refusing or clearly flagging
-scientifically ambiguous inputs that were previously accepted silently.
+Scientifically necessary refusals—unknown/geographic planar distances,
+incompatible units or vertical datums, implicit raster alignment, duplicate
+coordinates without a stated policy, and invalid stochastic models—use stable
+classed conditions rather than silent correction. Regression tests cover the
+baseline defaults, positional calls, result accessors, contours, support, and
+arrow behavior.

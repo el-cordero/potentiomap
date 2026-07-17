@@ -1,0 +1,15 @@
+---
+title: "Comparing monitoring events"
+output: rmarkdown::html_vignette
+---
+
+Before comparison, verify units, vertical datum, measurement reference,
+water-bearing unit, screen-selection rule, and event timing. `ps_head_change()`
+returns paired-well measured changes separately from the modeled B-minus-A
+surface difference and accounts for changing membership. Modeled head change
+is not storage, depletion, recharge, or volumetric change.
+
+```{r, eval=FALSE}
+change <- ps_head_change(event_a, event_b, pair_by="well_id",
+                         event_a_time=t1, event_b_time=t2, method="TPS")
+```

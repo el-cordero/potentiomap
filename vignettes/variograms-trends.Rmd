@@ -1,0 +1,28 @@
+---
+title: "Variograms, anisotropy, and external drift"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Variograms, anisotropy, and external drift}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(potentiomap)
+data("synthetic_anisotropic_points")
+p <- ps_make_points(synthetic_anisotropic_points, "x", "y", "head",
+                    "point_id", "EPSG:26916")
+```
+
+```{r variogram}
+v <- suppressWarnings(ps_variogram(p, directions = c(0, 45, 90, 135)))
+head(v$empirical[, c("np", "dist", "gamma", "dir.hor")])
+models <- suppressWarnings(ps_variogram_compare(v, c("Sph", "Exp")))
+models$ranking[, c("model", "weighted_sse", "singular")]
+a <- suppressWarnings(ps_anisotropy(p, minimum_pairs = 5))
+a$summary
+```
+
+Directional evidence is exploratory and is not applied automatically. External
+drift must be supplied as scientifically defensible covariates available over
+the full prediction domain; association does not establish causality.

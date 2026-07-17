@@ -1,20 +1,18 @@
-# URL check report
+# URL and local-link report
 
-Date: 2026-07-16
+Date: 2026-07-17
 
-`urlchecker::url_check()` discovered and checked 5 package-documentation URLs.
-Result: **All URLs are correct.**
+- `urlchecker::url_check()` checked 13 discovered external URLs: **all
+  correct**.
+- The final local pkgdown build contained 174 HTML pages. An XML-based crawl of
+  every local `href` and `src` found **0 broken local links**.
+- `pkgdown::build_site(examples = FALSE, new_process = FALSE)` completed; its
+  warnings were Pandoc's deprecation notice for `--highlight-style`, not broken
+  pages.
+- Desktop and 390 × 844 mobile visual inspection found no console errors,
+  missing images, page overflow, or inaccessible navigation; code blocks scroll
+  within the mobile viewport.
 
-Additional public inspection established:
-
-- <https://CRAN.R-project.org/package=potentiomap> resolves to the CRAN 0.1.0
-  package page.
-- <https://github.com/el-cordero/potentiomap> is a public repository.
-- <https://github.com/el-cordero/potentiomap/issues> is visible, but public issue
-  creation is restricted and must be enabled manually.
-- <https://el-cordero.github.io/potentiomap/> returns HTTP 200 but currently
-  documents version 0.1.0, not this 0.2.0 release candidate.
-
-The package website URL is technically live. The 0.2.0 tarball must not be
-treated as submission-ready until the new pkgdown site is published and the
-URLs are rechecked, as described in `MANUAL_GITHUB_PAGES_ACTIONS.md`.
+The public documentation URL still serves the previously deployed release.
+Publishing the locally verified 0.2.0 site remains a manual post-review action;
+no remote deployment was performed.

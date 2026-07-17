@@ -1,0 +1,16 @@
+---
+title: "Universal kriging with hydrogeologic covariates"
+output: rmarkdown::html_vignette
+---
+
+Universal kriging can use an explicit trend and named raster or point/grid
+covariates. Geometry must match by default; requested alignment is recorded.
+The fit checks missing coverage, constants, duplicates, collinearity, and rank.
+Covariates should be scientifically defensible and available throughout the
+prediction domain. Statistical association is not causality.
+
+```{r, eval=FALSE}
+uk <- ps_interpolate(points, methods="UK", template=template,
+                     trend=Z~land_surface+valley_distance,
+                     covariates=list(land_surface=dem, valley_distance=valley))
+```

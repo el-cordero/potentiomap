@@ -1,0 +1,30 @@
+---
+title: "Validating and comparing interpolation methods"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Validating and comparing interpolation methods}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(potentiomap)
+data("synthetic_wells")
+p <- ps_make_points(synthetic_wells[1:16, ], "x", "y", "gw_elevation",
+                    "well_id", "EPSG:26916")
+```
+
+Validation designs represent different prediction tasks. Spatial separation is
+appropriate when transfer to unsampled areas matters; random folds answer a
+different question.
+
+```{r validation}
+v <- ps_validate(p, c("IDW", "TPS"), design = "kfold", folds = 3,
+                 prediction_mode = "direct", seed = 12)
+v$fold_manifest[, c("fold_id", "training_count", "validation_count")]
+comparison <- ps_compare_methods(v, metric = "rmse")
+comparison$ranking[, c("method", "rmse", "finite_coverage", "rank")]
+```
+
+These scores are conditional on the recorded folds; they are not universal
+method rankings or automatic map accuracy.

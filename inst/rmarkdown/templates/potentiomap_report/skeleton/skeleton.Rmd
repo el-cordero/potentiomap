@@ -1,0 +1,102 @@
+---
+title: "Potentiomap technical report"
+output: html_document
+params:
+  object: null
+  report_title: "Potentiomap technical report"
+  sections: "auto"
+  include_session: true
+  include_conditions: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+x <- params$object
+has_rows <- function(z) is.data.frame(z) && nrow(z) > 0L
+show_section <- function(name) identical(params$sections, "auto") ||
+  name %in% params$sections
+```
+
+# `r params$report_title`
+
+This report summarizes the supplied `potentiomap` result and its recorded
+settings. It is not professionally certified, regulator-approved, or an
+independent hydrogeologic verification. Interpolated surfaces remain
+model-dependent representations; validation and uncertainty statements apply
+only to their documented designs and assumptions.
+
+```{r summary, results='asis'}
+if (show_section("summary")) {
+  cat("## Analysis summary\n\n")
+  if (!is.null(x$summary)) print(x$summary) else print(x)
+  cat("\n")
+}
+```
+
+```{r metadata, results='asis'}
+if (show_section("metadata")) {
+  cat("## Metadata and units\n\n")
+  if (!is.null(x$metadata)) print(x$metadata)
+  if (inherits(x, "potentiomap_result") && !is.null(x$input_summary$metadata)) print(x$input_summary$metadata)
+  cat("\n")
+}
+```
+
+```{r settings, results='asis'}
+if (show_section("settings")) {
+  cat("## Settings and diagnostics\n\n")
+  if (!is.null(x$settings)) print(x$settings)
+  if (!is.null(x$diagnostics)) print(x$diagnostics)
+  if (!is.null(x$support_summary)) print(x$support_summary)
+  cat("\n")
+}
+```
+
+```{r validation-section, results='asis'}
+if (show_section("validation") && !is.null(x$metrics)) {
+  cat("## Validation\n\n")
+  print(x$metrics)
+  cat("\nValidation performance is conditional on the recorded prediction task and is not automatically area-wide map accuracy.\n")
+}
+```
+
+```{r uncertainty-section, results='asis'}
+if (show_section("uncertainty") &&
+    (inherits(x, "potentiomap_uncertainty") || !is.null(x$method_manifest))) {
+  cat("## Uncertainty or sensitivity\n\n")
+  if (!is.null(x$method_manifest)) print(x$method_manifest)
+  cat("\nPointwise uncertainty products are not simultaneous confidence regions unless explicitly established otherwise.\n")
+}
+```
+
+```{r network-change-section, results='asis'}
+if (show_section("change_network") &&
+    (!is.null(x$run_manifest) || inherits(x, "potentiomap_head_change"))) {
+  cat("## Change or monitoring-network analysis\n\n")
+  if (!is.null(x$run_manifest)) print(x$run_manifest)
+  if (!is.null(x$paired_measured_change)) print(x$paired_measured_change)
+  cat("\nModeled surface change is not a storage, depletion, recharge, or volumetric-change estimate. Network results are conditional and do not automatically identify erroneous wells or globally optimal sites.\n")
+}
+```
+
+```{r conditions, results='asis'}
+if (show_section("conditions") && isTRUE(params$include_conditions) &&
+    has_rows(x$conditions)) {
+  cat("## Captured conditions\n\n")
+  print(x$conditions)
+}
+```
+
+```{r limitations, results='asis'}
+if (show_section("limitations")) {
+  cat("## Scientific limitations\n\n")
+  cat("The result does not by itself establish aquifer boundaries, groundwater-flow boundary conditions, causality, hydrostratigraphy, flux, recharge, storage change, or regulatory suitability. Review units, vertical datum, temporal comparability, screen intervals, support, model assumptions, and the intended decision context before use.\n\n")
+}
+```
+
+```{r session, results='asis'}
+if (show_section("session") && isTRUE(params$include_session)) {
+  cat("## Session information\n\n")
+  print(utils::sessionInfo())
+}
+```

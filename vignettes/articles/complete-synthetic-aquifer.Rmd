@@ -1,0 +1,22 @@
+---
+title: "Complete synthetic aquifer example"
+output: rmarkdown::html_vignette
+---
+
+The package repository includes `dev/integration-tests/complete-synthetic.R`,
+an executable fixed-seed analysis using only released synthetic fixtures. It
+checks observations and events, groups screens, interpolates and validates,
+inspects variograms and anisotropy, uses an explicit covariate trend, maps
+support, ensembles and disagreement, creates uncertainty and pointwise contour
+bands, compares events and vertical gradients, evaluates network influence,
+thinning, candidates and parameter sensitivity, builds depth/profile/section
+products, and validates GIS/report files.
+
+Not every analysis needs every product. Use validation when comparing methods,
+uncertainty when model-conditional variability matters, network tools for
+monitoring-design questions, and profile or export tools only for the intended
+communication product. None replaces hydrogeologic judgment.
+
+```{r, eval=FALSE}
+source("dev/integration-tests/complete-synthetic.R")
+```

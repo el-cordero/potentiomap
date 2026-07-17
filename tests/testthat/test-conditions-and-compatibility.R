@@ -31,7 +31,21 @@ test_that("exported functions have help topics", {
     ps_flow_arrows = "ps_flow_arrows",
     ps_validate_arrows = "ps_validate_arrows", ps_arrow_vertices = "ps_arrow_vertices",
     ps_quicklook = "ps_quicklook", ps_export_surfaces = "ps_export_surfaces",
-    ps_smooth_surface = "ps_smooth_surface", ps_sample_aoi = "ps_sample_aoi"
+    ps_smooth_surface = "ps_smooth_surface", ps_sample_aoi = "ps_sample_aoi",
+    ps_validate = "ps_validate", ps_compare_methods = "ps_compare_methods",
+    ps_validation_plot = "ps_validation_plot", ps_tune_interpolation = "ps_tune_interpolation",
+    ps_surface_ensemble = "ps_surface_ensemble", ps_method_disagreement = "ps_method_disagreement",
+    ps_surface_uncertainty = "ps_surface_uncertainty", ps_contour_uncertainty = "ps_contour_uncertainty",
+    ps_compare_surfaces = "ps_compare_surfaces", ps_head_change = "ps_head_change",
+    ps_vertical_gradient = "ps_vertical_gradient", ps_well_influence = "ps_well_influence",
+    ps_network_thinning = "ps_network_thinning", ps_candidate_network = "ps_candidate_network",
+    ps_surface_sensitivity = "ps_surface_sensitivity", ps_variogram = "ps_variogram",
+    ps_variogram_compare = "ps_variogram_compare", ps_anisotropy = "ps_anisotropy",
+    ps_split_domain = "ps_split_domain", ps_interpolate_regions = "ps_interpolate_regions",
+    ps_depth_to_water_surface = "ps_depth_to_water_surface", ps_surface_profile = "ps_surface_profile",
+    ps_cross_section = "ps_cross_section", ps_export_style = "ps_export_style",
+    ps_report = "ps_report", ps_check_observations = "ps_check_observations",
+    ps_select_event = "ps_select_event", ps_screen_groups = "ps_screen_groups"
   )
   expect_setequal(exports, names(topics))
   source_man <- testthat::test_path("..", "..", "man")

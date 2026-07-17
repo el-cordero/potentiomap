@@ -1,5 +1,9 @@
 # Implementation changelog
 
+> Historical note: this file records the earlier 0.1.0-to-initial-0.2.0 work.
+> The 2026-07-17 expansion is documented by
+> `FINAL_0.2.0_EXPANSION_REPORT.md` and the current feature reports.
+
 ## Release foundation
 
 - Recorded the 0.1.0 baseline, CRAN state, public API, check result, scope lock,

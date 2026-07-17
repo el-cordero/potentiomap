@@ -1,0 +1,16 @@
+---
+title: "QGIS and SLD style exports"
+output: rmarkdown::html_vignette
+---
+
+`ps_export_style()` writes text-based QGIS QML or OGC SLD and parses the XML
+before returning. Continuous rasters, points, arrows, contour labels, and solid,
+dashed, or dotted support classes are represented without relying only on
+color. Existing files are protected by default. Optional properties can render
+differently among GIS versions, so inspect the style in the target software.
+
+```{r, eval=FALSE}
+ps_export_style(surface, "head.qml", "qml", "head_raster", units="m")
+ps_export_style(contours, "support.sld", "sld", "contour_support",
+                field="support_class")
+```

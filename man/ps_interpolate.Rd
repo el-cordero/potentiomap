@@ -29,7 +29,14 @@ ps_interpolate(
   uk_coordinate_scaling = c("center_scale", "none"),
   diagnostic_control = NULL,
   support = FALSE,
-  support_max_distance = NULL
+  support_max_distance = NULL,
+  trend = NULL,
+  covariates = NULL,
+  covariate_alignment = c("error", "bilinear", "near"),
+  standardize_covariates = TRUE,
+  variogram_model = NULL,
+  anisotropy = NULL,
+  kriging_control = list()
 )
 }
 \arguments{
@@ -90,6 +97,25 @@ thresholds. Supported names are \code{condition_number_warning},
 surface.}
 
 \item{support_max_distance}{Optional support distance threshold.}
+
+\item{trend}{Optional universal-kriging trend formula. \code{NULL} retains the
+coordinate-trend default for \code{"UK"}.}
+
+\item{covariates}{Optional named raster covariates for external drift.}
+
+\item{covariate_alignment}{Policy for a covariate that is not aligned to the
+output template: error, bilinear resampling, or nearest-neighbor resampling.}
+
+\item{standardize_covariates}{Standardize finite covariate values before
+fitting an external-drift model.}
+
+\item{variogram_model}{Optional explicit \code{gstat::vgm()} covariance model.}
+
+\item{anisotropy}{Optional anisotropy parameters passed to the fitted
+variogram model.}
+
+\item{kriging_control}{Named controls for kriging neighborhood or fitting
+behavior.}
 }
 \value{
 By default, a named list of \code{terra::SpatRaster} surfaces. With

@@ -1,0 +1,16 @@
+---
+title: "Pointwise contour uncertainty versus approximate contours"
+output: rmarkdown::html_vignette
+---
+
+Prediction-support classes and contour-uncertainty bands answer different
+questions. Support classes describe monitoring geometry and finite prediction.
+`ps_contour_uncertainty()` uses retained realizations for empirical crossings or
+an explicitly accepted pointwise Gaussian assumption. Its band is pointwise,
+not a simultaneous confidence region. Approximate support contours are not
+statistical confidence contours.
+
+```{r, eval=FALSE}
+band <- ps_contour_uncertainty(u, levels=seq(164,172,2),
+                               method="empirical_crossing")
+```

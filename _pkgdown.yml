@@ -6,12 +6,6 @@ template:
   bslib:
     primary: "#1F5E6B"
     link-color: "#176B87"
-    base_font:
-      google: Source Sans 3
-    heading_font:
-      google: Source Sans 3
-    code_font:
-      google: Source Code Pro
   opengraph:
     image:
       src: man/figures/social-preview.png
@@ -139,6 +133,36 @@ articles:
       - diagnostics-and-support
       - contours-and-arrows
       - units-and-groups
+      - observation-checks
+      - validation-methods
+      - variograms-trends
+      - uncertainty-support
+      - temporal-vertical
+      - monitoring-network
+      - profiles-depth
+      - gis-reports
+  - title: Expanded analysis articles
+    contents:
+      - articles/observation-qa-events-screens
+      - articles/validation-designs
+      - articles/nested-tuning
+      - articles/comparing-methods
+      - articles/ensembles-disagreement
+      - articles/conditional-simulation
+      - articles/contour-uncertainty
+      - articles/monitoring-events
+      - articles/vertical-gradient-sign
+      - articles/well-influence-network-thinning
+      - articles/candidate-locations
+      - articles/surface-sensitivity
+      - articles/directional-variograms
+      - articles/external-drift
+      - articles/regional-interpolation
+      - articles/depth-surfaces
+      - articles/profiles-cross-sections
+      - articles/gis-styles
+      - articles/technical-reports
+      - articles/complete-synthetic-aquifer
   - title: Scientific guidance
     contents:
       - articles/interpretation-limitations
@@ -146,48 +170,34 @@ articles:
       - articles/citation
 
 reference:
-  - title: Prepare groundwater observations
-    desc: Standardize measured heads or calculate head from depth to water.
-    contents:
-      - ps_make_points
-      - ps_potentiometric_points
-      - ps_metadata
-      - ps_sample_aoi
-      - synthetic_wells
-      - synthetic_dem
-      - synthetic_surface_points
+  - title: Prepare and check groundwater observations
+    contents: [ps_make_points, ps_potentiometric_points, ps_check_observations, ps_metadata, ps_sample_aoi]
+  - title: Select monitoring events and water-bearing units
+    contents: [ps_select_event, ps_screen_groups, ps_interpolate_grouped]
   - title: Interpolate potentiometric surfaces
-    desc: Fit single or explicitly grouped mapped surfaces.
-    contents:
-      - ps_interpolate
-      - ps_interpolate_grouped
-  - title: Inspect diagnostics and prediction support
-    desc: Review retained fit information, conditions, and training support.
-    contents:
-      - ps_diagnostics
-      - ps_prediction_support
-      - ps_surfaces
-      - potentiomap_result
-      - potentiomap_conditions
+    contents: [ps_interpolate, ps_interpolate_regions, ps_split_domain]
+  - title: Inspect variograms, trends, and anisotropy
+    contents: [ps_variogram, ps_variogram_compare, ps_anisotropy]
+  - title: Validate and tune interpolation methods
+    contents: [ps_validate, ps_compare_methods, ps_validation_plot, ps_tune_interpolation]
+  - title: Inspect support and uncertainty
+    contents: [ps_prediction_support, ps_surface_ensemble, ps_method_disagreement, ps_surface_uncertainty, ps_contour_uncertainty]
+  - title: Compare surfaces and monitoring events
+    contents: [ps_compare_surfaces, ps_head_change, ps_surface_sensitivity]
+  - title: Calculate vertical gradients and depth surfaces
+    contents: [ps_vertical_gradient, ps_depth_to_water_surface]
+  - title: Evaluate monitoring networks
+    contents: [ps_well_influence, ps_network_thinning, ps_candidate_network]
   - title: Create contours and hydraulic-gradient arrows
-    desc: Inventory contour levels and create checked negative-gradient symbols.
-    contents:
-      - ps_contours
-      - ps_contour_support
-      - plot.potentiomap_contour_support
-      - ps_flow_arrows
-      - ps_validate_arrows
-      - ps_arrow_vertices
-  - title: Visualize and export
-    desc: Create quicklooks, smooth rasters, and save GIS products.
-    contents:
-      - ps_quicklook
-      - ps_export_surfaces
-      - ps_export_contour_support
-      - ps_smooth_surface
-  - title: Package overview
-    contents:
-      - potentiomap-package
+    contents: [ps_contours, ps_contour_support, plot.potentiomap_contour_support, ps_flow_arrows, ps_validate_arrows, ps_arrow_vertices]
+  - title: Extract profiles and cross-sections
+    contents: [ps_surface_profile, ps_cross_section]
+  - title: Visualize, style, report, and export
+    contents: [ps_quicklook, ps_smooth_surface, ps_export_surfaces, ps_export_contour_support, ps_export_style, ps_report]
+  - title: Example data
+    contents: [synthetic_wells, synthetic_dem, synthetic_surface_points, synthetic_events, synthetic_nested_wells, synthetic_regions, synthetic_covariates, synthetic_candidate_sites, synthetic_transect, synthetic_anisotropic_points, synthetic_validation_points]
+  - title: Result classes and accessors
+    contents: [ps_diagnostics, ps_surfaces, potentiomap_result, potentiomap_conditions, potentiomap-package]
 
 footer:
   structure:

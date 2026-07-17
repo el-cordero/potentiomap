@@ -1,63 +1,76 @@
 # potentiomap 0.2.0
 
-## Scientific behavior
+## Observation preparation and quality checks
 
-- Hydraulic-gradient arrows can be flagged, shortened, dropped, or left with
-  legacy unvalidated geometry after checking finite line support and modeled
-  head at the base and tip. Shortening preserves the original direction.
-- Universal kriging now centers and scales coordinates before constructing the
-  quadratic drift by default. The legacy unscaled coordinates remain available
-  through `uk_coordinate_scaling = "none"`.
-- Universal-kriging results report trend rank, conditioning, prediction range,
-  overshoot, and nonfinite predictions. Heuristic review thresholds produce
-  classed warnings.
-- Requested interpolation methods are not silently replaced.
-- Prediction-support products describe the training convex hull, distance to
-  observations, mask membership, and finite predictions without automatically
-  removing extrapolated cells.
-- Modeled contours can be divided into supported, approximate, and unsupported
-  sections using user-defined distance, hull, local-neighbor, and optional
-  identified uncertainty criteria.
-- Groundwater-head units, depth units, vertical datum, measurement reference,
-  depth sign, and measuring-point offset can be supplied and checked.
+- Added `ps_check_observations()`, `ps_select_event()`, and
+  `ps_screen_groups()` with record-level issue, exclusion, ambiguity, and
+  grouping manifests.
 
-## Diagnostics
+## Validation and tuning
 
-- Ordinary- and universal-kriging conditions are retained by method with
-  empirical and fitted variogram information.
-- Thin-plate-spline results retain supported GCV selection information and warn
-  when the selected lambda is at a search boundary.
-- `ps_interpolate(..., return = "result")` returns surfaces, diagnostics,
-  parameters, input summaries, grid information, conditions, and optional
-  prediction support.
-- Structured contour results inventory requested, returned, and omitted levels.
+- Added deterministic leave-one-out, random-fold, spatial-block,
+  leave-cluster-out, user-fold, and independent validation through
+  `ps_validate()`.
+- Added design-specific method comparison, diagnostic plotting, exhaustive or
+  reproducibly sampled candidate tuning, and optional nested validation.
 
-## New functions
+## Variograms, anisotropy, and trends
 
-- `ps_validate_arrows()` checks existing arrow geometry.
-- `ps_prediction_support()` classifies prediction support.
-- `ps_contour_support()` splits contour lines at local support-class boundaries,
-  and `ps_export_contour_support()` writes the classified segments and summary.
-- `ps_interpolate_grouped()` separates analyses by explicit grouping keys.
-- `ps_metadata()`, `ps_diagnostics()`, and `ps_surfaces()` access retained
-  metadata and structured results.
+- Added empirical and directional variograms, independent candidate-model
+  fitting, exploratory anisotropy, explicit variogram models, neighborhoods,
+  anisotropy, trends, and raster or table covariates for kriging.
+
+## Support and uncertainty
+
+- Added compatible-surface ensembles and method-disagreement products.
+- Added retained kriging variance, conditional Gaussian simulation, supported
+  TPS standard error, resampling sensitivity, and pointwise contour bands with
+  explicit terminology and assumptions.
+- Prediction-support products retain training-hull, observation-distance, mask,
+  and finite-prediction information, and modeled contours can be split by
+  user-defined support criteria without calling those classes confidence.
+
+## Surface and event comparisons
+
+- Added aligned surface comparisons, paired-event head change, and numeric or
+  raster vertical hydraulic gradients with explicit sign conventions.
+- Structured interpolation and contour results inventory diagnostics,
+  conditions, requested methods or levels, and nonfinite outputs.
+
+## Monitoring-network analysis
+
+- Added conditional leave-one-well influence, reproducible network thinning,
+  constrained sequential candidate ranking, and explicit parameter/grid
+  sensitivity scenarios.
+
+## Profiles, cross-sections, and depth products
+
+- Added water-table or potentiometric depth surfaces, sampled surface profiles,
+  and plot-ready cross-sections with well offsets and screen elevations.
+
+## GIS and reporting
+
+- Added validated open QML/SLD style export and offline HTML/DOCX technical
+  reports from a package-owned template.
+- Hydraulic-gradient arrows retain endpoint support checks and the explicit
+  `endpoint_action = "none"` legacy geometry option.
 
 ## Documentation
 
-- Rewrote the generated README for groundwater practitioners.
-- Added package-level help and four concise vignettes.
-- Added a Bootstrap 5 pkgdown configuration, public support information, and
-  issue-reporting templates.
-- Added guidance for on-disk rasters, temporary files, and large prediction
-  grids.
+- Added small deterministic fixtures, expanded function examples, integrated
+  vignettes, website articles, scientific due diligence, and release audits.
+- Rebuilt the hydrogeologist-facing README, package help, reference index, and
+  Bootstrap 5 website configuration, with guidance for on-disk rasters and
+  larger prediction grids.
 
 ## Compatibility
 
-- `ps_interpolate()` still returns a named list of `SpatRaster` objects by
-  default.
-- `ps_contours()` still returns a `SpatVector` by default.
-- Existing public function names and valid positional arguments remain.
-- Structured interpolation and contour results are opt-in.
-- Requested interpolation methods are not silently replaced.
-- Legacy unvalidated arrow geometry is available with
-  `endpoint_action = "none"`; the new default is `"flag"`.
+- Existing public functions remain exported, and `ps_interpolate()` continues
+  to return a named list of `SpatRaster` objects by default.
+- Structured interpolation results now also retain exact template and
+  method-fit objects needed by validation and model-conditional uncertainty.
+- `ps_contours()` still returns a `SpatVector` by default; structured
+  interpolation and contour results remain opt-in.
+- Existing public names and valid positional calls remain available, requested
+  interpolation methods are not silently replaced, and universal kriging keeps
+  the documented `uk_coordinate_scaling = "none"` compatibility option.

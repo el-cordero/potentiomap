@@ -1,15 +1,14 @@
 # Reverse-dependency report
 
-Date: 2026-07-16
+Date: 2026-07-17
 
-The official CRAN page for potentiomap 0.1.0 was inspected. It contains no
-reverse-dependency section, and no direct CRAN reverse dependencies were
-identified. Therefore no reverse-dependency packages required local checking
-for this update.
+The current CRAN package index was queried through
+`available.packages()`/`tools::package_dependencies()` for Depends, Imports,
+LinkingTo, Suggests, and Enhances relationships. CRAN currently lists
+potentiomap 0.1.0 and reports **no direct or recursive reverse dependencies**.
+There were therefore no registered reverse-dependent packages to install and
+check.
 
-The public CRAN check page lists version 0.1.0 as OK on all 12 displayed
-flavors, including R-devel and R-release Linux, Windows, and macOS checks.
-
-This report concerns CRAN packages. It does not claim that unregistered GitHub,
-internal, or private scripts cannot depend on potentiomap; backward-compatible
-defaults were retained for that reason.
+This does not assert that private, internal, or GitHub-only scripts do not use
+the API. Baseline defaults and positional signatures were retained for that
+reason.

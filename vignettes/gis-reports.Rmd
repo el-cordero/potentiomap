@@ -1,0 +1,25 @@
+---
+title: "Exporting GIS products and technical reports"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exporting GIS products and technical reports}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(potentiomap)
+r <- terra::rast(nrows = 3, ncols = 3, xmin = 0, xmax = 300,
+                 ymin = 0, ymax = 300, crs = "EPSG:26920", vals = 1:9)
+```
+
+```{r style}
+style_file <- tempfile(fileext = ".sld")
+style <- ps_export_style(r, style_file, "sld", "head_raster", units = "m")
+style$manifest
+```
+
+`ps_report()` renders an offline HTML or DOCX file from a package-owned
+template. Reports include direct limitations and never claim professional
+certification or regulatory approval. Open style properties can render
+differently across GIS versions, so inspect the result in the target GIS.

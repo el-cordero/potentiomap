@@ -50,6 +50,18 @@
 #' @param support Calculate [ps_prediction_support()] for the first returned
 #'   surface.
 #' @param support_max_distance Optional support distance threshold.
+#' @param trend Optional universal-kriging trend formula. `NULL` retains the
+#'   coordinate-trend default for `"UK"`.
+#' @param covariates Optional named raster covariates for external drift.
+#' @param covariate_alignment Policy for a covariate that is not aligned to the
+#'   output template: error, bilinear resampling, or nearest-neighbor resampling.
+#' @param standardize_covariates Standardize finite covariate values before
+#'   fitting an external-drift model.
+#' @param variogram_model Optional explicit `gstat::vgm()` covariance model.
+#' @param anisotropy Optional anisotropy parameters passed to the fitted
+#'   variogram model.
+#' @param kriging_control Named controls for kriging neighborhood or fitting
+#'   behavior.
 #'
 #' @return By default, a named list of `terra::SpatRaster` surfaces. With
 #'   `return = "result"`, a documented `potentiomap_result`.
@@ -77,11 +89,24 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
                            allow_geographic = FALSE,
                            uk_coordinate_scaling = c("center_scale", "none"),
                            diagnostic_control = NULL,
-                           support = FALSE, support_max_distance = NULL) {
+                           support = FALSE, support_max_distance = NULL,
+                           trend = NULL, covariates = NULL,
+                           covariate_alignment = c("error", "bilinear", "near"),
+                           standardize_covariates = TRUE,
+                           variogram_model = NULL, anisotropy = NULL,
+                           kriging_control = list()) {
   call <- match.call()
   return <- match.arg(return)
   duplicate_action <- match.arg(duplicate_action)
   uk_coordinate_scaling <- match.arg(uk_coordinate_scaling)
+  covariate_alignment <- match.arg(covariate_alignment)
+  .ps_scalar_logical(standardize_covariates, "standardize_covariates")
+  if (!is.null(trend) && !inherits(trend, "formula")) {
+    .ps_abort("`trend` must be a formula or NULL.", "potentiomap_covariate_error")
+  }
+  if (!is.list(kriging_control)) {
+    .ps_abort("`kriging_control` must be a named list.", "potentiomap_covariate_error")
+  }
   .validate_interpolation_controls(
     grid_res, template, padding, idw_power, idw_nmax, tps_lambda,
     kr_auto_cutoff, kr_cutoff, kr_width, support_max_distance
@@ -128,7 +153,7 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   grid <- as.data.frame(terra::xyFromCell(tmpl, seq_len(terra::ncell(tmpl))))
   names(grid) <- c("X", "Y")
   uk_control <- .uk_diagnostic_control(diagnostic_control)
-  surfaces <- diagnostics <- method_parameters <- list()
+  surfaces <- diagnostics <- method_parameters <- fits <- list()
   condition_rows <- list()
 
   for (method in methods) {
@@ -137,8 +162,22 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
       builtin,
       IDW = .interp_idw(pts, tmpl, grid, idw_power, idw_nmax),
       TPS = .interp_tps(pts, tmpl, grid, tps_lambda),
-      OK = .interp_ok(pts, tmpl, grid, kr_auto_cutoff, kr_cutoff, kr_width),
-      UK = .interp_uk(
+      OK = if (!is.null(variogram_model) || !is.null(anisotropy) || length(kriging_control)) {
+        .interp_kriging_extended(
+          pts, tmpl, grid, "OK", Z ~ 1, NULL, covariate_alignment,
+          standardize_covariates, variogram_model, anisotropy,
+          kriging_control, kr_auto_cutoff, kr_cutoff, kr_width
+        )
+      } else .interp_ok(pts, tmpl, grid, kr_auto_cutoff, kr_cutoff, kr_width),
+      UK = if (!is.null(trend) || !is.null(covariates) || !is.null(variogram_model) ||
+               !is.null(anisotropy) || length(kriging_control)) {
+        .interp_kriging_extended(
+          pts, tmpl, grid, "UK", trend, covariates, covariate_alignment,
+          standardize_covariates, variogram_model, anisotropy,
+          kriging_control, kr_auto_cutoff, kr_cutoff, kr_width,
+          uk_coordinate_scaling
+        )
+      } else .interp_uk(
         pts, tmpl, grid, kr_auto_cutoff, kr_cutoff, kr_width,
         uk_coordinate_scaling, uk_control
       ),
@@ -147,6 +186,7 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
     surface <- fit$surface
     names(surface) <- method
     if (!is.null(mask)) surface <- .apply_mask(surface, mask)
+    surface <- .ps_set_metadata(surface, metadata %||% list())
     surfaces[[method]] <- surface
     fit$diagnostics$requested_method <- method
     fit$diagnostics$returned_method <- method
@@ -157,6 +197,7 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
       fit$diagnostics$finite_prediction_count
     diagnostics[[method]] <- fit$diagnostics
     method_parameters[[method]] <- fit$parameters
+    fits[[method]] <- fit$fitted %||% NULL
     if (nrow(fit$conditions)) {
       fit$conditions$method <- method
       condition_rows[[method]] <- fit$conditions
@@ -189,8 +230,10 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   }
   out <- list(
     surfaces = surfaces,
+    template = tmpl,
     diagnostics = diagnostics,
     method_parameters = method_parameters,
+    fits = fits,
     input_summary = list(
       original_count = dropped_records$original_count %||% nrow(pts),
       retained_count = nrow(pts), metadata = metadata
@@ -211,6 +254,7 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
     support = support_result,
     conditions = conditions,
     package_version = .package_version_string(),
+    schema_version = .ps_schema_version,
     call = call
   )
   class(out) <- "potentiomap_result"
@@ -434,6 +478,9 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   terra::values(r) <- as.numeric(pred[[pred_col]])
   list(
     surface = r,
+    fitted = list(method = "IDW", model = model, formula = Z ~ 1,
+                  points = points, template = template, grid = grid,
+                  idw_power = idw_power, idw_nmax = idw_nmax),
     diagnostics = list(
       formula = "Z ~ 1", observation_count = nrow(points),
       idw_power = idw_power, idw_nmax = idw_nmax,
@@ -477,6 +524,8 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   terra::values(r) <- as.numeric(captured$value$pred)
   list(
     surface = r,
+    fitted = list(method = "TPS", fit = fit, formula = "thin-plate spline",
+                  points = points, template = template, grid = grid),
     diagnostics = list(
       formula = "thin-plate spline", observation_count = nrow(points),
       selection_mode = if (is.null(tps_lambda)) "GCV" else "user_supplied",
@@ -510,6 +559,8 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   ))
   r <- template
   terra::values(r) <- prediction$value$var1.pred
+  variance <- template
+  terra::values(variance) <- prediction$value$var1.var
   warnings <- c(vg$warnings, prediction$warnings)
   messages <- c(vg$messages, prediction$messages)
   diag <- c(list(
@@ -520,6 +571,10 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   ), vg$diagnostics)
   list(
     surface = r, diagnostics = diag,
+    fitted = list(method = "OK", formula = Z ~ 1, data = pts,
+                  newdata = grid, variogram_model = vg$fitted,
+                  prediction_variance = variance, template = template,
+                  points = points),
     parameters = list(kr_auto_cutoff = kr_auto_cutoff,
                       kr_cutoff = vg$diagnostics$cutoff,
                       kr_width = vg$diagnostics$lag_width),
@@ -558,6 +613,8 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   pred <- as.numeric(prediction$value$var1.pred)
   r <- template
   terra::values(r) <- pred
+  variance <- template
+  terra::values(variance) <- prediction$value$var1.var
   observed <- pts$Z
   finite_pred <- pred[is.finite(pred)]
   observed_range <- diff(range(observed))
@@ -631,6 +688,12 @@ ps_interpolate <- function(points, value = "Z", methods = "TPS",
   ), vg$diagnostics)
   list(
     surface = r, diagnostics = diag,
+    fitted = list(method = "UK", formula = Z ~ x + y + x2 + y2 + xy,
+                  data = pts, newdata = gd, variogram_model = vg$fitted,
+                  prediction_variance = variance, template = template,
+                  points = points,
+                  coordinate_center = transformed$center,
+                  coordinate_scale = transformed$scale),
     parameters = list(
       kr_auto_cutoff = kr_auto_cutoff, kr_cutoff = vg$diagnostics$cutoff,
       kr_width = vg$diagnostics$lag_width,

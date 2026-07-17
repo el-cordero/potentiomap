@@ -18,6 +18,16 @@
 #'   negative-gradient symbols.
 #' - [ps_quicklook()], [ps_export_surfaces()], and
 #'   [ps_export_contour_support()] review and save products.
+#' - [ps_check_observations()], [ps_select_event()], and [ps_screen_groups()]
+#'   document observation, timing, and screen-selection decisions.
+#' - [ps_validate()], [ps_compare_methods()], and [ps_tune_interpolation()]
+#'   evaluate explicit prediction tasks without calling them map truth.
+#' - [ps_surface_uncertainty()] and [ps_contour_uncertainty()] retain
+#'   model-conditional or resampling assumptions.
+#' - [ps_head_change()], [ps_vertical_gradient()], [ps_well_influence()], and
+#'   [ps_network_thinning()] support event and monitoring-network review.
+#' - [ps_surface_profile()], [ps_cross_section()], [ps_export_style()], and
+#'   [ps_report()] create review and exchange products.
 #'
 #' Hydraulic-gradient arrows are map symbols derived from the local gradient of
 #' a modeled surface. Their lengths are display conventions. They are not
@@ -35,6 +45,8 @@
 #'
 #' Use `citation("potentiomap")` for citation guidance.
 #'
+#' @importFrom stats aggregate setNames
+#' @importFrom utils head tail
 #' @aliases potentiomap
 #' @keywords internal
 "_PACKAGE"
