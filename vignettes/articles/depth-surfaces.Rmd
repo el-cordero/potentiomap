@@ -1,5 +1,6 @@
 ---
 title: "Depth to water and depth to a potentiometric surface"
+description: "Subtract modeled head from a compatible land-surface raster and review datum and unit requirements."
 output: rmarkdown::html_vignette
 ---
 

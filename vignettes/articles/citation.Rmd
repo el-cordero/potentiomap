@@ -8,16 +8,17 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The website documents **potentiomap 0.2.0**. Version 0.2.0 has been submitted
-to CRAN; use the CRAN page and the installed package citation to confirm the
-currently available release.
+The website documents **potentiomap 0.2.0**. CRAN currently distributes
+**0.1.0** while 0.2.0 is under review. The GitHub repository provides the
+0.2.0 source; use the installed package citation to identify the version used
+in an analysis.
 
 ```{r release-metadata, echo=FALSE}
 knitr::kable(data.frame(
-  item = c("Website version", "CRAN package", "Permanent DOI", "License"),
+  item = c("Website version", "Current CRAN version", "Permanent DOI", "License"),
   value = c(
     "0.2.0",
-    "potentiomap",
+    "0.1.0",
     "10.32614/CRAN.package.potentiomap",
     "GPL-3"
   )
@@ -28,6 +29,13 @@ knitr::kable(data.frame(
 - DOI: <https://doi.org/10.32614/CRAN.package.potentiomap>
 - Source: <https://github.com/el-cordero/potentiomap>
 - License: GPL-3
+
+To install the website version while CRAN remains at 0.1.0:
+
+```{r, eval=FALSE}
+install.packages("pak")
+pak::pak("el-cordero/potentiomap")
+```
 
 ## Recommended citation
 

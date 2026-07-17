@@ -1,5 +1,6 @@
 ---
 title: "Ensembles versus method disagreement"
+description: "Separate an ensemble prediction from a descriptive map of spread among interpolation methods."
 output: rmarkdown::html_vignette
 ---
 

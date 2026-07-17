@@ -1,5 +1,6 @@
 ---
 title: "Universal kriging with hydrogeologic covariates"
+description: "Use aligned covariates as an explicit external drift and review the resulting trend assumptions."
 output: rmarkdown::html_vignette
 ---
 

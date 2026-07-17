@@ -1,5 +1,6 @@
 ---
 title: "Vertical-gradient sign conventions"
+description: "Calculate paired vertical gradients with an explicit numerator, denominator, and sign interpretation."
 output: rmarkdown::html_vignette
 ---
 

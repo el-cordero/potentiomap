@@ -1,5 +1,6 @@
 ---
 title: "Variograms, anisotropy, and external drift"
+description: "Inspect spatial dependence, directional structure, trend assumptions, and covariate-supported kriging models."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Variograms, anisotropy, and external drift}

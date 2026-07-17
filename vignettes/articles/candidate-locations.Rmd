@@ -1,5 +1,6 @@
 ---
 title: "Candidate monitoring locations and design constraints"
+description: "Rank feasible candidate wells using explicit objectives, exclusions, costs, and user priorities."
 output: rmarkdown::html_vignette
 ---
 

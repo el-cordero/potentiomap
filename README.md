@@ -8,6 +8,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/potentiomap)](https://CRAN.R-project.org/package=potentiomap)
 [![DOI](https://img.shields.io/badge/DOI-10.32614%2FCRAN.package.potentiomap-blue)](https://doi.org/10.32614/CRAN.package.potentiomap)
+[![R-CMD-check](https://github.com/el-cordero/potentiomap/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/el-cordero/potentiomap/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `potentiomap` turns groundwater-level observations into auditable
@@ -46,10 +47,33 @@ Existing surface and contour workflows remain available with their
 ordinary return values. Rich result objects are optional when
 diagnostics, support, and manifests are needed.
 
+<figure class="pm-home-overview">
+
+<img src="man/figures/home-overview.png" alt="Two synthetic maps: a potentiometric surface with observation wells, contours, and model-gradient arrows; and contour segments drawn with line patterns for user-defined support classes." />
+<figcaption>
+
+A reproducible overview from the installed synthetic data: a fitted
+surface (left) and checked model-gradient symbols with contours (right).
+Arrow length is a display convention, not groundwater velocity or a
+traced flow path.
+</figcaption>
+
+</figure>
+
 ## Installation
+
+> **Version note:** CRAN currently serves `potentiomap` 0.1.0. This
+> website documents 0.2.0 while that release is being reviewed. Use CRAN
+> for the published release, or install the 0.2.0 source from GitHub
+> when you need the features documented here.
 
 ``` r
 install.packages("potentiomap")
+```
+
+``` r
+install.packages("pak")
+pak::pak("el-cordero/potentiomap")
 ```
 
 ## Minimal workflow
@@ -117,6 +141,10 @@ plans.
   guide](https://github.com/el-cordero/potentiomap/blob/main/CONTRIBUTING.md)
 - [Code of
   Conduct](https://github.com/el-cordero/potentiomap/blob/main/CODE_OF_CONDUCT.md)
+- [Support
+  guide](https://github.com/el-cordero/potentiomap/blob/main/SUPPORT.md)
+- [Security
+  policy](https://github.com/el-cordero/potentiomap/blob/main/SECURITY.md)
 
 Do not post confidential well coordinates, client data, private site
 identifiers, or restricted environmental data in public issues.

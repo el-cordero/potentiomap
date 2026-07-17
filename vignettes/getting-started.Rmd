@@ -1,5 +1,6 @@
 ---
 title: "Getting started with potentiomap"
+description: "A concise end-to-end introduction to observations, interpolation, contours, diagnostics, and support."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting started with potentiomap}

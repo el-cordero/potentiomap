@@ -1,5 +1,6 @@
 ---
 title: "Grid, boundary, and parameter sensitivity"
+description: "Compare surfaces across grid resolution, domain, and interpolation settings without treating spread as uncertainty."
 output: rmarkdown::html_vignette
 ---
 

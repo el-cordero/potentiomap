@@ -41,6 +41,16 @@ body { color: var(--pm-ink); }
   margin: 1.5rem 0;
 }
 
+.pm-home-overview {
+  margin: 1.75rem 0;
+  border: 1px solid var(--pm-border);
+  border-radius: .75rem;
+  overflow: hidden;
+  background: #fff;
+}
+.pm-home-overview img { display: block; width: 100%; height: auto; }
+.pm-home-overview figcaption { padding: .8rem 1rem; }
+
 .gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
 .gallery-card { border: 1px solid var(--pm-border); border-radius: .65rem; overflow: hidden; background: #fff; }
 .gallery-card img { display: block; width: 100%; height: auto; }

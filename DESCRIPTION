@@ -1,8 +1,11 @@
 Package: potentiomap
 Title: Build Potentiometric Surfaces and Hydraulic-Gradient Arrows
 Version: 0.2.0
+Date: 2026-07-17
 Authors@R:
-    person("Elvin", "Cordero", email = "elvin.cordero@seamountgeo.com", role = c("aut", "cre"))
+    person("Elvin", "Cordero", email = "elvin.cordero@seamountgeo.com",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0003-8025-283X"))
 Description: Prepares groundwater-level observations from measured hydraulic
     head or from depth-to-water and land-surface elevation, interpolates
     potentiometric surfaces using thin-plate splines, inverse-distance

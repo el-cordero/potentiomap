@@ -1,5 +1,6 @@
 ---
 title: "Well influence and network thinning"
+description: "Quantify leave-one-well surface change and evaluate proposed monitoring-network reductions."
 output: rmarkdown::html_vignette
 ---
 

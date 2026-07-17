@@ -1,5 +1,6 @@
 ---
 title: "Pointwise contour uncertainty versus approximate contours"
+description: "Compare pointwise contour-position bands with support-classified approximate contour segments."
 output: rmarkdown::html_vignette
 ---
 

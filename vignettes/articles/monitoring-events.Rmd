@@ -1,5 +1,6 @@
 ---
 title: "Comparing monitoring events"
+description: "Select comparable monitoring rounds and map modeled head differences without interpreting them as storage change."
 output: rmarkdown::html_vignette
 ---
 

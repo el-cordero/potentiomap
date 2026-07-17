@@ -1,5 +1,6 @@
 ---
 title: "Validating and comparing interpolation methods"
+description: "Define prediction tasks, compare validation designs, and select methods without overstating map-wide accuracy."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Validating and comparing interpolation methods}

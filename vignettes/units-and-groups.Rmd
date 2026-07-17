@@ -1,5 +1,6 @@
 ---
 title: "Units, vertical references, and grouped groundwater observations"
+description: "Keep units, vertical datums, screened intervals, and water-bearing groups explicit before interpolation."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Units, vertical references, and grouped groundwater observations}

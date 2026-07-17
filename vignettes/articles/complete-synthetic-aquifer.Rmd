@@ -1,22 +1,603 @@
 ---
 title: "Complete synthetic aquifer example"
+description: "A complete fixed-seed 0.2.0 workflow from observation QA through validation, uncertainty, network review, profiles, and export."
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Complete synthetic aquifer example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-The package repository includes `dev/integration-tests/complete-synthetic.R`,
-an executable fixed-seed analysis using only released synthetic fixtures. It
-checks observations and events, groups screens, interpolates and validates,
-inspects variograms and anisotropy, uses an explicit covariate trend, maps
-support, ensembles and disagreement, creates uncertainty and pointwise contour
-bands, compares events and vertical gradients, evaluates network influence,
-thinning, candidates and parameter sensitivity, builds depth/profile/section
-products, and validates GIS/report files.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.bg = "white",
+  fig.width = 9,
+  fig.height = 6,
+  fig.align = "center",
+  dpi = 144,
+  warning = TRUE,
+  message = TRUE
+)
+library(potentiomap)
+library(terra)
+set.seed(20260717)
 
-Not every analysis needs every product. Use validation when comparing methods,
-uncertainty when model-conditional variability matters, network tools for
-monitoring-design questions, and profile or export tools only for the intended
-communication product. None replaces hydrogeologic judgment.
+head_cols <- hcl.colors(64, "RdYlBu", rev = TRUE)
+diff_cols <- hcl.colors(64, "Blue-Red 3", rev = TRUE)
 
-```{r, eval=FALSE}
-source("dev/integration-tests/complete-synthetic.R")
+draw_flow <- function(x, col = "#17252d", length = 0.045) {
+  base <- crds(ps_arrow_vertices(x, "first"))
+  tip <- crds(ps_arrow_vertices(x, "last"))
+  length_xy <- sqrt((base[, 1] - tip[, 1])^2 + (base[, 2] - tip[, 2])^2)
+  keep <- is.finite(base[, 1]) & is.finite(base[, 2]) &
+    is.finite(tip[, 1]) & is.finite(tip[, 2]) & length_xy > 1
+  arrows(base[keep, 1], base[keep, 2], tip[keep, 1], tip[keep, 2],
+         length = length, angle = 24, col = col)
+}
+```
+
+This article is a reproducible tour of the 0.2.0 analysis objects. Every input
+comes from the installed package, every stochastic operation uses an explicit
+seed, and export examples write only to a temporary directory. The example is
+deliberately broad: a real project should run only analyses that answer its
+defined hydrogeologic and monitoring questions.
+
+<div class="pm-science-note">
+This is a synthetic demonstration, not a site conceptual model. Interpolation does not create hydrogeologic knowledge outside the observations, and potentiomap is not a groundwater-flow or contaminant-transport simulator.
+</div>
+
+## 1. Define the analysis and load installed fixtures
+
+We use a projected CRS whose horizontal coordinates are metres and retain the
+fixture's head units as metres. The two monitoring events use the same vertical
+datum and water-bearing-unit label. Those compatibilities must be verified,
+not assumed, for field data.
+
+```{r load-data}
+data("synthetic_events", package = "potentiomap")
+data("synthetic_wells", package = "potentiomap")
+data("synthetic_nested_wells", package = "potentiomap")
+data("synthetic_regions", package = "potentiomap")
+data("synthetic_candidate_sites", package = "potentiomap")
+data("synthetic_anisotropic_points", package = "potentiomap")
+data("synthetic_transect", package = "potentiomap")
+
+spring <- subset(synthetic_events, event == "spring")
+autumn <- subset(synthetic_events, event == "autumn")
+attr(spring, "crs") <- "EPSG:26916"
+
+data.frame(
+  fixture = c("spring event", "autumn event", "survey wells", "nested intervals"),
+  records = c(nrow(spring), nrow(autumn), nrow(synthetic_wells),
+              nrow(synthetic_nested_wells))
+)
+```
+
+```{r observation-map, fig.alt="Synthetic spring monitoring wells colored from blue at lower head to red at higher head across a projected aquifer study area."}
+spring_points <- ps_make_points(
+  spring, "x", "y", "head", "well_id", "EPSG:26916"
+)
+plot(spring_points, "Z", col = head_cols, pch = 21, cex = 1.1,
+     main = "Synthetic spring monitoring event")
+```
+
+## 2. Check observations before fitting a surface
+
+`ps_check_observations()` reports issues without quietly redefining the input.
+The check covers numeric coordinates and heads, identifiers, dates, units, and
+vertical-datum fields. A clean synthetic result is not evidence that field data
+would pass the same review.
+
+```{r qa}
+qa <- ps_check_observations(
+  spring,
+  x = "x", y = "y", value = "head", id = "well_id",
+  datetime = "datetime", unit = "unit", vertical_datum = "vertical_datum"
+)
+qa$summary
+qa$issues
+```
+
+Proceed only after resolving errors and documenting accepted review findings.
+Unit conversion, datum reconciliation, casing-reference corrections, and
+screen-interval interpretation belong upstream of interpolation.
+
+## 3. Select a coherent monitoring event
+
+The event selector records the target time, window, actual selected span,
+ties, and excluded wells. Here the requested three-hour window around noon
+captures one reading per well.
+
+```{r event-selection}
+event <- ps_select_event(
+  spring,
+  id = "well_id", datetime = "datetime",
+  center = as.POSIXct("2025-03-15 12:00", tz = "UTC"),
+  window = 3 * 60 * 60,
+  rule = "nearest"
+)
+event$summary
+head(event$selected[, c("well_id", "datetime", "head", "quality")])
+```
+
+The event window is a design choice. A short span does not guarantee hydraulic
+synchroneity where pumping, tides, recharge, barometric response, or aquifer
+storage cause meaningful within-event change.
+
+## 4. Keep screened intervals and water-bearing units explicit
+
+Nested intervals should not be pooled merely because they share coordinates.
+The rules below classify intervals by vertical overlap with two declared
+ranges. Ambiguous and unclassified records remain inspectable.
+
+```{r screen-groups}
+screen_rules <- data.frame(
+  unit = c("upper", "lower"),
+  top = c(150, 130),
+  bottom = c(130, 110)
+)
+
+screen_groups <- ps_screen_groups(
+  synthetic_nested_wells,
+  mode = "rules",
+  screen_top = "screen_top",
+  screen_bottom = "screen_bottom",
+  rules = screen_rules,
+  overlap_required = 0.5
+)
+screen_groups$summary
+head(screen_groups$assigned[, c("nest_id", "interval", "unit")])
+```
+
+Grouping is a transparent classification, not proof that an interval belongs
+to a hydraulically connected unit. That interpretation requires the site
+conceptual model and supporting stratigraphic evidence.
+
+## 5. Fit alternative surfaces and retain diagnostics
+
+We use the first 18 survey wells so the example runs quickly. The returned
+`potentiomap_result` keeps the prediction template, fits, conditions,
+diagnostics, method parameters, and support products alongside the surfaces.
+Messages and numerical fit warnings are printed deliberately because they are
+part of the audit trail.
+
+```{r interpolate}
+points <- ps_make_points(
+  synthetic_wells[1:18, ],
+  x = "x", y = "y", value = "gw_elevation",
+  name_col = "well_id", crs = "EPSG:26916"
+)
+
+fit <- ps_interpolate(
+  points,
+  methods = c("IDW", "TPS", "OK"),
+  grid_res = 300,
+  support = TRUE,
+  return = "result"
+)
+
+fit$method_parameters
+fit$conditions
+```
+
+```{r method-surfaces, fig.width=10, fig.height=4, fig.alt="Side-by-side IDW, thin-plate spline, and ordinary kriging potentiometric surfaces using the same synthetic wells, grid, and head color range."}
+common_range <- range(unlist(lapply(fit$surfaces, minmax)), finite = TRUE)
+par(mfrow = c(1, 3), mar = c(2.6, 2.6, 3, 1))
+for (method in c("IDW", "TPS", "OK")) {
+  plot(fit$surfaces[[method]], col = head_cols, range = common_range,
+       main = method, axes = FALSE)
+  plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.6)
+}
+```
+
+The three maps are alternative modeled representations, not competing truths.
+Differences are most consequential where observations are sparse or where a
+method's trend and covariance assumptions control extrapolation.
+
+## 6. Validate the declared prediction task and tune inside it
+
+This three-fold example asks how well a method predicts held-out wells drawn
+from this network. It does not measure continuous area-wide accuracy. Spatial
+blocks, leave-cluster-out folds, user folds, or independent data can be more
+appropriate for other tasks.
+
+```{r validation}
+validation <- ps_validate(
+  points,
+  methods = c("IDW", "TPS"),
+  design = "kfold",
+  folds = 3,
+  prediction_mode = "direct",
+  seed = 21
+)
+comparison <- ps_compare_methods(validation, metric = "rmse")
+comparison$ranking[, c(
+  "method", "rmse", "mae", "me", "finite_coverage",
+  "support_coverage", "rank"
+)]
+```
+
+```{r validation-plot, fig.alt="Observed versus predicted synthetic heads for IDW and TPS three-fold validation, with a dashed one-to-one reference line and open symbols for limited-support predictions."}
+ps_validation_plot(validation, type = "observed_predicted")
+legend("topleft", legend = c("IDW", "TPS", "1:1"),
+       col = c(2, 3, 1), pch = c(16, 16, NA), lty = c(NA, NA, 2), bty = "n")
+```
+
+Candidate settings are evaluated within the resampling design. The small grid
+below illustrates mechanics; it is not a comprehensive IDW calibration.
+
+```{r tuning}
+tuning <- ps_tune_interpolation(
+  points,
+  method = "IDW",
+  candidates = data.frame(idw_power = c(1.5, 2)),
+  inner_design = "kfold",
+  inner_folds = 3,
+  refit = FALSE,
+  seed = 21
+)
+tuning$candidates[, c("candidate_id", "metric", "coverage", "rank", "selected")]
+```
+
+## 7. Inspect spatial dependence, direction, and external drift
+
+An empirical variogram is a diagnostic summary whose stability depends on
+network geometry, lag definitions, trend treatment, and pair counts. A fitted
+variogram is not justified simply because software returns parameters.
+
+```{r variogram}
+empirical <- ps_variogram(points, directions = c(0, 90))
+head(empirical$empirical[, c("np", "dist", "gamma", "dir.hor")])
+
+anis_points <- ps_make_points(
+  synthetic_anisotropic_points,
+  "x", "y", "head", "point_id", "EPSG:26916"
+)
+anisotropy <- ps_anisotropy(anis_points, minimum_pairs = 5)
+anisotropy$summary
+```
+
+```{r variogram-plot, fig.alt="Directional empirical semivariance points for north-south and east-west directions; point size increases with the number of contributing observation pairs."}
+vtab <- empirical$empirical
+direction_cols <- c("0" = "#176b87", "90" = "#c65d2e")
+plot(vtab$dist, vtab$gamma,
+     col = direction_cols[as.character(vtab$dir.hor)],
+     pch = 19, cex = 0.7 + sqrt(vtab$np) / 4,
+     xlab = "Lag distance (m)", ylab = "Semivariance",
+     main = "Directional empirical variograms")
+legend("topleft", names(direction_cols), col = direction_cols, pch = 19,
+       title = "Direction (degrees)", bty = "n")
+```
+
+If `anisotropy$summary` reports insufficient usable directions, the correct
+response is to record that limitation—not to force a ratio. External drift
+similarly needs a defensible covariate that is available throughout the
+prediction domain. This deterministic illustration creates a compatible land
+surface from the same template, then fits UK with that declared trend.
+
+```{r external-drift}
+land <- fit$template
+xy <- xyFromCell(land, seq_len(ncell(land)))
+values(land) <- 185 - 0.0005 * (xy[, 1] - mean(xy[, 1]))
+names(land) <- "land_surface"
+
+drift_points <- points
+land_at_points <- extract(land, drift_points)[[2]]
+values(drift_points)$Z <- 0.7 * land_at_points + 39
+
+external_drift <- ps_interpolate(
+  drift_points,
+  methods = "UK",
+  template = fit$template,
+  trend = Z ~ land_surface,
+  covariates = list(land_surface = land),
+  return = "result"
+)
+external_drift$method_parameters
+```
+
+Association with a drift covariate is not evidence of causality, and using a
+post-outcome or unavailable future covariate would invalidate prediction.
+
+## 8. Separate support, method disagreement, and uncertainty
+
+These products answer different questions. Support summarizes observation
+geometry and declared thresholds. An ensemble is a specified combination of
+methods. Disagreement is descriptive method spread. Kriging standard error is
+conditional on the fitted ordinary-kriging model.
+
+```{r uncertainty-objects}
+ensemble <- ps_surface_ensemble(fit$surfaces[c("IDW", "TPS")])
+disagreement <- ps_method_disagreement(fit$surfaces[c("IDW", "TPS")])
+
+ok_uncertainty <- ps_surface_uncertainty(
+  ps_interpolate(points, methods = "OK", template = fit$template,
+                 return = "result"),
+  approach = "kriging_variance"
+)
+
+fit$support$summary
+disagreement$summary
+ok_uncertainty$summary
+```
+
+```{r support-uncertainty-map, fig.width=10, fig.height=4, fig.alt="Three synthetic maps showing prediction-support class, absolute IDW versus TPS head disagreement, and ordinary-kriging prediction standard error; each describes a different limitation."}
+par(mfrow = c(1, 3), mar = c(2.5, 2.5, 3, 1))
+plot(fit$support$rasters[["support_class_code"]],
+     col = c("#d8efe8", "#f3cf72", "#d77c63"),
+     main = "Support class", axes = FALSE)
+plot(disagreement$rasters[["range"]], col = hcl.colors(64, "YlOrRd"),
+     main = "IDW–TPS range", axes = FALSE)
+plot(ok_uncertainty$standard_deviation, col = hcl.colors(64, "YlOrRd"),
+     main = "OK standard error", axes = FALSE)
+```
+
+None of these maps is a universal confidence surface. In particular, method
+spread can be small when methods share the same bias, and geometric support
+classes do not establish that a mapped value is correct.
+
+## 9. Classify contours and check model-gradient symbols
+
+The support thresholds below are analyst-declared distances. The classes mean
+"meets these criteria," not "statistically confident." Arrows are derived from
+the IDW raster and shortened when necessary so their endpoints remain within
+finite raster support.
+
+```{r contour-arrow-products}
+contours <- ps_contours(fit$surfaces$IDW, interval = 1)
+supported_contours <- ps_contour_support(
+  contours,
+  support = fit$support,
+  supported_distance = 500,
+  approximate_distance = 1000
+)
+flow <- ps_flow_arrows(
+  fit$surfaces$IDW,
+  res_factor = 3,
+  scale = 40,
+  endpoint_action = "shorten"
+)
+supported_contours$summary
+flow$validation_summary
+```
+
+```{r contour-arrow-map, fig.width=10, fig.height=4.5, fig.alt="Two panels: contours drawn solid, dashed, or dotted by user-defined prediction-support criteria; and an IDW head surface with contours and checked arrows pointing toward lower modeled head."}
+par(mfrow = c(1, 2), mar = c(2.5, 2.5, 3, 1))
+plot(supported_contours, legend_position = NULL,
+     main = "User-defined contour support")
+plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.55)
+legend("bottomright", c("supported", "approximate", "unsupported"),
+       lty = c(1, 2, 3), title = "Criteria", cex = 0.78, bty = "n")
+
+plot(fit$surfaces$IDW, col = head_cols,
+     main = "Modeled gradient direction", axes = FALSE)
+plot(contours, add = TRUE, col = "#52646d", lwd = 0.8)
+draw_flow(flow$arrows)
+plot(points, add = TRUE, pch = 21, bg = "white", cex = 0.5)
+```
+
+Arrow direction indicates decreasing modeled head. Arrow length is a display
+scale, not pore-water velocity, Darcy flux, travel time, or a particle path.
+
+## 10. Compare events and state vertical-gradient sign
+
+The event comparison pairs wells by identifier and retains measured and
+modeled differences. The signed raster is autumn minus spring because autumn
+is passed as event B.
+
+```{r temporal-products}
+spring_ps <- ps_make_points(spring, "x", "y", "head", "well_id", "EPSG:26916")
+autumn_ps <- ps_make_points(autumn, "x", "y", "head", "well_id", "EPSG:26916")
+
+change <- ps_head_change(
+  spring_ps, autumn_ps,
+  pair_by = "well_id",
+  method = "IDW",
+  grid_res = 350
+)
+change$summary
+
+vertical <- ps_vertical_gradient(
+  upper_head = 10,
+  lower_head = 12,
+  upper_elevation = 100,
+  lower_elevation = 80,
+  positive = "upward"
+)
+vertical$summary
+```
+
+```{r change-map, fig.alt="Synthetic modeled autumn-minus-spring head change raster colored from blue for negative change to red for positive change, with paired event wells overlaid."}
+change_limit <- max(abs(minmax(change$modeled_change)), na.rm = TRUE)
+plot(change$modeled_change, col = diff_cols,
+     range = c(-change_limit, change_limit),
+     main = "Modeled head change: autumn minus spring")
+plot(spring_ps, add = TRUE, pch = 21, bg = "white", cex = 0.55)
+```
+
+Modeled head change is not storage change. Converting change in head to change
+in storage requires appropriate storage properties, boundaries, aquifer
+geometry, and a defensible water-budget interpretation. Vertical-gradient
+sign likewise has meaning only when the numerator, denominator, reference
+elevations, interval pairing, and positive convention are explicit.
+
+## 11. Review influence, thinning, candidates, and settings
+
+Network diagnostics describe consequences under their declared method and
+scenario. They do not discover a uniquely optimal monitoring network.
+
+```{r network-analysis}
+influence <- ps_well_influence(
+  points[1:7], method = "IDW", grid_res = 400
+)
+thinning <- ps_network_thinning(
+  points[1:12], retain = 0.75, repeats = 2,
+  method = "IDW", grid_res = 400, seed = 6
+)
+
+candidate_points <- vect(
+  subset(synthetic_candidate_sites, !excluded),
+  geom = c("x", "y"), crs = "EPSG:26916"
+)
+candidate_design <- ps_candidate_network(
+  points,
+  candidate_points,
+  objective = "spatial_coverage",
+  n_select = 2
+)
+
+sensitivity <- ps_surface_sensitivity(
+  points[1:14],
+  method = "IDW",
+  scenarios = data.frame(idw_power = c(1.5, 2), grid_res = 350),
+  reference = 1,
+  seed = 21
+)
+
+head(influence$influence[order(-influence$influence$rmse_difference),
+                         c("well_id", "rmse_difference", "held_out_residual")])
+thinning$summary
+candidate_design$candidate_scores
+sensitivity$comparisons
+```
+
+```{r network-plot, fig.width=10, fig.height=4.5, fig.alt="Two network-review panels: leave-one-well surface RMSE difference by synthetic well and candidate sites around the existing monitoring network, with selected candidates highlighted."}
+par(mfrow = c(1, 2), mar = c(7, 4, 3, 1))
+ord <- order(influence$influence$rmse_difference, decreasing = TRUE)
+barplot(influence$influence$rmse_difference[ord],
+        names.arg = influence$influence$well_id[ord], las = 2,
+        col = "#4f9daf", border = NA,
+        ylab = "Leave-one-well surface RMSE difference",
+        main = "Influence under IDW")
+
+plot(points, pch = 21, bg = "#176b87", cex = 0.75,
+     main = "Existing and candidate locations")
+plot(candidate_points, add = TRUE, pch = 24, bg = "#f3cf72", cex = 1.1)
+chosen_indices <- as.integer(sub(
+  "candidate_0+", "", candidate_design$selected_sequence$candidate_id
+))
+chosen <- candidate_points[chosen_indices]
+plot(chosen, add = TRUE, pch = 24, bg = "#d65f4b", cex = 1.35)
+legend("bottomleft", c("existing", "candidate", "selected"),
+       pch = c(21, 24, 24), pt.bg = c("#176b87", "#f3cf72", "#d65f4b"),
+       bty = "n")
+```
+
+Candidate ranking must also respect access, ownership, utilities, construction
+feasibility, screened interval, sampling purpose, budget, and permitting. A
+high algorithmic score is not authorization to drill.
+
+## 12. Split regions and make depth, profile, and section products
+
+Separate hydrogeologic regions can be interpolated only when their boundaries
+and group assignments are defensible. The synthetic regions illustrate the
+API; they do not imply that a statistical discontinuity has been established.
+
+```{r regions-depth-profile}
+regions <- vect(synthetic_regions, geom = "wkt", crs = "EPSG:26916")
+regional <- ps_interpolate_regions(
+  points, regions, region_id = "region_id",
+  methods = "IDW", grid_res = 350
+)
+
+depth <- ps_depth_to_water_surface(
+  fit$surfaces$IDW, land, surface_type = "potentiometric"
+)
+
+transect <- vect(synthetic_transect, geom = "wkt", crs = "EPSG:26916")
+profile <- ps_surface_profile(
+  transect,
+  surfaces = list(head = fit$surfaces$IDW, land = land),
+  n = 12
+)
+section <- ps_cross_section(
+  transect,
+  head_surface = fit$surfaces$IDW,
+  land_surface = land,
+  step = 300,
+  vertical_exaggeration = 3
+)
+
+regional$summary
+depth$summary
+profile$summary
+section$summary
+```
+
+```{r profile-section-plot, fig.width=10, fig.height=4.5, fig.alt="Two transect panels: head and land-surface elevation plotted against chainage, and a cross-section view of the same profiles with three-times vertical exaggeration declared in the title."}
+par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
+ptab <- profile$profile
+plot(ptab$chainage, ptab$land, type = "l", lty = 2, lwd = 2,
+     col = "#6b5946", xlab = "Chainage (m)", ylab = "Elevation (m)",
+     main = "Surface profile")
+lines(ptab$chainage, ptab$head, lwd = 2, col = "#176b87")
+legend("bottomleft", c("land", "modeled head"),
+       lty = c(2, 1), lwd = 2, col = c("#6b5946", "#176b87"), bty = "n")
+
+plot(section, lwd = 2, col = "#176b87",
+     main = "Plot-ready section (3× vertical exaggeration)")
+legend("bottomleft", c("modeled head", "land"), lty = c(1, 2),
+       col = c("#176b87", "black"), bty = "n")
+```
+
+Depth is meaningful only when land and head surfaces share compatible
+horizontal and vertical references and units. The cross-section samples
+surfaces along a line; it does not invent hydrostratigraphy or become a
+three-dimensional numerical model.
+
+## 13. Export auditable products and record the interpretation
+
+Exports should preserve method names, units, CRS, settings, support criteria,
+conditions, and software versions. This chunk writes a raster, contours,
+quicklook, contour-support files, and an open QGIS style to a temporary folder,
+then removes the folder after listing its products.
+
+```{r export}
+output_dir <- file.path(tempdir(), "potentiomap-complete-example")
+if (dir.exists(output_dir)) unlink(output_dir, recursive = TRUE)
+dir.create(output_dir)
+
+surface_files <- ps_export_surfaces(
+  list(IDW = fit$surfaces$IDW),
+  out_dir = output_dir,
+  out_stub = "synthetic_head",
+  contour_interval = 1,
+  points = points,
+  support = fit$support,
+  diagnostics = fit$diagnostics,
+  write_support = TRUE,
+  write_diagnostics = TRUE,
+  vector_format = "gpkg"
+)
+support_files <- ps_export_contour_support(
+  supported_contours,
+  out_dir = output_dir,
+  out_stub = "synthetic_contour_support",
+  vector_format = "gpkg"
+)
+style_file <- ps_export_style(
+  fit$surfaces$IDW,
+  file = file.path(output_dir, "synthetic_head.qml"),
+  format = "qml",
+  layer_type = "head_raster",
+  units = "m"
+)
+
+data.frame(file = sort(list.files(output_dir)))
+unlink(output_dir, recursive = TRUE)
+```
+
+A release-quality analysis should close with a plain-language record of what
+the map represents, which observations and screens were used, when they were
+measured, which prediction task was validated, where support is limited, which
+uncertainty assumptions apply, and which decisions the products cannot support.
+
+<div class="pm-method-note">
+Reproducibility checklist: package version 0.2.0; fixed seeds shown in code; installed synthetic inputs only; EPSG:26916 projected coordinates; metre-based synthetic heads and elevations; explicit event, screen, validation, support, and sign conventions; temporary exports; no external services or repository development scripts.
+</div>
+
+```{r session-info}
+sessionInfo()
 ```

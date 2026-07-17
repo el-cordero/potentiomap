@@ -46,7 +46,7 @@ navbar:
         - text: Five-minute quick start
           href: articles/quick-start.html
         - text: Complete groundwater-surface workflow
-          href: articles/exporting-products.html
+          href: articles/complete-synthetic-aquifer.html
         - text: Prepare observations
         - text: Preparing groundwater observations
           href: articles/preparing-observations.html
@@ -75,6 +75,8 @@ navbar:
           href: articles/real-world-usgs.html
         - text: Output gallery
           href: articles/output-gallery.html
+        - text: Browse all articles
+          href: articles/index.html
     guides:
       text: Guides
       menu:
@@ -92,6 +94,8 @@ navbar:
           href: articles/troubleshooting.html
         - text: Citation
           href: articles/citation.html
+        - text: Browse all articles
+          href: articles/index.html
     reference:
       text: Reference
       href: reference/index.html

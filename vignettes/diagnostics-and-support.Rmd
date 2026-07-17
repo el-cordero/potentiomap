@@ -1,5 +1,6 @@
 ---
 title: "Interpolation diagnostics and prediction support"
+description: "Review retained interpolation diagnostics and classify where a mapped prediction has limited spatial support."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Interpolation diagnostics and prediction support}

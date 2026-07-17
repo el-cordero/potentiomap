@@ -64,7 +64,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Elvin Cordero \email{elvin.cordero@seamountgeo.com}
+\strong{Maintainer}: Elvin Cordero \email{elvin.cordero@seamountgeo.com} (\href{https://orcid.org/0009-0003-8025-283X}{ORCID})
 
 }
 \keyword{internal}

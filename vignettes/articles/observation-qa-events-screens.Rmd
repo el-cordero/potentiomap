@@ -1,5 +1,6 @@
 ---
 title: "Observation QA, event selection, and screen grouping"
+description: "Check records, select coherent monitoring events, and separate screened intervals before surface modeling."
 output: rmarkdown::html_vignette
 ---
 

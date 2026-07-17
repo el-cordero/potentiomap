@@ -1,5 +1,6 @@
 ---
 title: "Profiles and cross-sections"
+description: "Sample a modeled surface along a transect and assemble plot-ready hydrogeologic section data."
 output: rmarkdown::html_vignette
 ---
 

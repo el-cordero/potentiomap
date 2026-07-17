@@ -1,5 +1,6 @@
 ---
 title: "Exporting GIS products and technical reports"
+description: "Export auditable rasters, vectors, open GIS styles, manifests, and concise technical reports."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Exporting GIS products and technical reports}

@@ -1,5 +1,6 @@
 ---
 title: "Surface profiles, depth to water, and cross-sections"
+description: "Derive depth surfaces and extract transect profiles and plot-ready cross-sections from modeled heads."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Surface profiles, depth to water, and cross-sections}

@@ -1,5 +1,6 @@
 ---
 title: "QGIS and SLD style exports"
+description: "Create portable open GIS style files for exported potentiometric rasters and contour products."
 output: rmarkdown::html_vignette
 ---
 

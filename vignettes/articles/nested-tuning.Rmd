@@ -1,5 +1,6 @@
 ---
 title: "Nested tuning without information leakage"
+description: "Tune interpolation settings inside training folds so held-out predictions remain an honest comparison."
 output: rmarkdown::html_vignette
 ---
 

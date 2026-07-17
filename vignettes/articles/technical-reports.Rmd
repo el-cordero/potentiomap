@@ -1,5 +1,6 @@
 ---
 title: "Building a technical analysis report"
+description: "Record methods, conditions, QA, support, and exported artifacts in a reproducible technical report."
 output: rmarkdown::html_vignette
 ---
 

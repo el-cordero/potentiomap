@@ -1,5 +1,6 @@
 ---
 title: "Directional variograms and anisotropy"
+description: "Inspect directional semivariance and evaluate whether anisotropy is supported by the observation network."
 output: rmarkdown::html_vignette
 ---
 

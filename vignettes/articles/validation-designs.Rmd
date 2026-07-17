@@ -1,5 +1,6 @@
 ---
 title: "Leave-one-out, spatial-block, and independent validation"
+description: "Match validation design to the intended prediction task and interpret the resulting errors within that scope."
 output: rmarkdown::html_vignette
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: "Temporal head change and vertical hydraulic gradients"
+description: "Compare monitoring events and calculate explicitly signed vertical gradients from compatible paired intervals."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Temporal head change and vertical hydraulic gradients}

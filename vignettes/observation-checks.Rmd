@@ -1,5 +1,6 @@
 ---
 title: "Preparing and checking groundwater observations"
+description: "Prepare measured heads or depth-to-water records and inspect observation-level QA findings before mapping."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Preparing and checking groundwater observations}

@@ -1,5 +1,6 @@
 ---
 title: "Comparing TPS, IDW, OK, and UK"
+description: "Compare deterministic and geostatistical surfaces, diagnostics, assumptions, and validation results."
 output: rmarkdown::html_vignette
 ---
 

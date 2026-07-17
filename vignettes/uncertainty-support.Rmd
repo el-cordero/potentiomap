@@ -1,5 +1,6 @@
 ---
 title: "Prediction support, surface uncertainty, and contour uncertainty"
+description: "Distinguish geometric support, model-conditional uncertainty, method spread, and pointwise contour bands."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Prediction support, surface uncertainty, and contour uncertainty}

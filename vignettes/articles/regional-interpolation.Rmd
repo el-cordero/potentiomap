@@ -1,5 +1,6 @@
 ---
 title: "Interpolation within user-defined hydrogeologic regions"
+description: "Fit separate surfaces inside defensible hydrogeologic regions and retain region-level diagnostics."
 output: rmarkdown::html_vignette
 ---
 

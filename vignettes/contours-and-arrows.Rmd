@@ -1,5 +1,6 @@
 ---
 title: "Contours and hydraulic-gradient arrows"
+description: "Create contours and checked downgradient display symbols while keeping support and interpretation limits explicit."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Contours and hydraulic-gradient arrows}

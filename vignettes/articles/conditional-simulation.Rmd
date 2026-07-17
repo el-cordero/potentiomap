@@ -1,5 +1,6 @@
 ---
 title: "Conditional simulation and model-conditional uncertainty"
+description: "Summarize conditional simulations while keeping model assumptions and uncertainty scope visible."
 output: rmarkdown::html_vignette
 ---
 

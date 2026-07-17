@@ -1,5 +1,6 @@
 ---
 title: "Monitoring-network sensitivity and candidate locations"
+description: "Assess leave-one-well influence, thinning consequences, and constrained candidate-location rankings."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Monitoring-network sensitivity and candidate locations}
