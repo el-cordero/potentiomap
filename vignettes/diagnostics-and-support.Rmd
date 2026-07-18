@@ -101,7 +101,7 @@ classified <- suppressWarnings(ps_contour_support(
 knitr::kable(classified$summary)
 ```
 
-See the [contour-support threshold comparison](contour-support-thresholds.html)
+See the [contour-support threshold comparison](https://el-cordero.github.io/potentiomap/articles/contour-support-thresholds.html)
 for maps showing how tighter, broader, and network-relative distance criteria
 change the same contour lines.
 

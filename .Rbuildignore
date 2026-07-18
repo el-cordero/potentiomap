@@ -22,6 +22,7 @@
 ^paper$
 ^SECURITY\.md$
 ^SUPPORT\.md$
+^tests/testthat/.* 2\.R$
 ^potentiomap\.Rcheck$
 ^potentiomap_[0-9].*\.tar\.gz$
 ^doc$

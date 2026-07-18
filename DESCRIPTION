@@ -9,7 +9,7 @@ Authors@R:
 Description: Prepares groundwater-level observations from measured hydraulic
     head or from depth-to-water and land-surface elevation, interpolates
     potentiometric surfaces using thin-plate splines, inverse-distance
-    weighting, ordinary kriging, universal kriging, or user-supplied methods,
+    weighting, ordinary Kriging, universal Kriging, or user-supplied methods,
     and creates raster, contour, diagnostic, support, and hydraulic-gradient
     products for review and export. Functions retain method conditions and fit
     diagnostics, validate explicit prediction tasks, inspect model-conditional

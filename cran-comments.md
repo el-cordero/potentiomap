@@ -2,11 +2,12 @@
 
 ## Resubmission
 
-This resubmission addresses the invalid file URIs reported by CRAN. The
-relative links to `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` in `README.md`
-have been replaced with valid absolute URLs to the corresponding files in the
-public GitHub repository. The linked policy files are intentionally excluded
-from the CRAN source tarball, so no package-local file URI remains.
+This resubmission addresses both rounds of CRAN feedback. The relative links
+to `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` in `README.md` were replaced with
+valid absolute URLs. The relative `contour-support-thresholds.html` links in
+the two installed vignettes now use the corresponding absolute pkgdown URL.
+The DESCRIPTION now capitalizes Kriging because the term derives from a
+surname.
 
 ## Release
 
@@ -21,10 +22,12 @@ maintainer email, and minimum R version are unchanged.
 ## Actual local results for the candidate
 
 Candidate SHA-256:
-`d9320ee01d56c8556910eabbaca804294964cfc75b436b4517686c4a3d65f90a`
+`5bf85b78a3cb8d43b8ca92aa8c801ad34cd55494304bc71ef10c61125b5deeeb`
 
 - Exact-candidate `R CMD check --as-cran --no-manual`: 0 errors, 0 warnings,
-  0 notes (Status: OK), with only the local system-clock probe disabled.
+  0 notes (Status: OK), with the local system-clock probe and remote CRAN
+  incoming metadata lookup disabled. The latter was checked separately where
+  local DNS access allowed it.
 - A separate manual-enabled run passed the PDF manual and reported two local
   host NOTEs: the host could not verify its current time, and the Apple-supplied
   HTML Tidy is too old, so optional HTML-manual validation was skipped.
@@ -32,7 +35,7 @@ Candidate SHA-256:
   their rebuild, incoming URL feasibility, and detritus checks passed.
 - Overall line coverage is 96.57%; every new executable R file is at least
   98.08%.
-- All 18 discovered external URLs, including the corrected contribution-policy
+- All 20 discovered external URLs, including the corrected contribution-policy
   links, and the spelling audit passed.
 - CRAN lists no direct or recursive reverse dependencies.
 
