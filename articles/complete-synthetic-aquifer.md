@@ -732,8 +732,8 @@ sensitivity$comparisons
 #> 1                         0.000000       14822500                      0
 #> 2                         2.238476       14822500                      0
 #>    status runtime_seconds warning_count error_count warning_text error_text
-#> 1 success           0.066             0           0                        
-#> 2 success           0.065             0           0
+#> 1 success           0.068             0           0                        
+#> 2 success           0.067             0           0
 ```
 
 ``` r

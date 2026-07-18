@@ -69,7 +69,7 @@ if (rmarkdown::pandoc_available()) {
   ps_report(checked, file, "html", include_session = FALSE)
 }
 #>                                    file format                        title
-#> 1 /tmp/Rtmpn0KTQ2/file1d854ace51ea.html   html Potentiomap technical report
+#> 1 /tmp/Rtmp0c0xKz/file1dab106b9814.html   html Potentiomap technical report
 #>   sections include_session include_conditions package_version
 #> 1     auto           FALSE               TRUE           0.2.0
 # Generated reports are not professional certification.

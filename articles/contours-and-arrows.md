@@ -160,7 +160,7 @@ modeled surface. Coarse support cells can shift the apparent
 solid-to-dashed transition.
 
 The [contour-support threshold
-comparison](https://el-cordero.github.io/potentiomap/articles/contour-support-thresholds.md)
+comparison](https://el-cordero.github.io/potentiomap/articles/contour-support-thresholds.html)
 applies tight, balanced, broad, and network-relative criteria to the
 same modeled contours so their effects can be compared directly.
 

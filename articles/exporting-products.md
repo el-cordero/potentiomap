@@ -31,8 +31,8 @@ portable_inventory
 #> 1 synthetic_TPS_quicklook.png
 #> 2 synthetic_IDW_quicklook.png
 #>                                                             contour_manifest
-#> 1 /tmp/RtmpjDAmWD/potentiomap-gis-example/synthetic_TPS_contour_manifest.csv
-#> 2 /tmp/RtmpjDAmWD/potentiomap-gis-example/synthetic_IDW_contour_manifest.csv
+#> 1 /tmp/RtmpWBDcuK/potentiomap-gis-example/synthetic_TPS_contour_manifest.csv
+#> 2 /tmp/RtmpWBDcuK/potentiomap-gis-example/synthetic_IDW_contour_manifest.csv
 ```
 
 GeoPackage is the recommended vector format because it preserves field

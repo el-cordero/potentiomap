@@ -213,7 +213,7 @@ knitr::kable(classified$summary)
 | 6 | 170 | approximate | 3 | 3191.34715 | 3191.34715 | 0 |
 
 See the [contour-support threshold
-comparison](https://el-cordero.github.io/potentiomap/articles/contour-support-thresholds.md)
+comparison](https://el-cordero.github.io/potentiomap/articles/contour-support-thresholds.html)
 for maps showing how tighter, broader, and network-relative distance
 criteria change the same contour lines.
 
